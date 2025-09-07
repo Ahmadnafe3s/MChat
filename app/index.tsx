@@ -1,8 +1,15 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Welcome from "./(auth)/welcome";
 
 const Index = () => {
+  const isAuth = true;
+
+  if (isAuth) {
+    return <Welcome />;
+  }
+
   return (
     <SafeAreaView>
       <View className="flex min-h-screen items-center justify-center">
