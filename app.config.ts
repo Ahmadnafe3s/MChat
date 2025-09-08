@@ -23,6 +23,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: PROJECT_SLUG,
     version: "1.0.0",
     icon: ICON,
+    platforms: ["ios", "android"],
     android: {
       adaptiveIcon: {
         foregroundImage: ICON,
@@ -30,11 +31,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       },
       package: packageName,
       edgeToEdgeEnabled: true,
-    },
-    web: {
-      bundler: "metro",
-      output: "static",
-      favicon: ICON,
     },
     plugins: [
       "expo-router",

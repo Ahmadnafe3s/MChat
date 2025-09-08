@@ -10,6 +10,8 @@ const SignIn = () => {
 
   const onSignInPress = useCallback(async () => {
     if (!Validation(form)) return;
+
+    console.log(form);
   }, [form]);
 
   return (
@@ -53,7 +55,7 @@ const SignIn = () => {
         />
 
         <Text className="text-gray-500 font-Jakarta text-center mt-5">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Text
             className="text-green-800"
             onPress={() => Alert.alert("This is demo")}
