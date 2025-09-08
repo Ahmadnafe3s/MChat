@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store/auth";
 import React from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -5,6 +6,9 @@ import Welcome from "./(auth)/welcome";
 
 const Index = () => {
   const isAuth = true;
+  const { user } = useAuthStore()
+
+  console.log(user)
 
   if (isAuth) {
     return <Welcome />;

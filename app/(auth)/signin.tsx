@@ -1,18 +1,22 @@
 import CustomButton from "@/components/custom-button";
 import InputField from "@/components/input-field";
 import { icons, images } from "@/constants";
+import { useAuthStore } from "@/store/auth";
+import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Alert, Image, Text, View } from "react-native";
 
 const SignIn = () => {
 
   const [form, setForm] = useState({ email: "", password: "" });
+  const { setUser } = useAuthStore()
+  const router = useRouter()
 
   const onSignInPress = useCallback(async () => {
     if (!Validation(form)) return;
-
-    console.log(form);
-  }, [form]);
+    setUser({ id: "1", image: "myimg", name: "John Doe", email: form.email });
+    router.push("/(root)/test")
+  }, [form, setUser, router]);
 
   return (
     <View className="flex flex-1  bg-white">
@@ -69,9 +73,6 @@ const SignIn = () => {
 };
 
 export default SignIn;
-
-
-
 
 
 

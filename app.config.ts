@@ -14,7 +14,7 @@ const SCHEME = "app-scheme";
 export default ({ config }: ConfigContext): ExpoConfig => {
   const { name, scheme, packageName, bundleIdentifier } = getDynamicAppConfig(
     (process.env.APP_ENV as "development" | "preview" | "production") ||
-      "development"
+    "development"
   );
 
   return {
