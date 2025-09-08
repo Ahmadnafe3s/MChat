@@ -1,0 +1,56 @@
+name: EAS Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Choose platform (android or ios)'
+        required: true
+        default: 'android'
+        type: string
+      profile:
+        description: 'Choose EAS build profile (preview, development, production)'
+        required: true
+        default: 'preview'
+        type: string
+
+jobs:
+  build:
+    name: EAS Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      # 3. Install project dependencies
+      - name: Install Dependencies
+        run: npm ci
+
+      # 4. Install EAS CLI
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # 5. Login to EAS using GitHub Secret
+      - name: EAS Login
+        env:
+          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
+        run: eas login --token $EAS_TOKEN
+
+      # 6. Run EAS Build using chosen inputs
+      - name: Run EAS Build
+        run: eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }} --non-interactive
+
+      # 7. Optional: Upload build artifacts
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: eas-build
+          path: ./build  # adjust if EAS outputs elsewhere

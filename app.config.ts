@@ -8,13 +8,14 @@ const OWNER = "apex5767";
 const APP_NAME = "Mchat";
 const BUNDLE_IDENTIFIER = "com.muzztech.mchat";
 const PACKAGE_NAME = "com.muzztech.mchat";
-const ICON = "./assets/images/app-icon.png";
+const ICON = "./assets/images/icon.png";
+const SPLASH = "./assets/images/splash.png";
 const SCHEME = "app-scheme";
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const { name, scheme, packageName, bundleIdentifier } = getDynamicAppConfig(
     (process.env.APP_ENV as "development" | "preview" | "production") ||
-    "development"
+      "development"
   );
 
   return {
@@ -37,7 +38,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         "expo-splash-screen",
         {
-          image: ICON,
+          image: SPLASH,
           imageWidth: 200,
           resizeMode: "contain",
           backgroundColor: "#ffffff",
