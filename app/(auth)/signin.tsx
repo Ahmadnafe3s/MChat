@@ -29,7 +29,7 @@ const SignIn = () => {
         self_id: data.self_id,
         created_at: data.created_at,
       })
-      router.push("/(root)/test")
+      router.push("/(root)/chats")
     },
     onError: (err: AxiosError<{ message: string }>) => {
       console.log(err)
