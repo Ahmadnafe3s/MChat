@@ -1,7 +1,10 @@
 import CustomButton from "@/components/custom-button";
 import InputField from "@/components/input-field";
 import { icons, images } from "@/constants";
+import authApi from "@/services/auth";
 import { useAuthStore } from "@/store/auth";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Alert, Image, Text, View } from "react-native";
@@ -12,11 +15,34 @@ const SignIn = () => {
   const { setUser } = useAuthStore()
   const router = useRouter()
 
+  // Login
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => authApi(form.email, form.password),
+    onSuccess: (data) => {
+      setUser({
+        id: 19, // TODO: replace with real user id
+        name: data.name,
+        email: data.email,
+        mobile: data.mobile,
+        company: data.company,
+        user_type: data.user_type,
+        self_id: data.self_id,
+        created_at: data.created_at,
+      })
+      router.push("/(root)/test")
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      console.log(err)
+      Alert.alert("Error", err.response?.data.message)
+    }
+  })
+
+
   const onSignInPress = useCallback(async () => {
     if (!Validation(form)) return;
-    setUser({ id: "1", image: "myimg", name: "John Doe", email: form.email });
-    router.push("/(root)/test")
-  }, [form, setUser, router]);
+    mutate();
+  }, [form, mutate]);
+
 
   return (
     <View className="flex flex-1  bg-white">
@@ -55,6 +81,7 @@ const SignIn = () => {
         <CustomButton
           title="Sign In"
           className="mt-5"
+          loading={isPending}
           onPress={onSignInPress}
         />
 

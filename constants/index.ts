@@ -4,8 +4,10 @@ import onboarding3 from "@/assets/images/onboarding3.png";
 import logo from "@/assets/images/splash.png";
 
 // ICONS
+import filter from "@/assets/icons/funnel.png";
 import key from "@/assets/icons/key-round.png";
 import mail from "@/assets/icons/mail.png";
+
 
 export const images = {
   onboarding1,
@@ -16,7 +18,8 @@ export const images = {
 
 export const icons = {
   mail,
-  key
+  key,
+  filter
 };
 
 export const onboarding = [
