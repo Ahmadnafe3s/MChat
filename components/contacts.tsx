@@ -18,94 +18,14 @@ const OPTIONS = [
   "Starred",
 ];
 
-const chats = [
-  {
-    id: 437038,
-    name: "Ankita",
-    phone: "919044200277",
-    formatted: "A",
-    status: "Active",
-    unread_count: 5,
-    last_message: "Our Services",
-    last_chat: "17:11 PM",
-    is_starred: "",
-  },
-  {
-    id: 437039,
-    name: "Saumya",
-    phone: "919044200277",
-    formatted: "S",
-    status: "Expired",
-    unread_count: 0,
-    last_message:
-      "What is the price of your services , please can you let me know i want to purchase your service",
-    last_chat: "17:11 PM",
-    is_starred: "",
-  },
-  {
-    id: 437040,
-    name: "Naushad Shah",
-    phone: "919044200277",
-    formatted: "NS",
-    status: "Active",
-    unread_count: 0,
-    last_message: "Everything is fine what you will say ?",
-    last_chat: "17:11 PM",
-    is_starred: "",
-  },
-  {
-    id: 437041,
-    name: "Waquar Khan",
-    phone: "919044200277",
-    formatted: "WK",
-    status: "Expired",
-    unread_count: 10,
-    last_message: "Everything is fine what you will say ?",
-    last_chat: "17:11 PM",
-    is_starred: "",
-  },
-  {
-    id: 437042,
-    name: "Faizan Khan",
-    phone: "919044200277",
-    formatted: "FK",
-    status: "Expired",
-    unread_count: 10,
-    last_message: "Everything is fine what you will say ?",
-    last_chat: "17:11 PM",
-    is_starred: "",
-  },
-  {
-    id: 437043,
-    name: "Nafees Khan",
-    phone: "919044200277",
-    formatted: "NK",
-    status: "Expired",
-    unread_count: 10,
-    last_message: "Everything is fine what you will say ?",
-    last_chat: "17:11 PM",
-    is_starred: "",
-  },
-  {
-    id: 437044,
-    name: "Zeeshan Khan",
-    phone: "919044200277",
-    formatted: "ZK",
-    status: "Active",
-    unread_count: 10,
-    last_message: "Everything is fine what you will say ?",
-    last_chat: "17:11 PM",
-    is_starred: "",
-  },
-];
 
 const Contacts = () => {
-  const { onSearch } = useChat();
+  const { chats, onSearch } = useChat();
 
   return (
     <FlatList
       data={chats}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item) => item?.id?.toString()}
       renderItem={({ item }) => <ChatCard data={item} />}
       ListHeaderComponent={() => (
         <View className="flex gap-4">
@@ -126,7 +46,7 @@ const Contacts = () => {
           <HorizontalFilter
             defaultValue="Active"
             options={OPTIONS}
-            onSelect={(value) => console.log(value)}
+            onSelect={onSearch}
           />
 
           {/* Text */}

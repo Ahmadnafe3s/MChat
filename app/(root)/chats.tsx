@@ -24,7 +24,7 @@ const Chats = () => {
         </View>
       </View>
       {/* List of chats */}
-      <Contacts filter="Active" />
+      <Contacts />
     </View>
   );
 };
