@@ -31,4 +31,5 @@ declare interface PaginatedChats {
     data: Chat[]
     current_page: number
     last_page: number
+    total: number
 }

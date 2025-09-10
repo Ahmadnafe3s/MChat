@@ -1,23 +1,8 @@
 import Contacts from "@/components/contacts";
-import HorizontalFilter from "@/components/HorizontalFilter";
 import useChat from "@/hooks/useChat";
 import { useAuthStore } from "@/store/auth";
 import React from "react";
-import { Text, View } from "react-native";
-
-const OPTIONS = [
-  "All",
-  "Active",
-  "Unread",
-  "Expired",
-  "Blocked",
-  "Assigned",
-  "Open",
-  "Solved",
-  "Pending",
-  "Starred",
-];
-
+import { Text, TouchableOpacity, View } from "react-native";
 
 const Chats = () => {
   const { user } = useAuthStore();
@@ -27,25 +12,21 @@ const Chats = () => {
   return (
     <View className="flex-1 bg-gray-100">
       {/* Header */}
-      <View className="pb-5 bg-green-500 pt-12 px-5">
-        {/* User Avatar */}
-        <View className="flex flex-row items-center gap-2">
-          <View className="bg-white rounded-full size-12 flex items-center justify-center">
+      <View className="pb-5 bg-green-500 pt-12 px-5 relative">
+        <View className="flex flex-row items-center justify-between gap-2">
+          <Text className="text-2xl font-JakartaBold text-white">
+            {user?.company}
+          </Text>
+          {/* User Avatar */}
+          <TouchableOpacity className="bg-white rounded-full size-12 flex items-center justify-center">
             <Text className="font-JakartaBold text-2xl uppercase text-green-600">
               {arrayedName?.[0]?.charAt(0)}
               {arrayedName?.[1]?.charAt(0)}
             </Text>
-          </View>
-          <Text className="text-white text-xl font-JakartaSemiBold">
-            {user?.name}
-          </Text>
+          </TouchableOpacity>
         </View>
       </View>
-      <HorizontalFilter
-        defaultValue="Active"
-        options={OPTIONS}
-        onSelect={onSearch}
-      />
+
       {/* List of chats */}
       <Contacts />
     </View>

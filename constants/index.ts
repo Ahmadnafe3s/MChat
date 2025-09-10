@@ -5,6 +5,7 @@ import onboarding3 from "@/assets/images/onboarding3.png";
 import logo from "@/assets/images/splash.png";
 
 // ICONS
+import moveLeft from "@/assets/icons/arrow-left.png";
 import error_bug from "@/assets/icons/error-bug.png";
 import filter from "@/assets/icons/funnel.png";
 import key from "@/assets/icons/key-round.png";
@@ -24,7 +25,8 @@ export const icons = {
   key,
   filter,
   search,
-  error_bug
+  error_bug,
+  moveLeft,
 };
 
 export const onboarding = [
