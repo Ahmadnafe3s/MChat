@@ -1,13 +1,31 @@
 import Contacts from "@/components/contacts";
+import HorizontalFilter from "@/components/HorizontalFilter";
+import useChat from "@/hooks/useChat";
 import { useAuthStore } from "@/store/auth";
 import React from "react";
 import { Text, View } from "react-native";
 
+const OPTIONS = [
+  "All",
+  "Active",
+  "Unread",
+  "Expired",
+  "Blocked",
+  "Assigned",
+  "Open",
+  "Solved",
+  "Pending",
+  "Starred",
+];
+
+
 const Chats = () => {
   const { user } = useAuthStore();
   const arrayedName = user?.name?.split(" ");
+  const { onSearch } = useChat();
+
   return (
-    <View className="flex-1 bg-gray-100 gap-4">
+    <View className="flex-1 bg-gray-100">
       {/* Header */}
       <View className="pb-5 bg-green-500 pt-12 px-5">
         {/* User Avatar */}
@@ -23,6 +41,11 @@ const Chats = () => {
           </Text>
         </View>
       </View>
+      <HorizontalFilter
+        defaultValue="Active"
+        options={OPTIONS}
+        onSelect={onSearch}
+      />
       {/* List of chats */}
       <Contacts />
     </View>

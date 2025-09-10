@@ -7,7 +7,7 @@ const useChat = () => {
 
   const [filter, setFilter] = useState("All");
 
-  const { data } = useInfiniteQuery({
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, error, isError } = useInfiniteQuery({
     queryKey: ["chats", filter],
     queryFn: ({ pageParam }) =>
       ChatApi.getChats({
@@ -21,10 +21,9 @@ const useChat = () => {
     initialPageParam: 1,
     getNextPageParam: (lastPage: PaginatedChats) => {
       const { current_page, last_page } = lastPage;
-      return current_page < last_page ? current_page + 1 : undefined;
+      return current_page < last_page ? (current_page + 1) : undefined;
     },
   });
-
 
   const onSearch = debounce((value: string) => {
     setFilter(value);
@@ -32,6 +31,11 @@ const useChat = () => {
 
   return {
     chats: data?.pages.flatMap((page) => page.data) ?? [],
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    error,
+    isError,
     onSearch,
   };
 };

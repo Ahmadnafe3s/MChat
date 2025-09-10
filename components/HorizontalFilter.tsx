@@ -1,27 +1,24 @@
-import React, { useEffect } from 'react'
+import React, { memo } from 'react'
 import { FlatList, Text, TouchableOpacity, View } from 'react-native'
 
 interface Props {
     defaultValue?: string
     options: string[]
+    className?: string
     onSelect: (value: string) => void
 }
 
-const HorizontalFilter = ({ options, defaultValue, onSelect }: Props) => {
+const HorizontalFilter = ({ options, defaultValue, onSelect, className }: Props) => {
 
-    const [selected, setSelected] = React.useState<string>('');
+    const [selected, setSelected] = React.useState<string>(defaultValue ?? "");
 
     const handleSelect = (option: string) => {
         setSelected(option);
         onSelect(option);
     };
 
-    useEffect(() => {
-        setSelected(defaultValue as string)
-    }, [defaultValue])
-
     return (
-        <View>
+        <View className={`${className}`}>
             <FlatList
                 data={options}
                 horizontal
@@ -44,4 +41,4 @@ const HorizontalFilter = ({ options, defaultValue, onSelect }: Props) => {
     )
 }
 
-export default HorizontalFilter
+export default memo(HorizontalFilter)
