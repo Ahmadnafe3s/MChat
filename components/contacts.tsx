@@ -2,7 +2,7 @@ import { icons, images } from "@/constants";
 import useChat from "@/hooks/useChat";
 import React from "react";
 import {
-  Animated,
+  FlatList,
   Image,
   Text,
   View
@@ -26,7 +26,7 @@ const Contacts = () => {
 
   return (
     <View className="flex-1">
-      <Animated.FlatList
+      <FlatList
         data={chats}
         keyExtractor={(item) => item?.id?.toString()}
         renderItem={({ item }) => <ChatCard data={item} />}
