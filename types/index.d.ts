@@ -33,3 +33,9 @@ declare interface PaginatedChats {
     last_page: number
     total: number
 }
+
+
+declare interface ChatStore {
+    selectedChat: Chat | null
+    setSelectedChat: (chat: Chat) => void
+}

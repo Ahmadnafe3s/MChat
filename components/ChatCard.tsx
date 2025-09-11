@@ -1,9 +1,19 @@
+import { useChatStore } from "@/store/chat";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-const ChatCard = ({ data }: { data: Chat}) => {
+const ChatCard = ({ data }: { data: Chat }) => {
+  const router = useRouter();
+  const { setSelectedChat } = useChatStore();
+
+  const handleSelect = () => {
+    setSelectedChat(data);
+    router.push(`/(root)/conversation`);
+  };
+
   return (
-    <TouchableOpacity className="bg-white px-4 py-4 flex flex-row items-center gap-2 rounded-2xl">
+    <TouchableOpacity className="bg-white px-4 py-4 flex flex-row items-center gap-2 rounded-2xl" onPress={handleSelect}>
       <View className="bg-green-100 rounded-full size-[45px] flex items-center justify-center">
         <Text className="font-JakartaSemiBold text-xl uppercase text-green-500">
           {data?.formatted}
@@ -32,9 +42,11 @@ const ChatCard = ({ data }: { data: Chat}) => {
           {data?.last_chat}
         </Text>
         {data?.unread_count > 0 && (
-          <Text className="bg-green-500 text-sm px-2 py-1 rounded-full text-white">
-            {data?.unread_count}
-          </Text>
+          <View className="size-6 rounded-full bg-green-500 items-center justify-center">
+            <Text className="text-sm text-white">
+              {data?.unread_count}
+            </Text>
+          </View>
         )}
       </View>
     </TouchableOpacity>

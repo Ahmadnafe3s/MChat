@@ -8,9 +8,16 @@ import logo from "@/assets/images/splash.png";
 import moveLeft from "@/assets/icons/arrow-left.png";
 import error_bug from "@/assets/icons/error-bug.png";
 import filter from "@/assets/icons/funnel.png";
+import company from "@/assets/icons/house-building.png";
 import key from "@/assets/icons/key-round.png";
 import mail from "@/assets/icons/mail.png";
+import more from "@/assets/icons/menu-dots-vertical.png";
+import phone from "@/assets/icons/mobile-notch.png";
 import search from "@/assets/icons/search.png";
+import star_filled from "@/assets/icons/solid_star.png";
+import star from "@/assets/icons/star.png";
+import user from "@/assets/icons/user.png";
+import avatar from "@/assets/images/avatar.png";
 
 export const images = {
   onboarding1,
@@ -27,6 +34,13 @@ export const icons = {
   search,
   error_bug,
   moveLeft,
+  user,
+  avatar,
+  phone,
+  company,
+  star,
+  star_filled,
+  more
 };
 
 export const onboarding = [
