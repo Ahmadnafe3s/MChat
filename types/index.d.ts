@@ -4,9 +4,9 @@ declare interface User {
     email: string
     mobile: string
     company: string
-    user_type: string
+    attribute: string
+    role: string
     self_id: number | null
-    parent_id: number | null
     created_at: string
 }
 

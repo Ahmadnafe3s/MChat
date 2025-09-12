@@ -25,7 +25,7 @@ const Profile = () => {
                     <View className='flex items-center mt-10'>
                         <Image source={icons.avatar as any} className='w-40 h-40 mb-4' />
                         <Text className='text-2xl font-JakartaBold text-gray-600'>{user?.name}</Text>
-                        <Text className='px-4 py-1 bg-rose-50 border border-rose-200 text-rose-500 rounded-full mt-1'>{user?.user_type}</Text>
+                        <Text className='px-4 py-1 bg-rose-50 border border-rose-200 text-rose-500 rounded-full mt-1'>{user?.role}</Text>
                     </View>
 
                     <DetailFeild label='Company' value={user?.company!} icon={icons.company} />

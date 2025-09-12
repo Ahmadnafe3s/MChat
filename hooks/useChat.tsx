@@ -15,12 +15,12 @@ const useChat = () => {
       queryKey: ["chats", filter, search],
       queryFn: ({ pageParam }) =>
         ChatApi.getChats({
-          id: 19,
-          user_type: user?.user_type!,
-          self_id: user?.self_id!,
-          status: filter,
-          parent_id: user?.parent_id!,
+          value: 19,
+          role: user?.role!, // TODO : Remove this
+          self_id: user?.self_id!, // TODO : Remove this
+          status: filter, // While searching pass (search)
           page: pageParam,
+          attribute: user?.attribute!,
           serach: search,
           per_page: 10,
         }),
