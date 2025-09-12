@@ -24,13 +24,18 @@ const Contacts = () => {
     setFilter,
   } = useChat();
 
+
+
   return (
     <View className="flex-1">
       <FlatList
         data={chats}
         keyExtractor={(item) => item?.id?.toString()}
         renderItem={({ item }) => <ChatCard data={item} />}
-
+        initialNumToRender={10}
+        maxToRenderPerBatch={20}
+        windowSize={10}
+        removeClippedSubviews={true}
         ListEmptyComponent={
           <View className="mt-4">
             {isLoading ? (

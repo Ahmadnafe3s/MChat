@@ -59,7 +59,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                     <View className="absolute top-16 right-6 bg-white rounded-lg shadow-md min-w-52">
                         <FlatList
                             data={options}
-                            className="h-[300px]"
+                            className="max-h-64"
                             keyExtractor={(item) => item}
                             renderItem={({ item, index }) => (
                                 <TouchableOpacity
@@ -77,5 +77,8 @@ const Dropdown: React.FC<DropdownProps> = ({
         </View>
     );
 };
+
+
+
 
 export default Dropdown;

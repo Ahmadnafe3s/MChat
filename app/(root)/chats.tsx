@@ -17,8 +17,8 @@ const Chats = () => {
             {user?.company}
           </Text>
           {/* User Avatar */}
-          <TouchableOpacity className="bg-white rounded-full size-10 flex items-center justify-center" onPress={() => router.push("profile")}>
-            <Image source={icons.user as any} className="w-6 h-6" tintColor={"#787878"} />
+          <TouchableOpacity onPress={() => router.push("/profile")}>
+            <Image source={icons.avatar as any} className="w-10 h-10" />
           </TouchableOpacity>
         </View>
       </View>
