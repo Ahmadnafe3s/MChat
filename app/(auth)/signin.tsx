@@ -27,6 +27,7 @@ const SignIn = () => {
         company: data.company,
         user_type: data.user_type,
         self_id: data.self_id,
+        parent_id: data.parent_id,
         created_at: data.created_at,
       })
       router.push("/(root)/chats")

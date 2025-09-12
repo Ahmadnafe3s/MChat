@@ -1,21 +1,27 @@
 import ChatApi from "@/services/chat";
+import { useAuthStore } from "@/store/auth";
 import debounce from "@/utils/debounce";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 const useChat = () => {
   const [filter, setFilter] = useState("All");
+  const [search, setSearch] = useState("");
+  const { user } = useAuthStore()
+
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, error, isError } =
     useInfiniteQuery({
-      queryKey: ["chats", filter],
+      queryKey: ["chats", filter, search],
       queryFn: ({ pageParam }) =>
         ChatApi.getChats({
           id: 19,
-          user_type: "user",
-          self_id: null,
+          user_type: user?.user_type!,
+          self_id: user?.self_id!,
           status: filter,
+          parent_id: user?.parent_id!,
           page: pageParam,
+          serach: search,
           per_page: 10,
         }),
       initialPageParam: 1,
@@ -26,7 +32,7 @@ const useChat = () => {
     });
 
   const onSearch = debounce((value: string) => {
-    setFilter(value);
+    setSearch(value);
   }, 400);
 
   return {

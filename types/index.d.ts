@@ -6,6 +6,7 @@ declare interface User {
     company: string
     user_type: string
     self_id: number | null
+    parent_id: number | null
     created_at: string
 }
 
