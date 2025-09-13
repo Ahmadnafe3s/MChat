@@ -9,19 +9,16 @@ const useChat = () => {
   const [search, setSearch] = useState("");
   const { user } = useAuthStore()
 
-
   const { data, isLoading, isFetchingNextPage, fetchNextPage, error, isError } =
     useInfiniteQuery({
       queryKey: ["chats", filter, search],
       queryFn: ({ pageParam }) =>
         ChatApi.getChats({
           value: 19,
-          role: user?.role!, // TODO : Remove this
-          self_id: user?.self_id!, // TODO : Remove this
-          status: filter, // While searching pass (search)
+          status: filter,
           page: pageParam,
           attribute: user?.attribute!,
-          serach: search,
+          search: search,
           per_page: 10,
         }),
       initialPageParam: 1,

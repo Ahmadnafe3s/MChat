@@ -18,6 +18,7 @@ const SearchChat = () => {
   const { chats, onSearch, isLoading, error, isError } = useChat();
   const router = useRouter();
 
+
   return (
     <SafeAreaView className="flex-1 px-[10px]">
       {/* Header */}
@@ -30,6 +31,7 @@ const SearchChat = () => {
           placeholderTextColor={"#A3A3A3"}
           autoFocus={true}
           className="py-4 flex-1 text-lg"
+          onChangeText={onSearch}
         />
       </View>
 

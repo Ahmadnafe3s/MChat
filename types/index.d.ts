@@ -6,8 +6,7 @@ declare interface User {
     company: string
     attribute: string
     role: string
-    self_id: number | null
-    created_at: string
+    self_id: number
 }
 
 declare interface AuthStore {
