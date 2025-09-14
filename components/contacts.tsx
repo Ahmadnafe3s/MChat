@@ -27,7 +27,7 @@ const Contacts = () => {
 
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-gray-100">
       <FlatList
         data={chats}
         keyExtractor={(item) => item?.id?.toString()}

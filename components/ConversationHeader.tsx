@@ -10,7 +10,7 @@ const ConversationHeader = memo(
         const router = useRouter();
         const { selectedChat } = useChatStore();
         return (
-            <View className='flex flex-row px-4 pb-3 items-center justify-between bg-white pt-14'>
+            <View className='flex flex-row px-4 pb-3 items-center justify-between bg-white mt-1 border-b border-gray-200'>
                 {/* Flex 1 */}
                 <View className='flex flex-row gap-2 items-center'>
                     <TouchableOpacity onPress={() => router.back()}>

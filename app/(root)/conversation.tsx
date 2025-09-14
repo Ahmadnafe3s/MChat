@@ -7,10 +7,10 @@ import { useAuthStore } from '@/store/auth';
 import React from 'react';
 import {
   FlatList,
-  SafeAreaView,
   StyleSheet,
   View
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const Conversation = () => {
@@ -43,6 +43,7 @@ export default Conversation
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   messagesContainer: {
     flex: 1,
