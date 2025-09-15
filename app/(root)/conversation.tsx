@@ -1,9 +1,8 @@
 import ConversationHeader from '@/components/ConversationHeader';
 import Messages from '@/components/Messages';
 import SendChatInput from '@/components/SendChatInput';
-import { conversations } from '@/constants';
+import useChat from '@/hooks/useChat';
 import useKeyboard from '@/hooks/useKeyboard';
-import { useAuthStore } from '@/store/auth';
 import React from 'react';
 import {
   FlatList,
@@ -14,8 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const Conversation = () => {
-  const { user } = useAuthStore();
   const { keyboardHeight } = useKeyboard();
+  const { conversations, isLoadingConversations, errorConversations, isErrorConversations } = useChat();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -23,8 +22,8 @@ const Conversation = () => {
       <View style={styles.messagesContainer}>
         <FlatList
           data={conversations}
-          keyExtractor={(item) => item?.id?.toString()}
-          renderItem={({ item }) => <Messages data={item} senderId={user?.id!} />}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <Messages data={item}/>}
           contentContainerStyle={styles.contentStyle}
           inverted
           keyboardShouldPersistTaps="handled"

@@ -4,15 +4,19 @@ import { useAuthStore } from "@/store/auth";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Chats = () => {
   const { user } = useAuthStore();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   return (
-    <SafeAreaView className="flex-1 bg-green-500">
+    <SafeAreaView className="flex-1 bg-gray-100">
       {/* Header */}
-      <View className="pb-4 px-5 relative pt-4">
+      <View
+        style={{ paddingTop: insets.top + 24 , marginTop: -insets.top - 16 }}
+        className="pb-4 px-5 bg-green-500"
+      >
         <View className="flex flex-row items-center justify-between gap-2">
           <Text className="text-2xl font-JakartaBold text-white">
             {user?.company}

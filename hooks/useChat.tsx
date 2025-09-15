@@ -1,20 +1,22 @@
 import ChatApi from "@/services/chat";
 import { useAuthStore } from "@/store/auth";
+import { useChatStore } from "@/store/chat";
 import debounce from "@/utils/debounce";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 const useChat = () => {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const { user } = useAuthStore()
+  const { selectedChat } = useChatStore()
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, error, isError } =
     useInfiniteQuery({
       queryKey: ["chats", filter, search],
       queryFn: ({ pageParam }) =>
         ChatApi.getChats({
-          value: 19,
+          value: user?.id!,
           status: filter,
           page: pageParam,
           attribute: user?.attribute!,
@@ -27,6 +29,14 @@ const useChat = () => {
         return current_page < last_page ? current_page + 1 : undefined;
       },
     });
+
+
+  const { data: conversations, isLoading: isLoadingConversations, error: errorConversations, isError: isErrorConversations } = useQuery({
+    queryKey: ["conversations", selectedChat?.id],
+    queryFn: () => ChatApi.getConversations(selectedChat?.id!),
+    enabled: !!selectedChat?.id,
+  })
+
 
   const onSearch = debounce((value: string) => {
     setSearch(value);
@@ -43,6 +53,12 @@ const useChat = () => {
     onSearch,
     filter,
     setFilter,
+
+    // conversation
+    conversations,
+    isLoadingConversations,
+    errorConversations,
+    isErrorConversations,
   };
 };
 

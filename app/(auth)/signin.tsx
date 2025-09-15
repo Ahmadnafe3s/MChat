@@ -28,7 +28,7 @@ const SignIn = () => {
     mutationFn: () => authApi(form.email, form.password),
     onSuccess: (data) => {
       setUser({
-        id: 19, // TODO: replace with real user id
+        id: data.id,
         name: data.name,
         email: data.email,
         mobile: data.mobile,

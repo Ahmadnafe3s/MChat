@@ -39,3 +39,27 @@ declare interface ChatStore {
     selectedChat: Chat | null
     setSelectedChat: (chat: Chat) => void
 }
+
+
+declare interface Conversations {
+    id: number
+    message_type: "user" | "customer",
+    message_by: string,
+    header: {
+        filetype: string,
+        format: string,
+        link: string
+    } | null,
+    body: {
+        text: string,
+    },
+    footer: string
+    button: [
+        {
+            text: string
+        }
+    ],
+    status: 'sent' | 'delivered' | 'read' | 'failed',
+    datetime: string
+}
+
