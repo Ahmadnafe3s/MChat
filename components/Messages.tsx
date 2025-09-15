@@ -1,8 +1,8 @@
 // import { conversations, icons } from '@/constants';
 import { icons } from '@/constants';
-import { Video } from 'expo-av';
 import React, { memo, useState } from 'react';
 import { Image, Modal, Text, TouchableOpacity, View } from 'react-native';
+import Video from 'react-native-video';
 import DownloadDocument from './DownloadFile';
 
 const Messages = memo(
