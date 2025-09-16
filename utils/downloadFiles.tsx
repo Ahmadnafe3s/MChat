@@ -29,7 +29,7 @@ const downloadFile = async ({
 
   try {
     await task.promise;
-    scheduleDownloadNotification(fileName, downloadDest);
+    await scheduleDownloadNotification(fileName, downloadDest);
   } catch (err: any) {
     Alert.alert("Error", err.message);
   }
