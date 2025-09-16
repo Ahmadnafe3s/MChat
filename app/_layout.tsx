@@ -10,6 +10,8 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { setupNotificationListener } from "@/notifications";
+import { setupNotificationConfig } from "@/notifications/config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 
@@ -34,6 +36,12 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
+  useEffect(() => {
+    setupNotificationConfig();
+    const subscription = setupNotificationListener();
+    return () => subscription.remove();
+  }, []);
+
   if (!loaded) {
     // Async font loading only occurs in development.
     return null;
@@ -47,7 +55,6 @@ export default function RootLayout() {
       },
     },
   });
-
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
