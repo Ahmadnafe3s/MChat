@@ -2,14 +2,14 @@ import { icons } from "@/constants";
 import downloadFile from "@/utils/downloadFiles";
 import React, { memo, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    Dimensions,
-    Image,
-    Modal,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Image,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import Video from "react-native-video";
 
@@ -50,7 +50,6 @@ const Messages = memo(({ data }: { data: Conversations }) => {
           setDownloadProgress(progress);
         },
       });
-      Alert.alert("Success", "File downloaded successfully!");
     } catch (error) {
       Alert.alert("Error", "Failed to download file");
       console.error("Download error:", error);
