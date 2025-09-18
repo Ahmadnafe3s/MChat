@@ -27,7 +27,7 @@ const HorizontalFilter = ({ options, defaultValue, onSelect, className }: Props)
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         onPress={() => handleSelect(item)}
-                        className={`px-4 h-10  flex items-center justify-center rounded-full ${selected === item ? 'bg-green-100' : 'bg-gray-200'}`}
+                        className={`px-4 h-10  flex items-center justify-center rounded-full border ${selected === item ? 'bg-emerald-100 border-emerald-300' : 'bg-gray-100 border-gray-200'}`}
                     >
                         <Text className={`text-sm font-bold ${selected === item ? 'text-green-700' : 'text-gray-700'}`}>{item}</Text>
                     </TouchableOpacity>

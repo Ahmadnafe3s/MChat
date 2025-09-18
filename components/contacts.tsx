@@ -27,7 +27,7 @@ const Contacts = () => {
 
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <View className="flex-1">
       <FlatList
         data={chats}
         keyExtractor={(item) => item?.id?.toString()}
@@ -78,7 +78,6 @@ const Contacts = () => {
         }
         contentContainerStyle={{
           paddingHorizontal: 10,
-          gap: 5,
           paddingBottom: 10,
         }}
       />

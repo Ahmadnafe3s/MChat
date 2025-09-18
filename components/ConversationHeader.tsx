@@ -16,8 +16,8 @@ const ConversationHeader = memo(
                     <TouchableOpacity onPress={() => router.back()}>
                         <Image source={icons.moveLeft as any} className='w-6 h-6' />
                     </TouchableOpacity>
-                    <View className='bg-green-100 rounded-full size-12 flex items-center justify-center'>
-                        <Text className='font-JakartaSemiBold text-2xl text-green-500'>{selectedChat?.formatted}</Text>
+                    <View className='bg-emerald-100 rounded-full size-12 flex items-center justify-center'>
+                        <Text className='font-JakartaSemiBold text-2xl text-emerald-500'>{selectedChat?.formatted}</Text>
                     </View>
                     <Text className='text-lg text-neutral-700 font-Jakarta' numberOfLines={1}>{selectedChat?.name}</Text>
                 </View>

@@ -11,11 +11,11 @@ const Chats = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   return (
-    <SafeAreaView className="flex-1 bg-gray-100">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
       <View
         style={{ paddingTop: insets.top + 24 , marginTop: -insets.top - 16 }}
-        className="pb-4 px-5 bg-green-500"
+        className="pb-4 px-5 bg-emerald-400"
       >
         <View className="flex flex-row items-center justify-between gap-2">
           <Text className="text-2xl font-JakartaBold text-white">

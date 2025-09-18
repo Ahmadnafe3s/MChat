@@ -21,7 +21,7 @@ const ChatsHeader: React.FC<ChatsHeaderProps> = React.memo(
         return (
             <View className="flex gap-4 mt-4 pb-2">
                 <Pressable
-                    className="flex flex-row items-center border border-gray-200 rounded-2xl bg-white p-4"
+                    className="flex flex-row items-center border border-gray-200 rounded-2xl bg-gray-100 p-3.5"
                     onPress={() => router.push("/(root)/searchChat")}
                 >
                     <Image

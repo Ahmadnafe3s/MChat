@@ -23,11 +23,16 @@ const Conversation = () => {
         <FlatList
           data={conversations}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <Messages data={item}/>}
-          contentContainerStyle={styles.contentStyle}
+          renderItem={({ item }) => <Messages data={item} />}
+          contentContainerStyle={[styles.contentStyle, {
+            flexGrow: 1,
+            justifyContent: conversations?.length! > 6 ? "flex-start" : "flex-end",
+          }]}
           inverted
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
+          bounces={false}
+          overScrollMode='never'
         />
       </View>
       <View style={[styles.inputContainer, { paddingBottom: keyboardHeight > 0 ? keyboardHeight : 0 }]}>
