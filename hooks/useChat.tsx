@@ -13,7 +13,7 @@ const useChat = () => {
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, error, isError } =
     useInfiniteQuery({
-      queryKey: ["chats", filter, search],
+      queryKey: ["chats", filter, search, user?.id],
       queryFn: ({ pageParam }) =>
         ChatApi.getChats({
           value: user?.id!,
