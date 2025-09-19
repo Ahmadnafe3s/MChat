@@ -25,6 +25,8 @@ const useKeyboard = () => {
         };
     }, []);
 
+    console.log(keyboardHeight)
+
     return {
         keyboardHeight,
     }

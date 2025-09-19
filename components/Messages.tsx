@@ -232,11 +232,11 @@ const Messages = memo(({ data }: { data: Conversations }) => {
             )}
 
             {data.button.length > 0 && (
-              <View className="mt-2 w-full flex gap-2 justify-center">
+              <View className="mt-2 flex gap-2 items-center">
                 {data.button.map((button, index) => (
                   <TouchableOpacity
                     key={index}
-                    className={`flex-row items-center flex-1 justify-center py-2 px-4 `}
+                    className={` w-full py-2 px-4 items-center justify-center border border-emerald-400 rounded-xl`}
                   >
                     <Text
                       className={`font-medium text-sm text-emerald-500`}
