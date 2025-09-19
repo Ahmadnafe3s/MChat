@@ -10,13 +10,12 @@ import React, { useCallback, useState } from "react";
 import {
   Alert,
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Text,
-  View,
+  View
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 
 const SignIn = () => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -52,66 +51,59 @@ const SignIn = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      <KeyboardAwareScrollView
+        bottomOffset={100}
       >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Header Text */}
-          <View className="flex items-center mt-24 justify-center gap-5">
-            <View>
-              <Image source={images.logo as any} className="size-36" />
-              <Text className="text-3xl text-center text-gray-500 font-JakartaSemiBold">
-                <Text className="text-green-800">M</Text>
-                Chat
-              </Text>
-            </View>
-            <Text className="text-green-800 text-center text-2xl font-JakartaSemiBold">
-              Sign in to your account
+        {/* Header Text */}
+        <View className="flex items-center mt-24 justify-center gap-5">
+          <View>
+            <Image source={images.logo as any} className="size-36" />
+            <Text className="text-3xl text-center text-gray-500 font-JakartaSemiBold">
+              <Text className="text-green-800">M</Text>
+              Chat
             </Text>
           </View>
+          <Text className="text-green-800 text-center text-2xl font-JakartaSemiBold">
+            Sign in to your account
+          </Text>
+        </View>
 
-          <View className="p-5">
-            <InputField
-              label="Email"
-              Icon={icons.mail}
-              iconStyle={{ color: "#9CA3AF" }}
-              placeholder="eg. john@gmaildsdfdf.com"
-              onChangeText={(text) => setForm({ ...form, email: text })}
-            />
-            <InputField
-              label="Password"
-              Icon={icons.key}
-              iconStyle={{ color: "#9CA3AF" }}
-              placeholder="********"
-              secureTextEntry={true}
-              onChangeText={(text) => setForm({ ...form, password: text })}
-            />
+        <View className="p-5">
+          <InputField
+            label="Email"
+            Icon={icons.mail}
+            iconStyle={{ color: "#9CA3AF" }}
+            placeholder="eg. john@gmaildsdfdf.com"
+            onChangeText={(text) => setForm({ ...form, email: text })}
+          />
+          <InputField
+            label="Password"
+            Icon={icons.key}
+            iconStyle={{ color: "#9CA3AF" }}
+            placeholder="********"
+            secureTextEntry={true}
+            onChangeText={(text) => setForm({ ...form, password: text })}
+          />
 
-            {/* Sign Up Button */}
-            <CustomButton
-              title="Sign In"
-              className="mt-5"
-              loading={isPending}
-              onPress={onSignInPress}
-            />
+          {/* Sign Up Button */}
+          <CustomButton
+            title="Sign In"
+            className="mt-5"
+            loading={isPending}
+            onPress={onSignInPress}
+          />
 
-            <Text className="text-gray-500 font-Jakarta text-center mt-5">
-              Don&apos;t have an account?{" "}
-              <Text
-                className="text-green-800"
-                onPress={() => Alert.alert("This is demo")}
-              >
-                Please contact admin
-              </Text>
+          <Text className="text-gray-500 font-Jakarta text-center mt-5">
+            Don&apos;t have an account?{" "}
+            <Text
+              className="text-green-800"
+              onPress={() => Alert.alert("This is demo")}
+            >
+              Please contact admin
             </Text>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          </Text>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

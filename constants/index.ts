@@ -8,6 +8,7 @@ import logo from "@/assets/images/splash.png";
 import moveLeft from "@/assets/icons/arrow-left.png";
 import doubleCheck from "@/assets/icons/check-double.png";
 import check from "@/assets/icons/check.png";
+import clip from "@/assets/icons/clip.png";
 import download from "@/assets/icons/download.png";
 import error_bug from "@/assets/icons/error-bug.png";
 import filter from "@/assets/icons/funnel.png";
@@ -50,7 +51,8 @@ export const icons = {
   doubleCheck,
   send,
   play,
-  download
+  download,
+  clip,
 };
 
 export const onboarding = [

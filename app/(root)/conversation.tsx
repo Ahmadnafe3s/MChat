@@ -2,6 +2,7 @@ import ConversationHeader from '@/components/ConversationHeader';
 import Messages from '@/components/Messages';
 import SendChatInput from '@/components/SendChatInput';
 import useChat from '@/hooks/useChat';
+import useGradualKeyboard from '@/hooks/useGradualKeyboard';
 import useKeyboard from '@/hooks/useKeyboard';
 import React from 'react';
 import {
@@ -9,12 +10,20 @@ import {
   StyleSheet,
   View
 } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const Conversation = () => {
   const { keyboardHeight } = useKeyboard();
+  const { height } = useGradualKeyboard();
   const { conversations, isLoadingConversations, errorConversations, isErrorConversations } = useChat();
+
+  const keyboardPadding = useAnimatedStyle(() => {
+    return {
+      height: height.value
+    }
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -35,9 +44,8 @@ const Conversation = () => {
           overScrollMode='never'
         />
       </View>
-      <View style={[styles.inputContainer, { paddingBottom: keyboardHeight > 0 ? keyboardHeight : 0 }]}>
-        <SendChatInput />
-      </View>
+      <SendChatInput />
+      <Animated.View style={keyboardPadding} />
     </SafeAreaView>
   )
 }

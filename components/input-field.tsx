@@ -73,4 +73,7 @@ const InputField = forwardRef<TextInput, InputFieldProps>(
   }
 );
 
+
+InputField.displayName = "InputField";
+
 export default InputField;
