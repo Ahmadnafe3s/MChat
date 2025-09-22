@@ -2,7 +2,8 @@ import ChatApi from "@/services/chat";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chat";
 import debounce from "@/utils/debounce";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useState } from "react";
 
 const useChat = () => {
@@ -10,6 +11,8 @@ const useChat = () => {
   const [search, setSearch] = useState("");
   const { user } = useAuthStore()
   const { selectedChat } = useChatStore()
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, error, isError } =
     useInfiniteQuery({
@@ -38,6 +41,22 @@ const useChat = () => {
   })
 
 
+  const { mutate: sendMessage, isError: isErrorSendChat, isPending } = useMutation({
+    mutationKey: ["sendMessage"],
+    mutationFn: ({ receiverId, data }: { receiverId: number, data: any }) => ChatApi.sendMessage({ receiverId, data }),
+    onSuccess: (newData: Conversations) => {
+      queryClient.setQueryData(["conversations", selectedChat?.id!], (oldData: Conversations[]) => {
+        if (!oldData) return [newData]
+        return [newData, ...oldData]
+      })
+    },
+    onError: (error: AxiosError<{ message: { error: { message: string } } }>) => {
+      const Err = error.response?.data.message || error.message
+      console.log("Error encountered in sending message: ", Err)
+    },
+  })
+
+
   const onSearch = debounce((value: string) => {
     setSearch(value);
   }, 400);
@@ -59,6 +78,11 @@ const useChat = () => {
     isLoadingConversations,
     errorConversations,
     isErrorConversations,
+
+    // send message
+    sendMessage,
+    isErrorSendChat,
+    isPending,
   };
 };
 

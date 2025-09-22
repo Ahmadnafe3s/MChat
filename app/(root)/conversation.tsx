@@ -3,7 +3,6 @@ import Messages from '@/components/Messages';
 import SendChatInput from '@/components/SendChatInput';
 import useChat from '@/hooks/useChat';
 import useGradualKeyboard from '@/hooks/useGradualKeyboard';
-import useKeyboard from '@/hooks/useKeyboard';
 import React from 'react';
 import {
   FlatList,
@@ -15,7 +14,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const Conversation = () => {
-  const { keyboardHeight } = useKeyboard();
   const { height } = useGradualKeyboard();
   const { conversations, isLoadingConversations, errorConversations, isErrorConversations } = useChat();
 

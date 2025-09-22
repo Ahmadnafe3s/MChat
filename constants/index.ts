@@ -9,21 +9,25 @@ import moveLeft from "@/assets/icons/arrow-left.png";
 import doubleCheck from "@/assets/icons/check-double.png";
 import check from "@/assets/icons/check.png";
 import clip from "@/assets/icons/clip.png";
+import document from "@/assets/icons/document.png";
 import download from "@/assets/icons/download.png";
 import error_bug from "@/assets/icons/error-bug.png";
 import filter from "@/assets/icons/funnel.png";
+import audio from "@/assets/icons/headphones.png";
 import company from "@/assets/icons/house-building.png";
 import key from "@/assets/icons/key-round.png";
 import mail from "@/assets/icons/mail.png";
 import more from "@/assets/icons/menu-dots-vertical.png";
 import phone from "@/assets/icons/mobile-notch.png";
 import send from "@/assets/icons/paper-plane-top.png";
+import gallery from "@/assets/icons/picture.png";
 import play from "@/assets/icons/play.png";
 import search from "@/assets/icons/search.png";
 import star_filled from "@/assets/icons/solid_star.png";
 import star from "@/assets/icons/star.png";
 import user from "@/assets/icons/user.png";
 import avatar from "@/assets/images/avatar.png";
+
 
 export const images = {
   onboarding1,
@@ -53,6 +57,9 @@ export const icons = {
   play,
   download,
   clip,
+  gallery,
+  document,
+  audio,
 };
 
 export const onboarding = [
