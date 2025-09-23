@@ -15,15 +15,15 @@ const ChatCard = memo(
     };
 
     return (
-      <TouchableOpacity className="bg-white px-4 py-4 flex flex-row items-center gap-2 rounded-2xl" onPress={handleSelect}>
-        <View className="bg-green-100 rounded-full size-[45px] flex items-center justify-center">
-          <Text className="font-JakartaSemiBold text-xl uppercase text-green-500">
+      <TouchableOpacity className="bg-white px-4 py-4 flex flex-row items-center gap-2" onPress={handleSelect}>
+        <View className="bg-emerald-100 rounded-full size-[45px] flex items-center justify-center">
+          <Text className="font-JakartaSemiBold text-xl uppercase text-emerald-500">
             {data?.formatted}
           </Text>
         </View>
 
         <View className="flex flex-1">
-          <Text className=" font-JakartaSemiBold text-gray-600 mr-2" numberOfLines={1}>
+          <Text className="font-JakartaSemiBold text-gray-600 mr-2" numberOfLines={1}>
             {data?.name}
           </Text>
           <Text

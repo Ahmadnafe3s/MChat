@@ -1,6 +1,6 @@
 import { icons } from "@/constants";
 import downloadFile from "@/utils/downloadFiles";
-import React, { memo, useState } from "react";
+import React, { memo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -9,9 +9,14 @@ import {
   Modal,
   Text,
   TouchableOpacity,
+<<<<<<< HEAD
   View,
+=======
+  View
+>>>>>>> ffb685f4a269a067df5a944c1c095b0cb066890f
 } from "react-native";
-import Video from "react-native-video";
+import Video, { VideoRef } from "react-native-video";
+import { ClickableText } from "./ClickableLink";
 
 const { width: screenWidth } = Dimensions.get("window");
 const maxMediaWidth = screenWidth * 0.7; // 70% of screen width
@@ -23,6 +28,8 @@ const Messages = memo(({ data }: { data: Conversations }) => {
   const [imageVisible, setImageVisible] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
+  const playerRef = useRef<VideoRef | null>(null);
+  const [paused, setPaused] = useState(false);
 
   // Calculate media dimensions with aspect ratio preservation
   const getMediaDimensions = (aspectRatio = 4 / 3) => {
@@ -59,7 +66,9 @@ const Messages = memo(({ data }: { data: Conversations }) => {
     }
   };
 
+
   const renderMedia = () => {
+    console.log(data)
     if (!data?.header) return null;
 
     const { format, link } = data.header;
@@ -98,6 +107,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
             repeat={false}
             resizeMode="cover"
             className="rounded-lg"
+            onEnd={() => console.log("Video ended")}
           />
           {/* Video overlay */}
           <View className="absolute inset-0 bg-black/20 rounded-lg" />
@@ -114,6 +124,60 @@ const Messages = memo(({ data }: { data: Conversations }) => {
         </TouchableOpacity>
       );
     }
+
+    if (format === "ogg" || format === "mp3") {
+      return (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "#f3f4f6",
+            borderRadius: 12,
+            padding: 10,
+            minWidth: 200,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              setPaused((prev) => !prev)
+            }}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: "#3b82f6",
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 10,
+            }}
+          >
+            <Image
+              source={paused ? icons.pause : icons.play as any}
+              style={{ width: 20, height: 20, tintColor: "#fff" }}
+            />
+          </TouchableOpacity>
+
+          <Text style={{ flex: 1, color: "#111827" }}>Voice message</Text>
+
+          <Video
+            ref={playerRef as any}
+            source={{ uri: '' }}
+            paused={paused}
+            playInBackground
+            ignoreSilentSwitch="ignore"
+            onEnd={() => {
+              setPaused(true);
+              playerRef?.current?.seek(0)
+            }}
+            volume={1.0}
+            style={{ width: 0, height: 0 }} // hidden for audio-only
+          />
+
+        </View>
+      );
+    }
+
+
 
     if (
       format === "pdf" ||
@@ -164,13 +228,12 @@ const Messages = memo(({ data }: { data: Conversations }) => {
           <TouchableOpacity
             onPress={handleDownload}
             disabled={isDownloading}
-            className={`flex-row items-center justify-center py-2 px-4 rounded-lg ${
-              isDownloading
-                ? "bg-gray-300"
-                : isSender
-                  ? "bg-white/20"
-                  : "bg-blue-500"
-            }`}
+            className={`flex-row items-center justify-center py-2 px-4 rounded-lg ${isDownloading
+              ? "bg-gray-300"
+              : isSender
+                ? "bg-gray-500"
+                : "bg-blue-500"
+              }`}
           >
             {isDownloading ? (
               <ActivityIndicator size="small" color="#666" />
@@ -182,13 +245,12 @@ const Messages = memo(({ data }: { data: Conversations }) => {
               />
             )}
             <Text
-              className={`font-medium text-sm ${
-                isDownloading
-                  ? "text-gray-600"
-                  : isSender
-                    ? "text-white"
-                    : "text-white"
-              }`}
+              className={`font-medium text-sm ${isDownloading
+                ? "text-gray-600"
+                : isSender
+                  ? "text-white"
+                  : "text-white"
+                }`}
             >
               {isDownloading ? "Downloading..." : "Download"}
             </Text>
@@ -203,45 +265,64 @@ const Messages = memo(({ data }: { data: Conversations }) => {
   return (
     <>
       <View
-        className={`flex flex-row items-end ${
-          isSender ? "justify-end" : "justify-start"
-        } px-4 mb-3`}
+        className={`flex flex-row items-end ${isSender ? "justify-end" : "justify-start"
+          } px-4 mb-3`}
       >
+
         <View
-          className={`flex max-w-[85%]  ${isSender ? "items-end" : "items-start"}`}
+          className={`flex max-w-[85%]  relative ${isSender ? "items-end" : "items-start"}`}
         >
           {/* Message bubble */}
           <View
-            className={`px-3 py-2 elevation ${
-              isSender
-                ? "bg-[#00d793] rounded-tl-[18px] rounded-tr-[18px] rounded-bl-[18px] rounded-br-[4px]"
-                : "bg-white rounded-tr-[18px] rounded-tl-[18px] rounded-br-[18px] rounded-bl-[4px]"
-            }`}
+            className={`px-3 py-2 elevation-sm relative  ${isSender
+              ? "bg-[#dffff5] rounded-tl-[18px]  rounded-bl-[18px] rounded-br-[4px]"
+              : "bg-white rounded-tr-[18px]  rounded-br-[18px] rounded-bl-[4px]"
+              }`}
           >
+
             {/* Media content */}
             {data?.header && renderMedia()}
 
             {/* Text content */}
             {data.body.text && (
               <View className={data?.header ? "mt-2" : ""}>
-                <Text
-                  className={`${
-                    isSender ? "text-white" : "text-gray-800"
-                  } text-[15px] leading-5`}
-                  selectable
-                >
-                  {data.body.text}
-                </Text>
+                <ClickableText
+                  text={data.body.text}
+                  style={{ color: isSender ? "#1f2937" : "#374151", fontSize: 15, lineHeight: 20 }}
+                  linkStyle={{ color: "blue" }}
+                />
+              </View>
+            )}
+
+            {data.button.length > 0 && (
+              <View className="mt-2 flex gap-2 items-center">
+                {data.button.map((button, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    className={` w-full py-2 px-4 items-center justify-center border border-emerald-400 rounded-xl`}
+                  >
+                    <Text
+                      className={`font-medium text-sm text-emerald-500`}
+                    >
+                      {button.text}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             )}
           </View>
+
+
           {/* Timestamp and status */}
           <View
             className={`flex-row items-center justify-end mt-1
-                                }`}
+           }`}
           >
             <Text className={`text-xs font-normal mr-1 text-gray-400`}>
               {new Date(data?.datetime).toLocaleTimeString([], {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
                 hour: "2-digit",
                 minute: "2-digit",
               })}
@@ -259,6 +340,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
             )}
           </View>
         </View>
+
       </View>
 
       {/* Image Full Screen Modal */}
@@ -267,6 +349,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
         transparent={true}
         onRequestClose={() => setImageVisible(false)}
         statusBarTranslucent
+        animationType="fade"
       >
         <View style={{ flex: 1, backgroundColor: "#000" }}>
           <TouchableOpacity
@@ -304,6 +387,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
         transparent={true}
         onRequestClose={() => setVideoVisible(false)}
         statusBarTranslucent
+        animationType="fade"
       >
         <View style={{ flex: 1, backgroundColor: "#000" }}>
           <TouchableOpacity

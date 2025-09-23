@@ -20,9 +20,9 @@ const SearchChat = () => {
 
 
   return (
-    <SafeAreaView className="flex-1 px-[10px]">
+    <SafeAreaView className="flex-1 px-[10px] bg-white">
       {/* Header */}
-      <View className="flex px-4 gap-2 flex-row mb-4 mt-2 items-center  border border-gray-200 rounded-2xl bg-white">
+      <View className="flex px-4 gap-2 flex-row mb-4 mt-2 items-center  border border-gray-200 rounded-2xl bg-gray-100">
         <TouchableOpacity onPress={() => router.back()}>
           <Image source={icons.moveLeft as any} className="w-6 h-6" />
         </TouchableOpacity>
@@ -30,7 +30,7 @@ const SearchChat = () => {
           placeholder="Search by name or contact"
           placeholderTextColor={"#A3A3A3"}
           autoFocus={true}
-          className="py-4 flex-1 text-lg"
+          className="py-3.5 flex-1 text-lg"
           onChangeText={onSearch}
         />
       </View>
@@ -74,7 +74,6 @@ const SearchChat = () => {
           </View>
         )}
         contentContainerStyle={{
-          gap: 5,
           paddingBottom: 10,
         }}
         showsVerticalScrollIndicator={false}
