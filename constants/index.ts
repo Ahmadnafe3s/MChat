@@ -20,6 +20,7 @@ import mail from "@/assets/icons/mail.png";
 import more from "@/assets/icons/menu-dots-vertical.png";
 import phone from "@/assets/icons/mobile-notch.png";
 import send from "@/assets/icons/paper-plane-top.png";
+import pause from "@/assets/icons/pause.png";
 import gallery from "@/assets/icons/picture.png";
 import play from "@/assets/icons/play.png";
 import search from "@/assets/icons/search.png";
@@ -60,6 +61,7 @@ export const icons = {
   gallery,
   document,
   audio,
+  pause,
 };
 
 export const onboarding = [

@@ -1,6 +1,6 @@
 import { icons } from "@/constants";
 import downloadFile from "@/utils/downloadFiles";
-import React, { memo, useState } from "react";
+import React, { memo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -9,9 +9,9 @@ import {
   Modal,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import Video from "react-native-video";
+import Video, { VideoRef } from "react-native-video";
 import { ClickableText } from "./ClickableLink";
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -24,6 +24,8 @@ const Messages = memo(({ data }: { data: Conversations }) => {
   const [imageVisible, setImageVisible] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
+  const playerRef = useRef<VideoRef | null>(null);
+  const [paused, setPaused] = useState(false);
 
   // Calculate media dimensions with aspect ratio preservation
   const getMediaDimensions = (aspectRatio = 4 / 3) => {
@@ -60,7 +62,9 @@ const Messages = memo(({ data }: { data: Conversations }) => {
     }
   };
 
+
   const renderMedia = () => {
+    console.log(data)
     if (!data?.header) return null;
 
     const { format, link } = data.header;
@@ -99,6 +103,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
             repeat={false}
             resizeMode="cover"
             className="rounded-lg"
+            onEnd={() => console.log("Video ended")}
           />
           {/* Video overlay */}
           <View className="absolute inset-0 bg-black/20 rounded-lg" />
@@ -115,6 +120,60 @@ const Messages = memo(({ data }: { data: Conversations }) => {
         </TouchableOpacity>
       );
     }
+
+    if (format === "ogg" || format === "mp3") {
+      return (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "#f3f4f6",
+            borderRadius: 12,
+            padding: 10,
+            minWidth: 200,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              setPaused((prev) => !prev)
+            }}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: "#3b82f6",
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 10,
+            }}
+          >
+            <Image
+              source={paused ? icons.pause : icons.play as any}
+              style={{ width: 20, height: 20, tintColor: "#fff" }}
+            />
+          </TouchableOpacity>
+
+          <Text style={{ flex: 1, color: "#111827" }}>Voice message</Text>
+
+          <Video
+            ref={playerRef as any}
+            source={{ uri: '' }}
+            paused={paused}
+            playInBackground
+            ignoreSilentSwitch="ignore"
+            onEnd={() => {
+              setPaused(true);
+              playerRef?.current?.seek(0)
+            }}
+            volume={1.0}
+            style={{ width: 0, height: 0 }} // hidden for audio-only
+          />
+
+        </View>
+      );
+    }
+
+
 
     if (
       format === "pdf" ||

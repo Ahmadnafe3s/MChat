@@ -2,6 +2,7 @@ import { icons } from '@/constants'
 import useChat from '@/hooks/useChat'
 import { useChatStore } from '@/store/chat'
 import { getDocument, getImage } from '@/utils/attachment'
+import bytesToMB from '@/utils/sizeConverter'
 import React, { useState } from 'react'
 import { Image, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -14,6 +15,7 @@ type Message = {
         uri: string,
         type: string,
         name: string,
+        size: number,
     } | null;
 };
 
@@ -42,11 +44,13 @@ const SendChatInput = ({ onSend }: Props) => {
                         uri: document.uri,
                         type: document.mimeType!,
                         name: document.name!,
+                        size: document.size!,
                     }
                 }))
                 break
             case 'gallery':
                 const image = await getImage()
+                console.log(image)
                 if (!image) return;
                 setMessage(prev => ({
                     ...prev, type: "gallery", attachment:
@@ -54,6 +58,7 @@ const SendChatInput = ({ onSend }: Props) => {
                         uri: image.uri,
                         type: image.mimeType!,
                         name: image.fileName!,
+                        size: image.fileSize!,
                     }
                 }))
                 break
@@ -65,6 +70,7 @@ const SendChatInput = ({ onSend }: Props) => {
                         uri: audio.uri,
                         type: audio.mimeType!,
                         name: audio.name!,
+                        size: audio.size!,
                     }
                 }))
                 break
@@ -95,6 +101,30 @@ const SendChatInput = ({ onSend }: Props) => {
 
     return (
         <>
+            {/* Attachment Preview */}
+            {
+                message.attachment && (
+                    <View className='mx-2 px-2.5 py-2 bg-emerald-50 rounded-lg flex flex-row items-center gap-1'>
+                        <View className="w-10 h-10 bg-red-100 rounded-lg items-center justify-center mr-3">
+                            {message.attachment?.type.includes('image') ? (
+                                <Image source={{ uri: message.attachment?.uri }} className="h-full w-full rounded-lg" />
+                            ) : (
+                                <Text className="text-red-600 text-xs font-bold uppercase">
+                                    {message.attachment?.type.split('/')[1]}
+                                </Text>
+                            )}
+                        </View>
+                        <View className='flex gap-0.5 flex-1 mr-4'>
+                            <Text className='font-JakartaSemiBold text-gray-700' numberOfLines={1} >{message.attachment?.name}</Text>
+                            <Text className='text-gray-400 text-xs'>{bytesToMB(message.attachment?.size!)}</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => setMessage(prev => ({ ...prev, attachment: null }))}>
+                            <Text className='text-gray-500 text-sm'>✕</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
+            {/* Send Message Input */}
             <View className='px-3 mb-3 pt-3 flex flex-row gap-2 items-start'>
                 <TouchableOpacity
                     className='bg-[#42d6a624] rounded-full mt-1.5 p-3'
@@ -178,3 +208,5 @@ const SendChatInput = ({ onSend }: Props) => {
 }
 
 export default SendChatInput
+
+
