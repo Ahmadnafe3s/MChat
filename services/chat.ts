@@ -17,7 +17,6 @@ const ChatApi = {
         return res.data.data
     },
     sendMessage: async ({ receiverId, data }: { receiverId: number, data: any }): Promise<Conversations> => {
-        console.log(data)
         const res = await axios.post(`https://meta.muzztech.com/api/v1/send/message/${receiverId}`, data , { headers: { 'Content-Type': 'multipart/form-data' } } )
         return res.data.data
     },

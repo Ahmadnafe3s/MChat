@@ -8,7 +8,7 @@ import { Image, Modal, Text, TextInput, TouchableOpacity, View } from 'react-nat
 
 
 
-type Message = {
+export type Message = {
     type: "text" | "gallery" | "audio" | "document",
     message: string,
     attachment?: {
@@ -19,11 +19,8 @@ type Message = {
     } | null;
 };
 
-interface Props {
-    onSend: (data: any) => void
-}
 
-const SendChatInput = ({ onSend }: Props) => {
+const SendChatInput = () => {
     const { sendMessage } = useChat()
     const { selectedChat } = useChatStore()
     const [showModal, setShowModal] = useState(false)
@@ -104,12 +101,12 @@ const SendChatInput = ({ onSend }: Props) => {
             {/* Attachment Preview */}
             {
                 message.attachment && (
-                    <View className='mx-2 px-2.5 py-2 bg-emerald-50 rounded-lg flex flex-row items-center gap-1'>
-                        <View className="w-10 h-10 bg-red-100 rounded-lg items-center justify-center mr-3">
+                    <View className='mx-3 px-3 py-2 bg-emerald-50 rounded-lg flex flex-row items-center gap-1'>
+                        <View className="w-16 h-16 bg-red-100 rounded-lg items-center justify-center mr-3">
                             {message.attachment?.type.includes('image') ? (
                                 <Image source={{ uri: message.attachment?.uri }} className="h-full w-full rounded-lg" />
                             ) : (
-                                <Text className="text-red-600 text-xs font-bold uppercase">
+                                <Text className="text-red-600 text-lg font-bold uppercase">
                                     {message.attachment?.type.split('/')[1]}
                                 </Text>
                             )}
@@ -119,7 +116,7 @@ const SendChatInput = ({ onSend }: Props) => {
                             <Text className='text-gray-400 text-xs'>{bytesToMB(message.attachment?.size!)}</Text>
                         </View>
                         <TouchableOpacity onPress={() => setMessage(prev => ({ ...prev, attachment: null }))}>
-                            <Text className='text-gray-500 text-sm'>✕</Text>
+                            <Text className='text-gray-500 text-lg mr-1'>✕</Text>
                         </TouchableOpacity>
                     </View>
                 )}

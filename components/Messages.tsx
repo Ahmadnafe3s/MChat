@@ -9,11 +9,7 @@ import {
   Modal,
   Text,
   TouchableOpacity,
-<<<<<<< HEAD
   View,
-=======
-  View
->>>>>>> ffb685f4a269a067df5a944c1c095b0cb066890f
 } from "react-native";
 import Video, { VideoRef } from "react-native-video";
 import { ClickableText } from "./ClickableLink";
@@ -66,11 +62,8 @@ const Messages = memo(({ data }: { data: Conversations }) => {
     }
   };
 
-
   const renderMedia = () => {
-    console.log(data)
     if (!data?.header) return null;
-
     const { format, link } = data.header;
 
     if (format === "png" || format === "jpg" || format === "jpeg") {
@@ -131,53 +124,52 @@ const Messages = memo(({ data }: { data: Conversations }) => {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            backgroundColor: "#f3f4f6",
+            backgroundColor: isSender ? "transparent" : "white",
             borderRadius: 12,
-            padding: 10,
+            padding: 5,
             minWidth: 200,
           }}
         >
+          <View
+            className={`p-2.5 rounded-full ${isSender ? "bg-white" : "bg-emerald-50"}`}
+          >
+            <Image
+              source={icons.audio as any}
+              style={{ width: 30, height: 30 }}
+            />
+          </View>
+
+          <Text style={{ flex: 1, marginLeft: 10, color: "#111827" }}>
+            Voice message
+          </Text>
+
           <TouchableOpacity
             onPress={() => {
-              setPaused((prev) => !prev)
-            }}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              backgroundColor: "#3b82f6",
-              justifyContent: "center",
-              alignItems: "center",
-              marginRight: 10,
+              setPaused((prev) => !prev);
             }}
           >
             <Image
-              source={paused ? icons.pause : icons.play as any}
-              style={{ width: 20, height: 20, tintColor: "#fff" }}
+              source={paused ? icons.pause : (icons.play as any)}
+              style={{ width: 20, height: 20, tintColor: "#303030" }}
             />
           </TouchableOpacity>
 
-          <Text style={{ flex: 1, color: "#111827" }}>Voice message</Text>
-
           <Video
             ref={playerRef as any}
-            source={{ uri: '' }}
-            paused={paused}
+            source={{ uri: link.trim() }}
+            paused={!paused}
             playInBackground
             ignoreSilentSwitch="ignore"
             onEnd={() => {
-              setPaused(true);
-              playerRef?.current?.seek(0)
+              setPaused(false);
+              playerRef?.current?.seek(0);
             }}
             volume={1.0}
             style={{ width: 0, height: 0 }} // hidden for audio-only
           />
-
         </View>
       );
     }
-
-
 
     if (
       format === "pdf" ||
@@ -228,12 +220,13 @@ const Messages = memo(({ data }: { data: Conversations }) => {
           <TouchableOpacity
             onPress={handleDownload}
             disabled={isDownloading}
-            className={`flex-row items-center justify-center py-2 px-4 rounded-lg ${isDownloading
-              ? "bg-gray-300"
-              : isSender
-                ? "bg-gray-500"
-                : "bg-blue-500"
-              }`}
+            className={`flex-row items-center justify-center py-2 px-4 rounded-lg ${
+              isDownloading
+                ? "bg-gray-300"
+                : isSender
+                  ? "bg-gray-500"
+                  : "bg-blue-500"
+            }`}
           >
             {isDownloading ? (
               <ActivityIndicator size="small" color="#666" />
@@ -245,12 +238,13 @@ const Messages = memo(({ data }: { data: Conversations }) => {
               />
             )}
             <Text
-              className={`font-medium text-sm ${isDownloading
-                ? "text-gray-600"
-                : isSender
-                  ? "text-white"
-                  : "text-white"
-                }`}
+              className={`font-medium text-sm ${
+                isDownloading
+                  ? "text-gray-600"
+                  : isSender
+                    ? "text-white"
+                    : "text-white"
+              }`}
             >
               {isDownloading ? "Downloading..." : "Download"}
             </Text>
@@ -265,21 +259,21 @@ const Messages = memo(({ data }: { data: Conversations }) => {
   return (
     <>
       <View
-        className={`flex flex-row items-end ${isSender ? "justify-end" : "justify-start"
-          } px-4 mb-3`}
+        className={`flex flex-row items-end ${
+          isSender ? "justify-end" : "justify-start"
+        } px-4 mb-3`}
       >
-
         <View
           className={`flex max-w-[85%]  relative ${isSender ? "items-end" : "items-start"}`}
         >
           {/* Message bubble */}
           <View
-            className={`px-3 py-2 elevation-sm relative  ${isSender
-              ? "bg-[#dffff5] rounded-tl-[18px]  rounded-bl-[18px] rounded-br-[4px]"
-              : "bg-white rounded-tr-[18px]  rounded-br-[18px] rounded-bl-[4px]"
-              }`}
+            className={`px-3 py-2 elevation-sm relative  ${
+              isSender
+                ? "bg-[#dffff5] rounded-tl-[18px]  rounded-bl-[18px] rounded-br-[4px]"
+                : "bg-white rounded-tr-[18px]  rounded-br-[18px] rounded-bl-[4px]"
+            }`}
           >
-
             {/* Media content */}
             {data?.header && renderMedia()}
 
@@ -288,9 +282,23 @@ const Messages = memo(({ data }: { data: Conversations }) => {
               <View className={data?.header ? "mt-2" : ""}>
                 <ClickableText
                   text={data.body.text}
-                  style={{ color: isSender ? "#1f2937" : "#374151", fontSize: 15, lineHeight: 20 }}
+                  style={{
+                    color: isSender ? "#1f2937" : "#374151",
+                    fontSize: 15,
+                    lineHeight: 20,
+                  }}
                   linkStyle={{ color: "blue" }}
                 />
+              </View>
+            )}
+
+            {/* Message Footer */}
+
+            {data.footer && (
+              <View className="mt-2">
+                <Text className="text-xs text-gray-400 font-Jakarta">
+                  {data.footer}
+                </Text>
               </View>
             )}
 
@@ -301,9 +309,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
                     key={index}
                     className={` w-full py-2 px-4 items-center justify-center border border-emerald-400 rounded-xl`}
                   >
-                    <Text
-                      className={`font-medium text-sm text-emerald-500`}
-                    >
+                    <Text className={`font-medium text-sm text-emerald-500`}>
                       {button.text}
                     </Text>
                   </TouchableOpacity>
@@ -311,7 +317,6 @@ const Messages = memo(({ data }: { data: Conversations }) => {
               </View>
             )}
           </View>
-
 
           {/* Timestamp and status */}
           <View
@@ -330,17 +335,24 @@ const Messages = memo(({ data }: { data: Conversations }) => {
             {isSender && (
               <Image
                 source={
-                  data.status === "read"
-                    ? icons.doubleCheck
-                    : (icons.check as any)
+                  data.status === "failed"
+                    ? icons.failed
+                    : data.status === "read"
+                      ? icons.doubleCheck
+                      : (icons.check as any)
                 }
                 className="w-4 h-4"
-                tintColor={data.status === "read" ? "#27f5a9" : "#A3A3A3"}
+                tintColor={
+                  data.status === "failed"
+                    ? "red"
+                    : data.status === "read"
+                      ? "#27f5a9"
+                      : "#A3A3A3"
+                }
               />
             )}
           </View>
         </View>
-
       </View>
 
       {/* Image Full Screen Modal */}

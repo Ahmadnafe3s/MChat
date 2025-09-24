@@ -2,15 +2,21 @@ import ChatApi from "@/services/chat";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chat";
 import debounce from "@/utils/debounce";
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import generateOptMessage from "@/utils/generateOptMessage";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useState } from "react";
 
 const useChat = () => {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
-  const { user } = useAuthStore()
-  const { selectedChat } = useChatStore()
+  const { user } = useAuthStore();
+  const { selectedChat } = useChatStore();
 
   const queryClient = useQueryClient();
 
@@ -33,29 +39,62 @@ const useChat = () => {
       },
     });
 
-
-  const { data: conversations, isLoading: isLoadingConversations, error: errorConversations, isError: isErrorConversations } = useQuery({
+  const {
+    data: conversations,
+    isLoading: isLoadingConversations,
+    error: errorConversations,
+    isError: isErrorConversations,
+  } = useQuery({
     queryKey: ["conversations", selectedChat?.id],
     queryFn: () => ChatApi.getConversations(selectedChat?.id!),
     enabled: !!selectedChat?.id,
-  })
+  });
 
-
-  const { mutate: sendMessage, isError: isErrorSendChat, isPending } = useMutation({
+  const {
+    mutate: sendMessage,
+    isError: isErrorSendChat,
+    isPending,
+  } = useMutation({
     mutationKey: ["sendMessage"],
-    mutationFn: ({ receiverId, data }: { receiverId: number, data: any }) => ChatApi.sendMessage({ receiverId, data }),
-    onSuccess: (newData: Conversations) => {
-      queryClient.setQueryData(["conversations", selectedChat?.id!], (oldData: Conversations[]) => {
-        if (!oldData) return [newData]
-        return [newData, ...oldData]
-      })
-    },
-    onError: (error: AxiosError<{ message: { error: { message: string } } }>) => {
-      const Err = error.response?.data.message || error.message
-      console.log("Error encountered in sending message: ", Err)
-    },
-  })
+    mutationFn: ({ receiverId, data }: { receiverId: number; data: any }) =>
+      ChatApi.sendMessage({ receiverId, data }),
+    onMutate: async ({
+      receiverId,
+      data,
+    }: {
+      receiverId: number;
+      data: any;
+    }) => {
+      const message = generateOptMessage(data);
+      await queryClient.cancelQueries({
+        queryKey: ["conversations", selectedChat?.id!],
+      });
 
+      const previousData = queryClient.getQueryData([
+        "conversations",
+        selectedChat?.id!,
+      ]);
+
+      // updating the cache with the optimistic update
+      queryClient.setQueryData(
+        ["conversations", selectedChat?.id!],
+        (oldData: Conversations[]) => {
+          return [message, ...oldData];
+        }
+      );
+
+      return previousData;
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      const Err = error.response?.data.message || error.message;
+      console.log("Error encountered in sending message: ", Err);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["conversations", selectedChat?.id!],
+      });
+    },
+  });
 
   const onSearch = debounce((value: string) => {
     setSearch(value);

@@ -9,9 +9,11 @@ import moveLeft from "@/assets/icons/arrow-left.png";
 import doubleCheck from "@/assets/icons/check-double.png";
 import check from "@/assets/icons/check.png";
 import clip from "@/assets/icons/clip.png";
+import cross from "@/assets/icons/cross-circle.png";
 import document from "@/assets/icons/document.png";
 import download from "@/assets/icons/download.png";
 import error_bug from "@/assets/icons/error-bug.png";
+import failed from "@/assets/icons/exclamation.png";
 import filter from "@/assets/icons/funnel.png";
 import audio from "@/assets/icons/headphones.png";
 import company from "@/assets/icons/house-building.png";
@@ -62,6 +64,8 @@ export const icons = {
   document,
   audio,
   pause,
+  cross,
+  failed,
 };
 
 export const onboarding = [
@@ -87,5 +91,3 @@ export const onboarding = [
     image: onboarding3,
   },
 ];
-
-
