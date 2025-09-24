@@ -89,7 +89,8 @@ const useChat = () => {
       const Err = error.response?.data.message || error.message;
       console.log("Error encountered in sending message: ", Err);
     },
-    onSettled: () => {
+    onSettled: (data) => {
+      console.log("Message sent successfully: ", data);
       queryClient.invalidateQueries({
         queryKey: ["conversations", selectedChat?.id!],
       });

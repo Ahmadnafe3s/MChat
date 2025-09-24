@@ -1,12 +1,7 @@
 import { icons, images } from "@/constants";
 import useChat from "@/hooks/useChat";
 import React from "react";
-import {
-  FlatList,
-  Image,
-  Text,
-  View
-} from "react-native";
+import { FlatList, Image, Text, View } from "react-native";
 import ChatCard from "./ChatCard";
 import ChatsHeader from "./ChatHeader";
 import ChatCardPlaceholder from "./ChatPlaceholder";
@@ -23,8 +18,6 @@ const Contacts = () => {
     filter,
     setFilter,
   } = useChat();
-
-
 
   return (
     <View className="flex-1">
@@ -45,15 +38,14 @@ const Contacts = () => {
                 ))}
               </View>
             ) : isError ? (
-              <View className="flex items-center justify-center gap-2 h-[20px]">
+              <View className="flex flex-1 items-center mt-5 h-72 justify-center gap-2">
                 <Image
-                  source={icons.error_bug as any}
+                  source={icons.failed as any}
                   className="h-20 w-20 mb-2"
-                  tintColor={"#A3A3A3"}
+                  tintColor={"#eb4034"}
                 />
                 <Text className="text-xl text-gray-500 font-JakartaSemiBold">
-                  {(error as any)?.response?.data?.message ||
-                    "Something went wrong"}
+                  {(error as any)?.response?.data?.message || error?.message}
                 </Text>
               </View>
             ) : (
@@ -70,7 +62,13 @@ const Contacts = () => {
           </View>
         }
         onEndReached={() => fetchNextPage()}
-        ListHeaderComponent={<ChatsHeader filter={filter} setFilter={setFilter} totalChats={totalChats} />} // if user function is not memoized, it will re-render
+        ListHeaderComponent={
+          <ChatsHeader
+            filter={filter}
+            setFilter={setFilter}
+            totalChats={totalChats}
+          />
+        } // if user function is not memoized, it will re-render
         ListFooterComponent={
           <View className="mb-4">
             {isFetchingNextPage && <ChatCardPlaceholder />}
@@ -86,7 +84,3 @@ const Contacts = () => {
 };
 
 export default Contacts;
-
-
-
-

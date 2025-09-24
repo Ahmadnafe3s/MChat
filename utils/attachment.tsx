@@ -6,6 +6,7 @@ const AudioMimeTypes = [
   "audio/aac",
   "audio/mp4",
   "audio/mp3",
+  "audio/mpeg",
   "audio/x-aac",
   "audio/ogg",
 ];
