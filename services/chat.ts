@@ -10,7 +10,6 @@ const ChatApi = {
         search?: string
     }): Promise<PaginatedChats> => {
         const res = await axios.get(`https://meta.muzztech.com/api/v1/chat/contacts`, { params })
-        console.log(params)
         return res.data
     },
     getConversations: async (selectedChat: number): Promise<Conversations[]> => {

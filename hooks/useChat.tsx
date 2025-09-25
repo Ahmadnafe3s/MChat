@@ -19,7 +19,6 @@ const useChat = (screen?: "chats" | "conversation") => {
   const { user } = useAuthStore();
   const { selectedChat, setStarred } = useChatStore();
 
-
   const queryClient = useQueryClient();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, error, isError } =
@@ -40,9 +39,10 @@ const useChat = (screen?: "chats" | "conversation") => {
         return current_page < last_page ? current_page + 1 : undefined;
       },
       staleTime: 0,
-      enabled: (screen === "chats"),
+      refetchOnMount: "always",
+      refetchOnWindowFocus: true,
+      enabled: screen === "chats",
     });
-
 
   const {
     data: conversations,
@@ -52,7 +52,7 @@ const useChat = (screen?: "chats" | "conversation") => {
   } = useQuery({
     queryKey: ["conversations", selectedChat?.id],
     queryFn: () => ChatApi.getConversations(selectedChat?.id!),
-    enabled: !!selectedChat?.id && (screen === "conversation"),
+    enabled: !!selectedChat?.id && screen === "conversation",
   });
 
   const {
@@ -101,25 +101,26 @@ const useChat = (screen?: "chats" | "conversation") => {
     },
   });
 
-
   // Sending Post Request
-  const { mutate: setStarredMutation, isPending: isPendingStarred } = useMutation({
-    mutationFn: () => ChatApi.setStarred(selectedChat?.id!),
-    onSuccess: (data: { status: string }) => {
-      setStarred(data.status);
-    },
-    onError: () => {
-      Alert.alert("Error", "Error while starring the chat");
-    },
-  })
+  const { mutate: setStarredMutation, isPending: isPendingStarred } =
+    useMutation({
+      mutationFn: () => ChatApi.setStarred(selectedChat?.id!),
+      onSuccess: (data: { status: string }) => {
+        setStarred(data.status);
+      },
+      onError: () => {
+        Alert.alert("Error", "Error while starring the chat");
+      },
+    });
 
   const onSearch = debounce((value: string) => {
     setSearch(value);
   }, 400);
 
-
-
   const chats = data?.pages.flatMap((page) => page?.data ?? []) ?? [];
+
+  console.log("data", data);
+  console.log("chats", chats);
 
   return {
     chats,

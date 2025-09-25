@@ -9,7 +9,7 @@ import { setupNotificationListener } from "@/notifications";
 import { setupNotificationConfig } from "@/notifications/config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 // Prevent splash from auto-hiding on app load
 SplashScreen.preventAutoHideAsync();
