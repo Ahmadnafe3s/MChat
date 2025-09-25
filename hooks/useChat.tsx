@@ -11,12 +11,14 @@ import {
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { Alert } from "react-native";
 
-const useChat = () => {
+const useChat = (screen?: "chats" | "conversation") => {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const { user } = useAuthStore();
-  const { selectedChat } = useChatStore();
+  const { selectedChat, setStarred } = useChatStore();
+
 
   const queryClient = useQueryClient();
 
@@ -37,7 +39,10 @@ const useChat = () => {
         const { current_page, last_page } = lastPage;
         return current_page < last_page ? current_page + 1 : undefined;
       },
+      staleTime: 0,
+      enabled: (screen === "chats"),
     });
+
 
   const {
     data: conversations,
@@ -47,7 +52,7 @@ const useChat = () => {
   } = useQuery({
     queryKey: ["conversations", selectedChat?.id],
     queryFn: () => ChatApi.getConversations(selectedChat?.id!),
-    enabled: !!selectedChat?.id,
+    enabled: !!selectedChat?.id && (screen === "conversation"),
   });
 
   const {
@@ -89,20 +94,35 @@ const useChat = () => {
       const Err = error.response?.data.message || error.message;
       console.log("Error encountered in sending message: ", Err);
     },
-    onSettled: (data) => {
-      console.log("Message sent successfully: ", data);
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["conversations", selectedChat?.id!],
       });
     },
   });
 
+
+  // Sending Post Request
+  const { mutate: setStarredMutation, isPending: isPendingStarred } = useMutation({
+    mutationFn: () => ChatApi.setStarred(selectedChat?.id!),
+    onSuccess: (data: { status: string }) => {
+      setStarred(data.status);
+    },
+    onError: () => {
+      Alert.alert("Error", "Error while starring the chat");
+    },
+  })
+
   const onSearch = debounce((value: string) => {
     setSearch(value);
   }, 400);
 
+
+
+  const chats = data?.pages.flatMap((page) => page?.data ?? []) ?? [];
+
   return {
-    chats: data?.pages.flatMap((page) => page.data) ?? [],
+    chats,
     isLoading,
     isFetchingNextPage,
     fetchNextPage,
@@ -123,6 +143,10 @@ const useChat = () => {
     sendMessage,
     isErrorSendChat,
     isPending,
+
+    // starred
+    setStarredMutation,
+    isPendingStarred,
   };
 };
 

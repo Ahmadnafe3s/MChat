@@ -1,15 +1,23 @@
 import { icons } from "@/constants";
+import useChat from "@/hooks/useChat";
 import { useChatStore } from "@/store/chat";
+import { useToastStore } from "@/store/toast";
 import { useRouter } from "expo-router";
 import React, { memo } from "react";
-import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import Dropdown from "./Dropdown";
 
 const ConversationHeader = memo(() => {
+
   const router = useRouter();
   const { selectedChat } = useChatStore();
+  const { setStarredMutation, isPendingStarred } = useChat();
+  const { showToast } = useToastStore();
+
+
   return (
     <View className="flex flex-row px-4 pb-3 items-center justify-between bg-white mt-1 border-b border-gray-200">
+
       {/* Flex 1 */}
       <View className="flex flex-row gap-2 items-center">
         <TouchableOpacity onPress={() => router.back()}>
@@ -27,13 +35,21 @@ const ConversationHeader = memo(() => {
           {selectedChat?.name}
         </Text>
       </View>
+
+
       {/* Flex 2 */}
       <View className="flex flex-row items-center gap-4">
-        <Image
-          source={icons.star as any}
-          className="w-6 h-6"
-          tintColor={"#ffbb00"}
-        />
+        <TouchableOpacity onPress={() => setStarredMutation()}>
+          {isPendingStarred ? (
+            <ActivityIndicator size="small" color="gray" />
+          ) : (
+            <Image
+              source={selectedChat?.is_starred === "Starred" ? icons.star_filled : icons.star as any}
+              className="w-6 h-6"
+              tintColor={"#ffbb00"}
+            />
+          )}
+        </TouchableOpacity>
         <Dropdown
           options={["Template", "Clear Chat", "Block Contact"]}
           icon={icons.more as any}
@@ -41,6 +57,7 @@ const ConversationHeader = memo(() => {
           iconBgStyle="bg-white"
           onSelect={(value) => {
             Alert.alert(value);
+            showToast(value, 3000)
           }}
         />
       </View>

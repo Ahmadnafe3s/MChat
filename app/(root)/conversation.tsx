@@ -10,12 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const Conversation = () => {
   const { height } = useGradualKeyboard();
-  const {
-    conversations,
-    isLoadingConversations,
-    errorConversations,
-    isErrorConversations,
-  } = useChat();
+  const { conversations } = useChat("conversation");
 
   const keyboardPadding = useAnimatedStyle(() => {
     return {

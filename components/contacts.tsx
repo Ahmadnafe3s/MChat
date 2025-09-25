@@ -17,7 +17,7 @@ const Contacts = () => {
     isError,
     filter,
     setFilter,
-  } = useChat();
+  } = useChat("chats");
 
   return (
     <View className="flex-1">

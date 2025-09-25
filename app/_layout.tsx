@@ -4,6 +4,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
+import Toast from "@/components/Toast";
 import { setupNotificationListener } from "@/notifications";
 import { setupNotificationConfig } from "@/notifications/config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -44,14 +45,15 @@ export default function RootLayout() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        refetchOnWindowFocus: false,
         retry: false,
+        refetchOnWindowFocus: false,
       },
     },
   });
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Toast />
       <KeyboardProvider>
         <Stack initialRouteName="index">
           <Stack.Screen name="index" options={{ headerShown: false }} />

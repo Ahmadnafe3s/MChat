@@ -15,7 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SearchChat = () => {
-  const { chats, onSearch, isLoading, error, isError } = useChat();
+  const { chats, onSearch, isLoading, error, isError } = useChat("chats");
   const router = useRouter();
 
 

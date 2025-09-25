@@ -38,6 +38,7 @@ declare interface PaginatedChats {
 declare interface ChatStore {
     selectedChat: Chat | null
     setSelectedChat: (chat: Chat) => void
+    setStarred: (status: string) => void
 }
 
 
