@@ -3,6 +3,7 @@ import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chat";
 import debounce from "@/utils/debounce";
 import generateOptMessage from "@/utils/generateOptMessage";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   useInfiniteQuery,
   useMutation,
@@ -10,7 +11,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Alert } from "react-native";
 
 const useChat = (screen?: "chats" | "conversation") => {
@@ -21,9 +22,9 @@ const useChat = (screen?: "chats" | "conversation") => {
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isFetchingNextPage, fetchNextPage, error, isError } =
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, refetch, error, isError , hasNextPage } =
     useInfiniteQuery({
-      queryKey: ["chats", filter, search, user?.id],
+      queryKey: ["chats", user?.id, search, filter],
       queryFn: ({ pageParam }) =>
         ChatApi.getChats({
           value: user?.id!,
@@ -119,8 +120,13 @@ const useChat = (screen?: "chats" | "conversation") => {
 
   const chats = data?.pages.flatMap((page) => page?.data ?? []) ?? [];
 
-  console.log("data", data);
-  console.log("chats", chats);
+  // refetch on focus root
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  )
+
 
   return {
     chats,
@@ -133,6 +139,8 @@ const useChat = (screen?: "chats" | "conversation") => {
     onSearch,
     filter,
     setFilter,
+    hasNextPage,
+
 
     // conversation
     conversations,

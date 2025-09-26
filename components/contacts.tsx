@@ -16,8 +16,12 @@ const Contacts = () => {
     error,
     isError,
     filter,
+    hasNextPage,
     setFilter,
+
   } = useChat("chats");
+
+
 
   return (
     <View className="flex-1">
@@ -29,6 +33,7 @@ const Contacts = () => {
         maxToRenderPerBatch={20}
         windowSize={10}
         removeClippedSubviews={true}
+        onEndReachedThreshold={0.1}
         ListEmptyComponent={
           <View className="mt-4">
             {isLoading ? (
@@ -61,7 +66,9 @@ const Contacts = () => {
             )}
           </View>
         }
-        onEndReached={() => fetchNextPage()}
+        onEndReached={() => {
+          hasNextPage && fetchNextPage();
+        }}
         ListHeaderComponent={
           <ChatsHeader
             filter={filter}
