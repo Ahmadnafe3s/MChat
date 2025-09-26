@@ -4,7 +4,7 @@ import { useChatStore } from "@/store/chat";
 import { useToastStore } from "@/store/toast";
 import { useRouter } from "expo-router";
 import React, { memo } from "react";
-import { ActivityIndicator, Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
 import Dropdown from "./Dropdown";
 
 const ConversationHeader = memo(() => {
@@ -56,8 +56,7 @@ const ConversationHeader = memo(() => {
           iconStyle={{ width: 20, height: 20 }}
           iconBgStyle="bg-white"
           onSelect={(value) => {
-            Alert.alert(value);
-            showToast(value, 3000)
+            showToast(value, "success")
           }}
         />
       </View>

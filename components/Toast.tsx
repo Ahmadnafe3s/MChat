@@ -1,40 +1,52 @@
-// Toast.tsx
+// components/Toast.tsx
+import { icons } from "@/constants";
 import { useToastStore } from "@/store/toast";
 import React from "react";
-import { StyleSheet, Text } from "react-native";
-import Animated, { FadeInUp, FadeOutDown } from "react-native-reanimated";
+import { Dimensions, Image, StyleSheet, Text } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 
-const Toast = () => {
-    const message = useToastStore((s) => s.message);
+const { width } = Dimensions.get("window");
 
-    if (!message) return null;
+export default function Toast() {
+    const { toast } = useToastStore();
+
+
+    if (!toast) return null;
 
     return (
-        <Animated.View
-            entering={FadeInUp.duration(300)}
-            exiting={FadeOutDown.duration(300)}
-            style={styles.toast}
+        <Animated.View style={[styles.toast]}
+            entering={FadeIn.duration(1000)}
         >
-            <Text style={styles.toastText}>{message}</Text>
+            <Image
+                source={toast.type === "success" ? icons.check_circle : icons.failed as any}
+                style={styles.icon}
+            />
+            <Text style={styles.text}>{toast.message}</Text>
         </Animated.View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     toast: {
+        flexDirection: "row",
         position: "absolute",
         bottom: 100,
-        left: 20,
-        right: 20,
-        backgroundColor: "black",
-        padding: 12,
-        borderRadius: 8,
-        alignItems: "center",
+        backgroundColor: "rgba(0,0,0,0.7)",
+        alignSelf: "center",
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 25,
+        maxWidth: width - 40,
+        zIndex: 9999,
     },
-    toastText: {
-        color: "red",
-        fontSize: 16,
+    text: {
+        color: "#fff",
+        textAlign: "center",
+    },
+    icon: {
+        width: 19,
+        height: 19,
+        marginRight: 10,
+        tintColor: "#fff",
     },
 });
-
-export default Toast;

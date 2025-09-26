@@ -1,3 +1,4 @@
+import { useToastStore } from "@/store/toast";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
@@ -28,7 +29,10 @@ const DocumentMimeTypes = [
   "application/pdf",
 ];
 
+
+
 export const getImage = async () => {
+  const toast = useToastStore.getState();
   try {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
@@ -38,7 +42,7 @@ export const getImage = async () => {
     if (!result.canceled) {
       const MaxSize = 5 * 1024 * 1024;
       if (result?.assets[0]?.fileSize! > MaxSize) {
-        Alert.alert("Error", "File size should be less than 5MB");
+        toast.showToast("Max file size 5MB", "error")
         return;
       }
       return result.assets[0];
@@ -51,18 +55,19 @@ export const getImage = async () => {
 
 export const getDocument = async (isOnlyAudio = false) => {
   try {
+    const toast = useToastStore.getState();
+
     const result = await DocumentPicker.getDocumentAsync({
       type: isOnlyAudio ? AudioMimeTypes : DocumentMimeTypes,
     });
+
     if (!result.canceled) {
       const MaxSize = isOnlyAudio ? 5 * 1024 * 1024 : 100 * 1024 * 1024;
       if (result?.assets[0]?.size! > MaxSize) {
-        Alert.alert(
-          "Error",
-          `File size should be less than ${MaxSize / 1024}MB`
-        );
+        toast.showToast(`Max file size ${MaxSize / 1024}MB`, "error")
         return;
       }
+
       return result.assets[0];
     }
   } catch (error: any) {

@@ -6,6 +6,8 @@ import logo from "@/assets/images/splash.png";
 
 // ICONS
 import moveLeft from "@/assets/icons/arrow-left.png";
+import flash from "@/assets/icons/bolt.png";
+import check_circle from "@/assets/icons/check-circle.png";
 import doubleCheck from "@/assets/icons/check-double.png";
 import check from "@/assets/icons/check.png";
 import clip from "@/assets/icons/clip.png";
@@ -31,6 +33,7 @@ import star_filled from "@/assets/icons/solid_star.png";
 import star from "@/assets/icons/star.png";
 import user from "@/assets/icons/user.png";
 import avatar from "@/assets/images/avatar.png";
+
 
 export const images = {
   onboarding1,
@@ -67,6 +70,8 @@ export const icons = {
   cross,
   failed,
   watch,
+  check_circle,
+  flash,
 };
 
 export const onboarding = [

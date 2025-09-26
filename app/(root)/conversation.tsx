@@ -39,6 +39,11 @@ const Conversation = () => {
           keyboardDismissMode="interactive"
           bounces={false}
           overScrollMode="never"
+          showsVerticalScrollIndicator={false}
+          windowSize={5}
+          initialNumToRender={8}
+          maxToRenderPerBatch={8}
+          removeClippedSubviews={true}
         />
       </View>
       <SendChatInput />

@@ -5,6 +5,7 @@ import debounce from "@/utils/debounce";
 import generateOptMessage from "@/utils/generateOptMessage";
 import { useFocusEffect } from "@react-navigation/native";
 import {
+  keepPreviousData,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -22,7 +23,7 @@ const useChat = (screen?: "chats" | "conversation") => {
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isFetchingNextPage, fetchNextPage, refetch, error, isError , hasNextPage } =
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, refetch, error, isError, hasNextPage } =
     useInfiniteQuery({
       queryKey: ["chats", user?.id, search, filter],
       queryFn: ({ pageParam }) =>
@@ -39,11 +40,9 @@ const useChat = (screen?: "chats" | "conversation") => {
         const { current_page, last_page } = lastPage;
         return current_page < last_page ? current_page + 1 : undefined;
       },
-      staleTime: 0,
-      refetchOnMount: "always",
-      refetchOnWindowFocus: true,
       enabled: screen === "chats",
     });
+
 
   const {
     data: conversations,
@@ -54,7 +53,9 @@ const useChat = (screen?: "chats" | "conversation") => {
     queryKey: ["conversations", selectedChat?.id],
     queryFn: () => ChatApi.getConversations(selectedChat?.id!),
     enabled: !!selectedChat?.id && screen === "conversation",
+    placeholderData: keepPreviousData
   });
+
 
   const {
     mutate: sendMessage,
@@ -123,8 +124,10 @@ const useChat = (screen?: "chats" | "conversation") => {
   // refetch on focus root
   useFocusEffect(
     useCallback(() => {
-      refetch();
-    }, [refetch])
+      if (screen === "chats") {
+        refetch();
+      }
+    }, [refetch, screen])
   )
 
 
