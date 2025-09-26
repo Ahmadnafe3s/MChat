@@ -3,6 +3,7 @@ import useChat from "@/hooks/useChat";
 import { useChatStore } from "@/store/chat";
 import { getDocument, getImage } from "@/utils/attachment";
 import bytesToMB from "@/utils/sizeConverter";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Image,
@@ -25,6 +26,7 @@ export type Message = {
 };
 
 const SendChatInput = () => {
+  const router = useRouter();
   const { sendMessage } = useChat();
   const { selectedChat } = useChatStore();
   const [showModal, setShowModal] = useState(false);
@@ -34,6 +36,8 @@ const SendChatInput = () => {
     attachment: null,
   });
 
+
+  // ----------------------Handling Attachment--------------------
   const handleAttachmentOption = async (type: string) => {
     setShowModal(false);
     switch (type) {
@@ -79,9 +83,13 @@ const SendChatInput = () => {
           },
         }));
         break;
+      case "quickReply":
+        router.push("quickReplies");
+        break;
     }
   };
 
+  // ----------------------Mutation--------------------
   const handleSend = async () => {
     const formData = new FormData();
     formData.append("type", message.type);
@@ -97,6 +105,8 @@ const SendChatInput = () => {
     setMessage({ message: "", attachment: null, type: "text" });
   };
 
+
+  // ---------------------Attachment Options--------------------
   const attachmentOptions = [
     {
       type: "gallery",
@@ -116,9 +126,17 @@ const SendChatInput = () => {
       label: "Audio",
       color: "#F59E0B",
     },
+    {
+      type: "quickReply",
+      icon: icons.flash || icons.clip,
+      label: "Quick Reply",
+      color: "#ff3b3b",
+    },
   ];
 
-  if (selectedChat?.status === "Expired") {
+
+  // ---------------------Checking Status--------------------
+  if (selectedChat?.status === "Expired" || selectedChat?.status === "Blocked") {
     return (
       <View className="flex flex-row items-center gap-2 justify-center bg-red-50 mb-2 p-4 mx-4 rounded-lg">
         <Image
@@ -127,7 +145,7 @@ const SendChatInput = () => {
           tintColor={"#ef4444"}
         />
         <Text className="text-center text-red-500 text-sm font-JakartaBold">
-          Chat Has Been Expired
+          {selectedChat?.status === "Expired" ? "Chat Has Been Expired" : "Chat Has Been Blocked"}
         </Text>
       </View>
     );

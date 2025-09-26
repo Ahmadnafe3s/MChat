@@ -1,10 +1,10 @@
 import React from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    PressableProps,
-    Text,
-    View,
+  ActivityIndicator,
+  Pressable,
+  PressableProps,
+  Text,
+  View,
 } from "react-native";
 
 interface CustomButtonProps extends Omit<PressableProps, "children"> {

@@ -12,7 +12,7 @@ import doubleCheck from "@/assets/icons/check-double.png";
 import check from "@/assets/icons/check.png";
 import clip from "@/assets/icons/clip.png";
 import watch from "@/assets/icons/clock-three.png";
-import cross from "@/assets/icons/cross-circle.png";
+import cross from "@/assets/icons/cross.png";
 import document from "@/assets/icons/document.png";
 import download from "@/assets/icons/download.png";
 import error_bug from "@/assets/icons/error-bug.png";

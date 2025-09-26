@@ -64,3 +64,9 @@ declare interface Conversations {
     datetime: string
 }
 
+
+declare interface QuickReply {
+    id: number
+    name: string
+    content: string
+}

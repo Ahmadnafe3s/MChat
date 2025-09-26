@@ -1,6 +1,7 @@
 import ChatApi from "@/services/chat";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chat";
+import { useToastStore } from "@/store/toast";
 import debounce from "@/utils/debounce";
 import generateOptMessage from "@/utils/generateOptMessage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -13,12 +14,12 @@ import {
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useCallback, useState } from "react";
-import { Alert } from "react-native";
 
 const useChat = (screen?: "chats" | "conversation") => {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const { user } = useAuthStore();
+  const { showToast } = useToastStore();
   const { selectedChat, setStarred } = useChatStore();
 
   const queryClient = useQueryClient();
@@ -94,7 +95,7 @@ const useChat = (screen?: "chats" | "conversation") => {
     },
     onError: (error: AxiosError<{ message: string }>) => {
       const Err = error.response?.data.message || error.message;
-      console.log("Error encountered in sending message: ", Err);
+      showToast(Err, "error");
     },
     onSettled: () => {
       queryClient.invalidateQueries({
@@ -111,15 +112,13 @@ const useChat = (screen?: "chats" | "conversation") => {
         setStarred(data.status);
       },
       onError: () => {
-        Alert.alert("Error", "Error while starring the chat");
+        showToast("Failed to star the chat", "error");
       },
     });
 
   const onSearch = debounce((value: string) => {
     setSearch(value);
   }, 400);
-
-  const chats = data?.pages.flatMap((page) => page?.data ?? []) ?? [];
 
   // refetch on focus root
   useFocusEffect(
@@ -129,6 +128,8 @@ const useChat = (screen?: "chats" | "conversation") => {
       }
     }, [refetch, screen])
   )
+
+  const chats = data?.pages.flatMap((page) => page?.data ?? []) ?? [];
 
 
   return {
