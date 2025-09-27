@@ -36,7 +36,6 @@ const Conversation = () => {
           keyboardDismissMode="interactive"
           showsVerticalScrollIndicator={false}
           overScrollMode="never"
-          contentContainerStyle={styles.contentStyle}
         />
       </View>
       <SendChatInput />

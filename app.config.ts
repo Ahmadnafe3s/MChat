@@ -15,7 +15,7 @@ const SCHEME = "app-scheme";
 export default ({ config }: ConfigContext): ExpoConfig => {
   const { name, scheme, packageName, bundleIdentifier } = getDynamicAppConfig(
     (process.env.APP_ENV as "development" | "preview" | "production") ||
-    "development"
+      "development"
   );
 
   return {
@@ -25,6 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     version: "1.0.0",
     icon: ICON,
     platforms: ["ios", "android"],
+
     android: {
       adaptiveIcon: {
         foregroundImage: ICON,
@@ -52,6 +53,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         projectId: EAS_PROJECT_ID,
       },
     },
+    userInterfaceStyle: "automatic",
     owner: OWNER,
   };
 };
