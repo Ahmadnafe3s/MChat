@@ -7,8 +7,8 @@ const quickReplyApi = {
     },
 
     createQuickReply: async (params: { value: number, name: string, content: string }) => {
-        const res = await axios.post(`https://meta.muzztech.com//api/v1/create/quick/reply`, params)
-        return res.data
+        const res = await axios.post(`https://meta.muzztech.com/api/v1/create/quick/reply`, params)
+        return res.data.data
     },
 }
 

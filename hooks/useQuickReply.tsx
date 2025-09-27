@@ -3,7 +3,7 @@ import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-const useQuickReply = () => {
+const useQuickReply = ({ afterSuccess }: { afterSuccess?: () => void }) => {
     const { user } = useAuthStore();
     const queryClient = useQueryClient();
     const { showToast } = useToastStore();
@@ -22,6 +22,7 @@ const useQuickReply = () => {
             queryClient.setQueryData(['quickReplies', user?.id!], (oldData: QuickReply[]) => {
                 return [data, ...oldData]
             })
+            afterSuccess?.()
         },
         onError: () => {
             showToast("Failed to create quick reply", "error")

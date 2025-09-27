@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
+    "@hookform/resolvers": "^5.2.2",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
@@ -39,6 +40,7 @@
     "prettier-plugin-tailwindcss": "^0.5.14",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-hook-form": "^7.63.0",
     "react-native": "0.79.6",
     "react-native-file-viewer": "^2.1.5",
     "react-native-fs": "^2.20.0",
@@ -51,6 +53,7 @@
     "react-native-video": "^6.16.1",
     "react-native-webview": "13.13.5",
     "tailwindcss": "^3.4.17",
+    "zod": "^4.1.11",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

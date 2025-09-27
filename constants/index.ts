@@ -5,6 +5,7 @@ import onboarding3 from "@/assets/images/onboarding3.png";
 import logo from "@/assets/images/splash.png";
 
 // ICONS
+import add from "@/assets/icons/add.png";
 import moveLeft from "@/assets/icons/arrow-left.png";
 import flash from "@/assets/icons/bolt.png";
 import check_circle from "@/assets/icons/check-circle.png";
@@ -72,6 +73,7 @@ export const icons = {
   watch,
   check_circle,
   flash,
+  add,
 };
 
 export const onboarding = [

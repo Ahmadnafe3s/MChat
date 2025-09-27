@@ -4,6 +4,7 @@ import { Image, Text, TextInput, View } from "react-native";
 type InputFieldProps = {
   labelStyle?: string;
   label: string;
+  error?: string;
   Icon?: any;
   secureTextEntry?: boolean;
   placeholder?: string;
@@ -19,6 +20,7 @@ const InputField = forwardRef<TextInput, InputFieldProps>(
     {
       labelStyle,
       label,
+      error,
       Icon,
       secureTextEntry = false,
       placeholder,
@@ -68,6 +70,9 @@ const InputField = forwardRef<TextInput, InputFieldProps>(
             {...props}
           />
         </View>
+        {error && (
+          <Text className="text-red-500 text-sm mt-0.5 ml-2">{error}</Text>
+        )}
       </View>
     );
   }

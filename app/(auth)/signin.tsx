@@ -3,10 +3,14 @@ import InputField from "@/components/input-field";
 import { icons, images } from "@/constants";
 import authApi from "@/services/auth";
 import { useAuthStore } from "@/store/auth";
+import { useToastStore } from "@/store/toast";
+import { signinSchema } from "@/utils/formSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   Alert,
   Image,
@@ -15,16 +19,21 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { z } from "zod";
 
 
 const SignIn = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
   const { setUser } = useAuthStore();
+  const { showToast } = useToastStore()
   const router = useRouter();
+  const { handleSubmit, control, formState: { errors } } = useForm<z.infer<typeof signinSchema>>({
+    resolver: zodResolver(signinSchema),
+    defaultValues: { email: "", password: "" }
+  })
 
   // Login
   const { mutate, isPending } = useMutation({
-    mutationFn: () => authApi(form.email, form.password),
+    mutationFn: (data: z.infer<typeof signinSchema>) => authApi(data.email, data.password),
     onSuccess: (data) => {
       setUser({
         id: data.id,
@@ -40,19 +49,16 @@ const SignIn = () => {
     },
     onError: (err: AxiosError<{ message: string }>) => {
       console.log(err);
-      Alert.alert("Error", err.response?.data.message);
+      showToast(err.response?.data.message!, "error")
     },
   });
 
-  const onSignInPress = useCallback(async () => {
-    if (!Validation(form)) return;
-    mutate();
-  }, [form, mutate]);
+
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAwareScrollView
-        bottomOffset={100}
+        bottomOffset={120}
       >
         {/* Header Text */}
         <View className="flex items-center mt-24 justify-center gap-5">
@@ -69,28 +75,36 @@ const SignIn = () => {
         </View>
 
         <View className="p-5">
-          <InputField
-            label="Email"
-            Icon={icons.mail}
-            iconStyle={{ color: "#9CA3AF" }}
-            placeholder="eg. john@gmaildsdfdf.com"
-            onChangeText={(text) => setForm({ ...form, email: text })}
-          />
-          <InputField
-            label="Password"
-            Icon={icons.key}
-            iconStyle={{ color: "#9CA3AF" }}
-            placeholder="********"
-            secureTextEntry={true}
-            onChangeText={(text) => setForm({ ...form, password: text })}
-          />
+          <Controller control={control} name="email" render={({ field }) => (
+            <InputField
+              label="Email"
+              Icon={icons.mail}
+              iconStyle={{ color: "#9CA3AF" }}
+              placeholder="eg. john@gmaildsdfdf.com"
+              onChangeText={(text) => field.onChange(text)}
+              error={errors.email && errors.email.message}
+              value={field.value}
+            />
+          )} />
+          <Controller control={control} name="password" render={({ field }) => (
+            <InputField
+              label="Password"
+              Icon={icons.key}
+              iconStyle={{ color: "#9CA3AF" }}
+              placeholder="********"
+              secureTextEntry={true}
+              onChangeText={(text) => field.onChange(text)}
+              error={errors.password && errors.password.message}
+              value={field.value}
+            />
+          )} />
 
           {/* Sign Up Button */}
           <CustomButton
             title="Sign In"
             className="mt-5"
             loading={isPending}
-            onPress={onSignInPress}
+            onPress={handleSubmit((data) => mutate(data))}
           />
 
           <Text className="text-gray-500 font-Jakarta text-center mt-5">
@@ -110,18 +124,3 @@ const SignIn = () => {
 
 export default SignIn;
 
-const Validation = (form: { email: string; password: string }) => {
-  if (!form.email) {
-    Alert.alert("Missing Field", "Please enter your email");
-    return false;
-  }
-  if (form.email && !form.email.includes("@")) {
-    Alert.alert("Invalid Email", "Please enter a valid email address");
-    return false;
-  }
-  if (!form.password) {
-    Alert.alert("Missing Field", "Please enter your password");
-    return false;
-  }
-  return true;
-};
