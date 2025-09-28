@@ -53,7 +53,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         projectId: EAS_PROJECT_ID,
       },
     },
-    userInterfaceStyle: "automatic",
+    userInterfaceStyle: "light",
     owner: OWNER,
   };
 };

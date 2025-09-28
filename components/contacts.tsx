@@ -1,7 +1,8 @@
 import { icons, images } from "@/constants";
 import useChat from "@/hooks/useChat";
+import { FlashList } from "@shopify/flash-list";
 import React from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import ChatCard from "./ChatCard";
 import ChatsHeader from "./ChatHeader";
 import ChatCardPlaceholder from "./ChatPlaceholder";
@@ -18,22 +19,17 @@ const Contacts = () => {
     filter,
     hasNextPage,
     setFilter,
-
   } = useChat("chats");
-
-
 
   return (
     <View className="flex-1">
-      <FlatList
+      <FlashList
         data={chats}
         keyExtractor={(item) => item?.id?.toString()}
         renderItem={({ item }) => <ChatCard data={item} />}
-        initialNumToRender={10}
-        maxToRenderPerBatch={20}
-        windowSize={10}
         removeClippedSubviews={true}
         onEndReachedThreshold={0.1}
+        estimatedItemSize={94}
         ListEmptyComponent={
           <View className="mt-4">
             {isLoading ? (

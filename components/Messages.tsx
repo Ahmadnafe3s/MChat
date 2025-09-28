@@ -6,26 +6,35 @@ import {
   Alert,
   Dimensions,
   Image,
-  Modal,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import Video, { VideoRef } from "react-native-video";
 import { ClickableText } from "./ClickableLink";
+import Multimedia from "./Multimedia";
 
 const { width: screenWidth } = Dimensions.get("window");
 const maxMediaWidth = screenWidth * 0.7; // 70% of screen width
 const minMediaWidth = 200;
 
+interface MediaType {
+  type: "image" | "video";
+  source: string;
+  visible: boolean;
+}
+
 const Messages = memo(({ data }: { data: Conversations }) => {
   const isSender = data.message_type === "user";
-  const [videoVisible, setVideoVisible] = useState(false);
-  const [imageVisible, setImageVisible] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
   const playerRef = useRef<VideoRef | null>(null);
   const [paused, setPaused] = useState(false);
+  const [media, setMedia] = useState<MediaType>({
+    type: "image",
+    source: "",
+    visible: false,
+  });
 
   // Calculate media dimensions with aspect ratio preservation
   const getMediaDimensions = (aspectRatio = 4 / 3) => {
@@ -69,7 +78,9 @@ const Messages = memo(({ data }: { data: Conversations }) => {
     if (format === "png" || format === "jpg" || format === "jpeg") {
       return (
         <TouchableOpacity
-          onPress={() => setImageVisible(true)}
+          onPress={() =>
+            setMedia({ type: "image", source: link, visible: true })
+          }
           className="overflow-hidden rounded-lg"
           style={mediaDimensions}
         >
@@ -88,7 +99,9 @@ const Messages = memo(({ data }: { data: Conversations }) => {
     if (format === "mp4") {
       return (
         <TouchableOpacity
-          onPress={() => setVideoVisible(true)}
+          onPress={() =>
+            setMedia({ type: "video", source: link, visible: true })
+          }
           className="relative overflow-hidden rounded-lg"
           style={mediaDimensions}
         >
@@ -220,12 +233,13 @@ const Messages = memo(({ data }: { data: Conversations }) => {
           <TouchableOpacity
             onPress={handleDownload}
             disabled={isDownloading}
-            className={`flex-row items-center justify-center py-2 px-4 rounded-lg ${isDownloading
+            className={`flex-row items-center justify-center py-2 px-4 rounded-lg ${
+              isDownloading
                 ? "bg-gray-300"
                 : isSender
                   ? "bg-gray-500"
                   : "bg-blue-500"
-              }`}
+            }`}
           >
             {isDownloading ? (
               <ActivityIndicator size="small" color="#666" />
@@ -237,12 +251,13 @@ const Messages = memo(({ data }: { data: Conversations }) => {
               />
             )}
             <Text
-              className={`font-medium text-sm ${isDownloading
+              className={`font-medium text-sm ${
+                isDownloading
                   ? "text-gray-600"
                   : isSender
                     ? "text-white"
                     : "text-white"
-                }`}
+              }`}
             >
               {isDownloading ? "Downloading..." : "Download"}
             </Text>
@@ -257,18 +272,20 @@ const Messages = memo(({ data }: { data: Conversations }) => {
   return (
     <>
       <View
-        className={`flex flex-row items-end ${isSender ? "justify-end" : "justify-start"
-          } px-4 mb-3`}
+        className={`flex flex-row items-end my-2 ${
+          isSender ? "justify-end" : "justify-start"
+        } px-4 mb-3`}
       >
         <View
           className={`flex max-w-[85%]  relative ${isSender ? "items-end" : "items-start"}`}
         >
           {/* Message bubble */}
           <View
-            className={`px-3 py-2 elevation-sm relative  ${isSender
+            className={`px-3 py-2 elevation-sm relative  ${
+              isSender
                 ? "bg-[#dffff5] rounded-tl-[18px]  rounded-bl-[18px] rounded-br-[4px]"
                 : "bg-white rounded-tr-[18px]  rounded-br-[18px] rounded-bl-[4px]"
-              }`}
+            }`}
           >
             {/* Media content */}
             {data?.header && renderMedia()}
@@ -354,7 +371,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
       {/* TODO : Have to move these into component */}
 
       {/* Image Full Screen Modal */}
-      <Modal
+      {/* <Modal
         visible={imageVisible}
         transparent={true}
         onRequestClose={() => setImageVisible(false)}
@@ -389,10 +406,10 @@ const Messages = memo(({ data }: { data: Conversations }) => {
             }}
           />
         </View>
-      </Modal>
+      </Modal> */}
 
       {/* Video Full Screen Modal */}
-      <Modal
+      {/* <Modal
         visible={videoVisible}
         transparent={true}
         onRequestClose={() => setVideoVisible(false)}
@@ -426,7 +443,14 @@ const Messages = memo(({ data }: { data: Conversations }) => {
             paused={false}
           />
         </View>
-      </Modal>
+      </Modal> */}
+
+      <Multimedia
+        source={media?.source!}
+        type={media?.type!}
+        visible={media?.visible!}
+        onClose={() => setMedia({ type: "image", source: "", visible: false })}
+      />
     </>
   );
 });
