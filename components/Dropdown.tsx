@@ -35,10 +35,11 @@ const Dropdown: React.FC<DropdownProps> = ({
 
     return (
         <View className="relative">
-            {/* Dropdown Button (always visible) */}
+            {/* Dropdown Button */}
             <TouchableOpacity
-                className={`size-12 rounded-full bg-white flex items-center justify-center ${iconBgStyle}`}
+                className={`size-12 rounded-full bg-white flex items-center justify-center shadow-sm ${iconBgStyle}`}
                 onPress={() => setIsOpen(true)}
+                activeOpacity={0.7}
             >
                 <Image source={icon as any} style={iconStyle} />
             </TouchableOpacity>
@@ -48,26 +49,30 @@ const Dropdown: React.FC<DropdownProps> = ({
                 transparent
                 visible={isOpen}
                 animationType="fade"
+                statusBarTranslucent
             >
-                {/* Fullscreen overlay (outside press closes dropdown) */}
+                {/* Semi-transparent backdrop */}
                 <Pressable
-                    className="flex-1"
+                    className="flex-1 bg-black/20"
                     onPress={() => setIsOpen(false)}
-                    style={{ backgroundColor: "transparent" }}
                 >
-                    {/* Keep dropdown aligned near button */}
-                    <View className="absolute top-16 right-6 bg-white rounded-lg shadow-md min-w-52">
+                    {/* Dropdown menu container */}
+                    <View className="absolute top-16 right-6 bg-white rounded-xl elevation-2xl min-w-52 overflow-hidden">
                         <FlatList
                             data={options}
                             className="max-h-64"
                             keyExtractor={(item) => item}
+                            showsVerticalScrollIndicator={false}
                             renderItem={({ item, index }) => (
                                 <TouchableOpacity
-                                    className={`px-4 py-2 border-b border-gray-200 ${options.length - 1 === index ? "border-b-0" : ""
+                                    className={`px-5 py-3.5 border-b border-gray-100 active:bg-gray-50 ${options.length - 1 === index ? "border-b-0" : ""
                                         }`}
                                     onPress={() => handleSelect(item)}
+                                    activeOpacity={0.6}
                                 >
-                                    <Text className="font-Jakarta text-lg">{item}</Text>
+                                    <Text className="font-Jakarta text-base text-gray-800">
+                                        {item}
+                                    </Text>
                                 </TouchableOpacity>
                             )}
                         />
@@ -77,8 +82,5 @@ const Dropdown: React.FC<DropdownProps> = ({
         </View>
     );
 };
-
-
-
 
 export default Dropdown;

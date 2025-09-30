@@ -10,4 +10,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             set({ selectedChat })
         }
     },
+    setStatus: (status: string) => {
+        const { selectedChat } = get()
+        if (selectedChat) {
+            selectedChat.status = status
+            set({ selectedChat })
+        }
+    }
 }))

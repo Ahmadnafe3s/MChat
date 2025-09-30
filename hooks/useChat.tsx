@@ -20,7 +20,7 @@ const useChat = (screen?: "chats" | "conversation") => {
   const [search, setSearch] = useState("");
   const { user } = useAuthStore();
   const { showToast } = useToastStore();
-  const { selectedChat, setStarred } = useChatStore();
+  const { selectedChat, setStarred, setStatus } = useChatStore();
 
   const queryClient = useQueryClient();
 
@@ -105,16 +105,26 @@ const useChat = (screen?: "chats" | "conversation") => {
   });
 
   // Sending Post Request
-  const { mutate: setStarredMutation, isPending: isPendingStarred } =
-    useMutation({
-      mutationFn: () => ChatApi.setStarred(selectedChat?.id!),
-      onSuccess: (data: { status: string }) => {
-        setStarred(data.status);
-      },
-      onError: () => {
-        showToast("Failed to star the chat", "error");
-      },
-    });
+  const starredChat = useMutation({
+    mutationFn: () => ChatApi.setStarred(selectedChat?.id!),
+    onSuccess: (data: { status: string }) => {
+      setStarred(data.status);
+    },
+    onError: () => {
+      showToast("Failed to star the chat", "error");
+    },
+  });
+
+  const blockChat = useMutation({
+    mutationFn: () => ChatApi.blockChat(selectedChat?.id!),
+    onSuccess: (data: { status: string }) => {
+      setStatus(data.status)
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      const Err = error.response?.data.message || error.message;
+      showToast(Err, "error");
+    },
+  })
 
   const onSearch = debounce((value: string) => {
     setSearch(value);
@@ -158,8 +168,10 @@ const useChat = (screen?: "chats" | "conversation") => {
     isPending,
 
     // starred
-    setStarredMutation,
-    isPendingStarred,
+    starredChat,
+
+    // block chat
+    blockChat,
   };
 };
 

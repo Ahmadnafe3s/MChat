@@ -9,6 +9,7 @@ const RootLayout = () => {
             <Stack.Screen name="profile" options={{ headerShown: false }} />
             <Stack.Screen name="searchChat" options={{ headerShown: false }} />
             <Stack.Screen name="quickReplies" options={{ headerShown: false }} />
+            <Stack.Screen name="chatProfile" options={{ headerShown: false }} />
         </Stack>
     )
 }

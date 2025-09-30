@@ -5,13 +5,13 @@ import useChat from "@/hooks/useChat";
 import useGradualKeyboard from "@/hooks/useGradualKeyboard";
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Conversation = () => {
   const { height } = useGradualKeyboard();
-  const { conversations } = useChat("conversation");
+  const { conversations, isLoadingConversations } = useChat("conversation");
   const [isAtBottom, setIsAtBottom] = useState(true);
   const flashListRef = React.useRef<FlashList<any>>(null);
 
@@ -29,8 +29,6 @@ const Conversation = () => {
       });
     }
   }, [conversations]);
-
-  console.log("isAtBottom", isAtBottom);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -61,6 +59,13 @@ const Conversation = () => {
           if (isAtBottom !== atBottom) setIsAtBottom(atBottom);
         }}
         scrollEventThrottle={16}
+        ListEmptyComponent={
+          <>
+            {isLoadingConversations && <View>
+              <ActivityIndicator style={{ marginVertical: 50 }} color={"#34d399"} size={22} />
+            </View>}
+          </>
+        }
       />
       <SendChatInput />
       <Animated.View style={keyboardPadding} />

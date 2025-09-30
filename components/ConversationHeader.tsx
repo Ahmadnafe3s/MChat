@@ -1,7 +1,6 @@
 import { icons } from "@/constants";
 import useChat from "@/hooks/useChat";
 import { useChatStore } from "@/store/chat";
-import { useToastStore } from "@/store/toast";
 import { useRouter } from "expo-router";
 import React, { memo } from "react";
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
@@ -11,15 +10,31 @@ const ConversationHeader = memo(() => {
 
   const router = useRouter();
   const { selectedChat } = useChatStore();
-  const { setStarredMutation, isPendingStarred } = useChat();
-  const { showToast } = useToastStore();
+  const { starredChat, blockChat } = useChat();
+
+
+  const handleSelect = (value: string) => {
+    switch (value) {
+      case "Block":
+      case "Unblock":
+        blockChat.mutate();
+        break;
+      case "Clear Chat":
+        break;
+      case "Template":
+        break;
+      case "Profile":
+        router.push(`/(root)/chatProfile`);
+        break;
+    }
+  };
+
 
 
   return (
-    <View className="flex flex-row px-4 pb-3 items-center justify-between bg-white mt-1 border-b border-gray-200">
-
+    <View className="w-full flex flex-row px-4 pb-3 items-center justify-between bg-white mt-1 border-b border-gray-200">
       {/* Flex 1 */}
-      <View className="flex flex-row gap-2 items-center">
+      <View className="flex-1 flex flex-row gap-2 items-center">
         <TouchableOpacity onPress={() => router.back()}>
           <Image source={icons.moveLeft as any} className="w-6 h-6" />
         </TouchableOpacity>
@@ -29,8 +44,9 @@ const ConversationHeader = memo(() => {
           </Text>
         </View>
         <Text
-          className="text-lg text-neutral-700 font-Jakarta"
+          className="text-lg flex-1  text-neutral-700 font-Jakarta mr-2"
           numberOfLines={1}
+          ellipsizeMode="tail"
         >
           {selectedChat?.name}
         </Text>
@@ -39,8 +55,8 @@ const ConversationHeader = memo(() => {
 
       {/* Flex 2 */}
       <View className="flex flex-row items-center gap-4">
-        <TouchableOpacity onPress={() => setStarredMutation()}>
-          {isPendingStarred ? (
+        <TouchableOpacity onPress={() => starredChat.mutate()}>
+          {starredChat.isPending ? (
             <ActivityIndicator size="small" color="gray" />
           ) : (
             <Image
@@ -51,13 +67,11 @@ const ConversationHeader = memo(() => {
           )}
         </TouchableOpacity>
         <Dropdown
-          options={["Template", "Clear Chat", "Block Contact"]}
+          options={["Template", "Clear Chat", selectedChat?.status === "Blocked" ? "Unblock" : "Block", "Profile"]}
           icon={icons.more as any}
           iconStyle={{ width: 20, height: 20 }}
           iconBgStyle="bg-white"
-          onSelect={(value) => {
-            showToast(value, "success")
-          }}
+          onSelect={handleSelect}
         />
       </View>
     </View>

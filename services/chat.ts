@@ -23,6 +23,10 @@ const ChatApi = {
     setStarred: async (selectedChat: number): Promise<{ status: string }> => {
         const res = await axios.post(`https://meta.muzztech.com/api/v1/starred/contact/${selectedChat}`)
         return res.data
+    },
+    blockChat : async (selectedChat: number): Promise<{ status: string }> => {
+        const res = await axios.post(`https://meta.muzztech.com/api/v1/block-unblock/${selectedChat}`)
+        return res.data
     }
 }
 
