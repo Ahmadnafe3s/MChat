@@ -30,13 +30,14 @@ const Conversation = () => {
     }
   }, [conversations]);
 
+
   return (
     <SafeAreaView style={styles.container}>
       <ConversationHeader />
       <FlashList
         ref={flashListRef}
         data={conversations}
-        keyExtractor={(item) => item?.id?.toString()}
+        keyExtractor={(item) => String(item?.id)}
         renderItem={({ item }) => <Messages data={item} />}
         inverted
         estimatedItemSize={94}

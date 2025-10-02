@@ -233,13 +233,12 @@ const Messages = memo(({ data }: { data: Conversations }) => {
           <TouchableOpacity
             onPress={handleDownload}
             disabled={isDownloading}
-            className={`flex-row items-center justify-center py-2 px-4 rounded-lg ${
-              isDownloading
-                ? "bg-gray-300"
-                : isSender
-                  ? "bg-gray-500"
-                  : "bg-blue-500"
-            }`}
+            className={`flex-row items-center justify-center py-2 px-4 rounded-lg ${isDownloading
+              ? "bg-gray-300"
+              : isSender
+                ? "bg-gray-500"
+                : "bg-blue-500"
+              }`}
           >
             {isDownloading ? (
               <ActivityIndicator size="small" color="#666" />
@@ -251,13 +250,12 @@ const Messages = memo(({ data }: { data: Conversations }) => {
               />
             )}
             <Text
-              className={`font-medium text-sm ${
-                isDownloading
-                  ? "text-gray-600"
-                  : isSender
-                    ? "text-white"
-                    : "text-white"
-              }`}
+              className={`font-medium text-sm ${isDownloading
+                ? "text-gray-600"
+                : isSender
+                  ? "text-white"
+                  : "text-white"
+                }`}
             >
               {isDownloading ? "Downloading..." : "Download"}
             </Text>
@@ -271,179 +269,120 @@ const Messages = memo(({ data }: { data: Conversations }) => {
 
   return (
     <>
-      <View
-        className={`flex flex-row items-end my-2 ${
-          isSender ? "justify-end" : "justify-start"
-        } px-4 mb-3`}
-      >
-        <View
-          className={`flex max-w-[85%]  relative ${isSender ? "items-end" : "items-start"}`}
-        >
-          {/* Message bubble */}
+      {/* ---------------- Assigned To Label --------------- */}
+      {
+        data.message_type === "label" ? (
+          <View className="flex items-center my-3">
+            <View className="rounded-full bg-neutral-100 py-1 px-4 elevation-sm">
+              <Text className="text-sm text-neutral-500">{data.text}</Text>
+              <Text className={`text-xs font-normal mr-1 text-center text-gray-400`}>
+                {new Date(data?.datetime).toLocaleTimeString([], {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </Text>
+            </View>
+          </View>
+        ) : (
           <View
-            className={`px-3 py-2 elevation-sm relative  ${
-              isSender
-                ? "bg-[#dffff5] rounded-tl-[18px]  rounded-bl-[18px] rounded-br-[4px]"
-                : "bg-white rounded-tr-[18px]  rounded-br-[18px] rounded-bl-[4px]"
-            }`}
+            className={`flex flex-row items-end my-2 ${isSender ? "justify-end" : "justify-start"
+              } px-4 mb-3`}
           >
-            {/* Media content */}
-            {data?.header && renderMedia()}
+            <View
+              className={`flex max-w-[85%]  relative ${isSender ? "items-end" : "items-start"}`}
+            >
+              {/* Message bubble */}
+              <View
+                className={`px-3 py-2 elevation-sm relative  ${isSender
+                  ? "bg-[#dffff5] rounded-tl-[18px]  rounded-bl-[18px] rounded-br-[4px]"
+                  : "bg-white rounded-tr-[18px]  rounded-br-[18px] rounded-bl-[4px]"
+                  }`}
+              >
+                {/* Media content */}
+                {data?.header && renderMedia()}
 
-            {/* Text content */}
-            {data.body.text && (
-              <View className={data?.header ? "mt-2" : ""}>
-                <ClickableText
-                  text={data.body.text}
-                  style={{
-                    color: isSender ? "#1f2937" : "#374151",
-                    fontSize: 15,
-                    lineHeight: 20,
-                  }}
-                  linkStyle={{ color: "blue" }}
-                />
-              </View>
-            )}
+                {/* Text content */}
+                {data.body.text && (
+                  <View className={data?.header ? "mt-2" : ""}>
+                    <ClickableText
+                      text={data.body.text}
+                      style={{
+                        color: isSender ? "#1f2937" : "#374151",
+                        fontSize: 15,
+                        lineHeight: 20,
+                      }}
+                      linkStyle={{ color: "blue" }}
+                    />
+                  </View>
+                )}
 
-            {/* Message Footer */}
+                {/* Message Footer */}
 
-            {data.footer && (
-              <View className="mt-2">
-                <Text className="text-xs text-gray-400 font-Jakarta">
-                  {data.footer}
-                </Text>
-              </View>
-            )}
-
-            {data.button.length > 0 && (
-              <View className="mt-2 flex gap-2 items-center">
-                {data.button.map((button, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    className={` w-full py-2 px-4 items-center justify-center border border-emerald-400 rounded-xl`}
-                  >
-                    <Text className={`font-medium text-sm text-emerald-500`}>
-                      {button.text}
+                {data.footer && (
+                  <View className="mt-2">
+                    <Text className="text-xs text-gray-400 font-Jakarta">
+                      {data.footer}
                     </Text>
-                  </TouchableOpacity>
-                ))}
+                  </View>
+                )}
+
+                {data.button.length > 0 && (
+                  <View className="mt-2 flex gap-2 items-center">
+                    {data.button.map((button, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        className={` w-full py-2 px-4 items-center justify-center border border-emerald-400 rounded-xl`}
+                      >
+                        <Text className={`font-medium text-sm text-emerald-500`}>
+                          {button.text}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
               </View>
-            )}
-          </View>
 
-          {/* Timestamp and status */}
-          <View
-            className={`flex-row items-center justify-end mt-1
+              {/* Timestamp and status */}
+              <View
+                className={`flex-row items-center justify-end mt-1
            }`}
-          >
-            <Text className={`text-xs font-normal mr-1 text-gray-400`}>
-              {new Date(data?.datetime).toLocaleTimeString([], {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </Text>
-            {isSender && (
-              <Image
-                source={
-                  data.status === "failed"
-                    ? icons.failed
-                    : data.status === "read"
-                      ? icons.doubleCheck
-                      : (icons.check as any)
-                }
-                className="w-4 h-4"
-                tintColor={
-                  data.status === "failed"
-                    ? "red"
-                    : data.status === "read"
-                      ? "#27f5a9"
-                      : "#A3A3A3"
-                }
-              />
-            )}
+              >
+                <Text className={`text-xs font-normal mr-1 text-gray-400`}>
+                  {new Date(data?.datetime).toLocaleTimeString([], {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </Text>
+                {isSender && (
+                  <Image
+                    source={
+                      data.status === "failed"
+                        ? icons.failed
+                        : data.status === "read"
+                          ? icons.doubleCheck
+                          : (icons.check as any)
+                    }
+                    className="w-4 h-4"
+                    tintColor={
+                      data.status === "failed"
+                        ? "red"
+                        : data.status === "read"
+                          ? "#27f5a9"
+                          : "#A3A3A3"
+                    }
+                  />
+                )}
+              </View>
+            </View>
           </View>
-        </View>
-      </View>
-
-      {/* TODO : Have to move these into component */}
-
-      {/* Image Full Screen Modal */}
-      {/* <Modal
-        visible={imageVisible}
-        transparent={true}
-        onRequestClose={() => setImageVisible(false)}
-        statusBarTranslucent
-        animationType="fade"
-      >
-        <View style={{ flex: 1, backgroundColor: "#000" }}>
-          <TouchableOpacity
-            onPress={() => setImageVisible(false)}
-            className="h-10 w-10 items-center justify-center"
-            style={{
-              zIndex: 10,
-              position: "absolute",
-              top: 50,
-              left: 20,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              borderRadius: 20,
-            }}
-          >
-            <Image
-              source={icons.moveLeft as any}
-              tintColor={"#ffffff"}
-              className="h-6 w-6"
-            />
-          </TouchableOpacity>
-          <Image
-            source={{ uri: data.header?.link.trim() }}
-            style={{
-              width: "100%",
-              height: "100%",
-              resizeMode: "contain",
-            }}
-          />
-        </View>
-      </Modal> */}
-
-      {/* Video Full Screen Modal */}
-      {/* <Modal
-        visible={videoVisible}
-        transparent={true}
-        onRequestClose={() => setVideoVisible(false)}
-        statusBarTranslucent
-        animationType="fade"
-      >
-        <View style={{ flex: 1, backgroundColor: "#000" }}>
-          <TouchableOpacity
-            onPress={() => setVideoVisible(false)}
-            className="h-10 w-10 items-center justify-center"
-            style={{
-              zIndex: 10,
-              position: "absolute",
-              top: 50,
-              left: 20,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              borderRadius: 20,
-            }}
-          >
-            <Image
-              source={icons.moveLeft as any}
-              tintColor={"#ffffff"}
-              className="h-6 w-6"
-            />
-          </TouchableOpacity>
-          <Video
-            source={{ uri: data.header?.link.trim() }}
-            style={{ width: "100%", height: "100%" }}
-            resizeMode="contain"
-            controls={true}
-            paused={false}
-          />
-        </View>
-      </Modal> */}
+        )
+      }
 
       <Multimedia
         source={media?.source!}

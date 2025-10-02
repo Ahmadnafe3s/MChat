@@ -138,7 +138,7 @@ const SendChatInput = () => {
   // ---------------------Checking Status--------------------
   if (selectedChat?.status === "Expired" || selectedChat?.status === "Blocked") {
     return (
-      <View className="flex flex-row items-center gap-2 justify-center bg-red-50 mb-2 p-4 mx-4 rounded-lg">
+      <View className="flex flex-row items-center gap-2 justify-center bg-red-50  p-4 rounded-lg">
         <Image
           source={icons.watch as any}
           className="w-5 h-5"

@@ -6,6 +6,7 @@ import logo from "@/assets/images/splash.png";
 
 // ICONS
 import add from "@/assets/icons/add.png";
+import chevronDown from "@/assets/icons/angle-small-down.png";
 import moveLeft from "@/assets/icons/arrow-left.png";
 import flash from "@/assets/icons/bolt.png";
 import check_circle from "@/assets/icons/check-circle.png";
@@ -34,7 +35,6 @@ import star_filled from "@/assets/icons/solid_star.png";
 import star from "@/assets/icons/star.png";
 import user from "@/assets/icons/user.png";
 import avatar from "@/assets/images/avatar.png";
-
 
 export const images = {
   onboarding1,
@@ -74,6 +74,7 @@ export const icons = {
   check_circle,
   flash,
   add,
+  chevronDown,
 };
 
 export const onboarding = [

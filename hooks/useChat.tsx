@@ -53,6 +53,7 @@ const useChat = (screen?: "chats" | "conversation") => {
   } = useQuery({
     queryKey: ["conversations", selectedChat?.id],
     queryFn: () => ChatApi.getConversations(selectedChat?.id!),
+    refetchOnWindowFocus: true,
     enabled: !!selectedChat?.id && screen === "conversation",
     placeholderData: keepPreviousData
   });

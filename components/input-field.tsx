@@ -3,7 +3,7 @@ import { Image, Text, TextInput, View } from "react-native";
 
 type InputFieldProps = {
   labelStyle?: string;
-  label: string;
+  label?: string;
   error?: string;
   Icon?: any;
   secureTextEntry?: boolean;
@@ -37,11 +37,13 @@ const InputField = forwardRef<TextInput, InputFieldProps>(
 
     return (
       <View className="my-2 w-full">
-        <Text
-          className={`text-lg mb-2 !text-black font-JakartaRegular ${labelStyle}`}
-        >
-          {label}
-        </Text>
+        {label && (
+          <Text
+            className={`text-lg mb-2 !text-black font-JakartaRegular ${labelStyle}`}
+          >
+            {label}
+          </Text>
+        )}
         <View
           className={`
               relative flex flex-row px-4 items-center border gap-2 bg-neutral-50 rounded-full
