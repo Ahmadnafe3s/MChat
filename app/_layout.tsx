@@ -9,6 +9,7 @@ import { setupNotificationListener } from "@/notifications";
 import { setupNotificationConfig } from "@/notifications/config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from "react-native-keyboard-controller";
 
 // Prevent splash from auto-hiding on app load
@@ -27,7 +28,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync(); // ✅ call the function
+      SplashScreen.hideAsync();
     }
   }, [loaded]);
 
@@ -38,14 +39,13 @@ export default function RootLayout() {
   }, []);
 
   if (!loaded) {
-    // Async font loading only occurs in development.
     return null;
   }
 
   const queryClient = new QueryClient();
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <Toast />
       <QueryClientProvider client={queryClient}>
         <KeyboardProvider>
@@ -58,6 +58,6 @@ export default function RootLayout() {
           <StatusBar style="auto" />
         </KeyboardProvider>
       </QueryClientProvider>
-    </>
+    </GestureHandlerRootView>
   );
 }

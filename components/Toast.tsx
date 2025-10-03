@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#fff",
-    width: "100%",
     flexWrap: "wrap",
     flexShrink: 1,
   },
