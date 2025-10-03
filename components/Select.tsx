@@ -58,7 +58,7 @@ const Select: React.FC<SelectProps> = ({
         </View>
         {isSelected && (
           <View className="bg-emerald-500 rounded-full size-6 flex items-center justify-center">
-            <Text className="text-white text-lg font-bold">✓</Text>
+            <Image source={icons.check as any} className="w-3 h-3" tintColor={'#fff'} />
           </View>
         )}
       </TouchableOpacity>

@@ -98,11 +98,13 @@ declare interface Attribute {
 }
 
 declare interface Tag {
+  id: number;
   name: string;
   created_at: string; // ISO-like timestamp
 }
 
 declare interface Note {
+  id: number;
   text: string;
   created_at: string; // ISO-like timestamp
 }

@@ -37,7 +37,7 @@ const Profile = () => {
                         title='Logout'
                         onPress={() => {
                             logout()
-                            router.push('/(auth)/signin')
+                            router.replace('/(auth)/signin')
                         }}
                     />
 

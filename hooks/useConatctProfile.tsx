@@ -54,11 +54,41 @@ const useContactProfile = () => {
     }
   })
 
+
+  const createTag = useMutation({
+    mutationFn: (params: { name: string }) => contactProfileApi.createTag(selectedChat?.id!, params),
+    onSuccess: (newData: any) => {
+      console.log(newData)
+      queryClient.setQueryData(["chatProfile", selectedChat?.id], (oldData: ChatProfile) => {
+        return { ...oldData, tag: [newData, ...oldData?.tag] }
+      });
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      const message = err.response?.data.message! || "Something went wrong";
+      showToast(message, "error")
+    }
+  })
+
+  const createNote = useMutation({
+    mutationFn: (params: { note: string }) => contactProfileApi.createNote(selectedChat?.id!, params),
+    onSuccess: (newData: any) => {
+      queryClient.setQueryData(["chatProfile", selectedChat?.id], (oldData: ChatProfile) => {
+        return { ...oldData, note: [newData, ...oldData?.note] }
+      });
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      const message = err.response?.data.message! || "Something went wrong";
+      showToast(message, "error")
+    }
+  })
+
   return {
     chatProfile,
     agentList,
     submitAs,
-    assignAgent
+    assignAgent,
+    createTag,
+    createNote
   };
 };
 

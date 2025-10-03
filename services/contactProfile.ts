@@ -21,6 +21,14 @@ const contactProfileApi = {
         const res = await axios.post(`https://meta.muzztech.com/api/v1/assign-agent/${selectedChat}`, params);
         return res.data
     },
+    createTag:async (selectedChat: number, params: { name: string }) => {
+        const res = await axios.post(`https://meta.muzztech.com/api/v1/create-tag/${selectedChat}`, params);
+        return res.data.data
+    },
+    createNote: async (selectedChat: number, params: { note: string }) => {
+        const res = await axios.post(`https://meta.muzztech.com/api/v1/create-note/${selectedChat}`, params);
+        return res.data.data
+    },
 }
 
 
