@@ -7,7 +7,7 @@ import React, { memo } from "react";
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
 import Dropdown from "./Dropdown";
 
-const ConversationHeader = memo(({ onTemplate }: { onTemplate: (f: boolean) => void }) => {
+const ConversationHeader = memo(({ onTemplate }: { onTemplate: () => void }) => {
 
   const router = useRouter();
   const { selectedChat } = useChatStore();
@@ -25,7 +25,7 @@ const ConversationHeader = memo(({ onTemplate }: { onTemplate: (f: boolean) => v
         showToast("Clear chat is not implemented yet", "success")
         break;
       case "Template":
-        onTemplate(true)
+        onTemplate()
         break;
       case "Profile":
         router.push(`/(root)/chatProfile`);

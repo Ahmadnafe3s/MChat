@@ -1,13 +1,14 @@
+
 import ConversationHeader from "@/components/ConversationHeader";
 import Messages from "@/components/Messages";
 import MessageTemplate from "@/components/MessageTemplate";
 import SendChatInput from "@/components/SendChatInput";
 import useChat from "@/hooks/useChat";
 import useGradualKeyboard from "@/hooks/useGradualKeyboard";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,8 +16,8 @@ const Conversation = () => {
   const { height } = useGradualKeyboard();
   const { conversations, isLoadingConversations } = useChat("conversation");
   const [isAtBottom, setIsAtBottom] = useState(true);
-  const [isMTvisible, setIsMTvisible] = useState(false)
   const flashListRef = React.useRef<FlashList<any>>(null);
+  const TemplateRef = useRef<BottomSheetModal>(null);
 
   const keyboardPadding = useAnimatedStyle(() => {
     return { height: height.value };
@@ -31,65 +32,60 @@ const Conversation = () => {
         animated: true,
       });
     }
-  }, [conversations, isAtBottom]);
-
+  }, [conversations]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      {/* -------------- Chat Header --------------- */}
+      <ConversationHeader onTemplate={() => TemplateRef.current?.present()} />
 
-        {/* -------------- Chat Header --------------- */}
-        <ConversationHeader onTemplate={setIsMTvisible} />
-
-        {/* -------------- Flash List --------------- */}
-        <FlashList
-          ref={flashListRef}
-          data={conversations}
-          keyExtractor={(item) => String(item?.id)}
-          renderItem={({ item }) => <Messages data={item} />}
-          inverted
-          estimatedItemSize={94}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="interactive"
-          showsVerticalScrollIndicator={false}
-          overScrollMode="never"
-          overrideProps={{
-            contentContainerStyle: {
-              flexGrow: isLessThan6 ? 1 : 0,
-              paddingBottom: 10,
-              paddingTop: 10,
-              justifyContent: isLessThan6 ? "flex-end" : "flex-start",
-            },
-          }}
-          onScroll={(e) => {
-            const offsetY = e.nativeEvent.contentOffset.y;
-            const atBottom = offsetY < 100;
-            // if we are not at bottom then will be trigger and set (false)
-            if (isAtBottom !== atBottom) setIsAtBottom(atBottom);
-          }}
-          scrollEventThrottle={16}
-          ListEmptyComponent={
-            <>
-              {isLoadingConversations && <View>
-                <ActivityIndicator style={{ marginVertical: 50 }} color={"#34d399"} size={22} />
-              </View>}
-            </>
-          }
-        />
+      {/* -------------- Flash List --------------- */}
+      <FlashList
+        ref={flashListRef}
+        data={conversations}
+        keyExtractor={(item) => String(item?.id)}
+        renderItem={({ item }) => <Messages data={item} />}
+        inverted
+        estimatedItemSize={94}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        showsVerticalScrollIndicator={false}
+        overScrollMode="never"
+        overrideProps={{
+          contentContainerStyle: {
+            flexGrow: isLessThan6 ? 1 : 0,
+            paddingBottom: 10,
+            paddingTop: 10,
+            justifyContent: isLessThan6 ? "flex-end" : "flex-start",
+          },
+        }}
+        onScroll={(e) => {
+          const offsetY = e.nativeEvent.contentOffset.y;
+          const atBottom = offsetY < 100;
+          // if we are not at bottom then will be trigger and set (false)
+          if (isAtBottom !== atBottom) setIsAtBottom(atBottom);
+        }}
+        scrollEventThrottle={16}
+        ListEmptyComponent={
+          <>
+            {isLoadingConversations && <View>
+              <ActivityIndicator style={{ marginVertical: 50 }} color={"#34d399"} size={22} />
+            </View>}
+          </>
+        }
+      />
 
 
-        {/* -------------- Send Chat Input --------------- */}
-        <SendChatInput />
+      {/* -------------- Send Chat Input --------------- */}
+      <SendChatInput />
 
 
-        {/* -------------- Keyboard --------------- */}
-        <Animated.View style={keyboardPadding} />
+      {/* -------------- Keyboard --------------- */}
+      <Animated.View style={keyboardPadding} />
 
 
-        {/* -------------- Message Template --------------- */}
-        <MessageTemplate visible={isMTvisible} onClose={() => setIsMTvisible(false)} />
-
-      </GestureHandlerRootView>
+      {/* -------------- Message Template --------------- */}
+      <MessageTemplate selectedTemplate={(s) => console.log(s)} ref={TemplateRef} />
     </SafeAreaView>
   );
 };

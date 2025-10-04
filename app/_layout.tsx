@@ -7,6 +7,7 @@ import "react-native-reanimated";
 import Toast from "@/components/Toast";
 import { setupNotificationListener } from "@/notifications";
 import { setupNotificationConfig } from "@/notifications/config";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -46,18 +47,20 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Toast />
-      <QueryClientProvider client={queryClient}>
-        <KeyboardProvider>
-          <Stack initialRouteName="index">
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(root)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </KeyboardProvider>
-      </QueryClientProvider>
+      <BottomSheetModalProvider>
+        <Toast />
+        <QueryClientProvider client={queryClient}>
+          <KeyboardProvider>
+            <Stack initialRouteName="index">
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(root)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </KeyboardProvider>
+        </QueryClientProvider>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }

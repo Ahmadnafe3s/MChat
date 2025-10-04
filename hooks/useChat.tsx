@@ -15,7 +15,7 @@ import {
 import { AxiosError } from "axios";
 import { useCallback, useState } from "react";
 
-const useChat = (screen?: "chats" | "conversation") => {
+const useChat = (screen?: "chats" | "conversation" | "template") => {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const { user } = useAuthStore();
@@ -126,6 +126,7 @@ const useChat = (screen?: "chats" | "conversation") => {
       showToast(Err, "error");
     },
   })
+
 
   const onSearch = debounce((value: string) => {
     setSearch(value);

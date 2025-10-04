@@ -35,6 +35,7 @@ import search from "@/assets/icons/search.png";
 import star_filled from "@/assets/icons/solid_star.png";
 import star from "@/assets/icons/star.png";
 import tag from "@/assets/icons/tags.png";
+import template from "@/assets/icons/template.png";
 import user from "@/assets/icons/user.png";
 import avatar from "@/assets/images/avatar.png";
 
@@ -78,7 +79,8 @@ export const icons = {
   add,
   chevronDown,
   tag,
-  note
+  note,
+  template
 };
 
 export const onboarding = [

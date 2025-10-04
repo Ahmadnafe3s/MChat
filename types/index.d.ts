@@ -70,6 +70,10 @@ declare interface QuickReply {
   content: string;
 }
 
+
+// --------------------Chat Profile-------------------
+
+
 declare interface ChatProfile {
   id: number;
   name: string;
@@ -112,4 +116,29 @@ declare interface Note {
 declare interface AgentList {
   id: number
   name: string
+}
+
+
+// --------------------Templates-------------------
+
+declare interface TemplatesResponse {
+  success: boolean;
+  total: number;
+  data: Template[]
+}
+
+declare interface Template {
+  id: number;
+  name: string;
+  category: "MARKETING" | "UTILITY" | string;
+  type: string;
+  header: {
+    type: string;
+    content: string;
+  }
+  body: string;
+  footer: string;
+  button: string[];
+  variable: string;
+  created_at: string;
 }
