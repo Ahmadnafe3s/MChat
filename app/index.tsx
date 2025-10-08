@@ -8,7 +8,7 @@ const Index = () => {
   if (!user) {
     return <Redirect href={"/(auth)/welcome"} />;
   }
-  return <Redirect href={"/(root)/chats"} />;
+  return <Redirect href={"/(root)/(tabs)/chats"} />;
 
 };
 

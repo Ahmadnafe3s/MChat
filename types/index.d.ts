@@ -131,6 +131,7 @@ declare interface Template {
   id: number;
   name: string;
   category: "MARKETING" | "UTILITY" | string;
+  language: string;
   type: string;
   header: {
     type: string;

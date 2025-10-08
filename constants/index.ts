@@ -20,6 +20,7 @@ import download from "@/assets/icons/download.png";
 import error_bug from "@/assets/icons/error-bug.png";
 import failed from "@/assets/icons/exclamation.png";
 import filter from "@/assets/icons/funnel.png";
+import globe from "@/assets/icons/globe.png";
 import audio from "@/assets/icons/headphones.png";
 import company from "@/assets/icons/house-building.png";
 import key from "@/assets/icons/key-round.png";
@@ -80,7 +81,8 @@ export const icons = {
   chevronDown,
   tag,
   note,
-  template
+  template,
+  globe
 };
 
 export const onboarding = [

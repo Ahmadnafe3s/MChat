@@ -1,18 +1,59 @@
 import { icons } from '@/constants';
+import useGradualKeyboard from '@/hooks/useGradualKeyboard';
 import useTemplate from '@/hooks/useTemplate';
+import { templateVarSchema } from '@/utils/formSchema';
 import { BottomSheetBackdrop, BottomSheetFlashList, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import React, { forwardRef, useMemo, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import Video from 'react-native-video';
+import z from 'zod';
+import CustomButton from './custom-button';
 
 
+interface Props {
+    close: () => void
+}
 
 
-const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
+const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => {
 
     const Points = useMemo(() => ["40%", "60%", "90%"], []);
     const [selectedTemplate, setSelectedTemplate] = useState<TemplatesResponse['data'][0] | null>(null);
+    const { height } = useGradualKeyboard()
+    const { getTemplate, sendTemplate } = useTemplate()
 
-    const { getTemplate } = useTemplate()
+    const { watch, handleSubmit, reset, control, formState: { errors } } = useForm<z.infer<typeof templateVarSchema>>({
+        resolver: zodResolver(templateVarSchema),
+        defaultValues: { variable: [] }
+    });
+    const { fields, append } = useFieldArray({
+        control,
+        name: "variable",
+    })
+
+    const keyboardHeight = useAnimatedStyle(() => ({
+        height: height?.value
+    }), [])
+
+
+    useEffect(() => {
+        const fields = genFields(selectedTemplate?.variable!)
+        reset(fields)
+    }, [selectedTemplate?.id])
+
+
+    const onSend = (data: any) => {
+        sendTemplate.mutate({ templateId: selectedTemplate?.id!, data }, {
+            onSuccess: () => {
+                close()
+                setSelectedTemplate(null)
+            }
+        })
+    }
+
 
     const renderBackdrop = React.useCallback((props: any) => (
         <BottomSheetBackdrop
@@ -23,7 +64,6 @@ const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
             opacity={0.5}
         />
     ), []);
-
 
 
     const RenderTemplateList = () => (
@@ -79,9 +119,11 @@ const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
                                 {item?.name}
                             </Text>
                             <View className='flex flex-row items-center gap-1'>
-                                <View className='size-1 rounded-full bg-emerald-400' />
+                                <View className='size-3 rounded-full'>
+                                    <Image source={icons.globe as any} className='size-full' tintColor={"#6b7280"} />
+                                </View>
                                 <Text className='text-xs text-gray-500 font-JakartaMedium'>
-                                    Ready to use
+                                    {item?.language}
                                 </Text>
                             </View>
                         </View>
@@ -137,22 +179,29 @@ const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
             if (numVariables === 0) return null;
 
             return (
-                <View className='mx-4 mb-4'>
+                <View className='mx-4 '>
                     <Text className='text-sm font-JakartaBold text-neutral-700 mb-3'>
                         Fill Template Variables
                     </Text>
-                    {Array.from({ length: numVariables }, (_, index) => (
-                        <View key={index} className='mb-3'>
+                    {fields.map((field, index) => (
+                        <View key={field.id} className='mb-3'>
                             <Text className='text-xs font-JakartaMedium text-neutral-600 mb-1'>
                                 Variable {index + 1} (Replace {'{'}{'{'}{index + 1}{'}'}{'}'}):
                             </Text>
-                            <TextInput
-                                className='bg-white border border-neutral-300 rounded-lg px-4 py-3 font-JakartaRegular text-sm text-neutral-800'
-                                placeholder={`Enter value for {{${index + 1}}}`}
-                                placeholderTextColor="#9CA3AF"
-                            // value={variableValues[index + 1] || ''}
-
-                            />
+                            <Controller control={control} name={`variable.${index}.value`} render={(({ field }) => (
+                                <TextInput
+                                    className='bg-white border border-neutral-300 rounded-lg px-4 py-3 font-JakartaRegular text-sm text-neutral-800'
+                                    placeholder={`Enter value for {{${index + 1}}}`}
+                                    placeholderTextColor="#9CA3AF"
+                                    value={field?.value || ''}
+                                    onChangeText={field.onChange}
+                                />
+                            ))} />
+                            {errors.variable?.[index] && (
+                                <Text className='text-xs text-red-500 mt-1'>
+                                    {errors.variable?.[index]?.value?.message}
+                                </Text>
+                            )}
                         </View>
                     ))}
                 </View>
@@ -162,18 +211,18 @@ const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
         // Replace variables in body with user input
         const getDisplayBody = () => {
             let body = selectedTemplate?.body || '';
-            // const numVariables = parseInt(selectedTemplate?.variable || 0);
+            const numVariables = +selectedTemplate?.variable! || 0;
 
-            // for (let i = 1; i <= numVariables; i++) {
-            //     const regex = new RegExp(`\\{\\{${i}\\}\\}`, 'g');
-            //     body = body.replace(regex, variableValues[i] || `{{${i}}}`);
-            // }
+            for (let i = 1; i <= numVariables; i++) {
+                const regex = new RegExp(`\\{\\{${i}\\}\\}`, 'g');
+                body = body.replace(regex, watch(`variable`)[i - 1]?.value || `{{${i}}}`);
+            }
 
             return body;
         };
 
         const renderHeader = () => {
-            if (!selectedTemplate?.header) return null;
+            if (!selectedTemplate?.header) return;
 
             return (
                 <View className='bg-neutral-50 p-4 border-b border-neutral-200'>
@@ -183,20 +232,51 @@ const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
                         </Text>
                     ) : selectedTemplate.header.type === 'Image'
                         ? (
-                            <View className='h-[200px]'>
-                                <Image source={{ uri: selectedTemplate.header.content }} resizeMode='cover' className='h-full rounded-2xl' />
+                            <View className='w-full aspect-[4/3]'>
+                                <Image source={{ uri: selectedTemplate.header.content }} className='size-full rounded-2xl' />
                             </View>
-                        ) : (
-                            <Text className='text-sm font-JakartaMedium text-neutral-600'>
-                                {selectedTemplate?.header?.content}
-                            </Text>
-                        )}
+                        ) : selectedTemplate.header.type === 'Video'
+                            ? (
+                                <View className='w-full aspect-[4/3] rounded-2xl overflow-hidden'>
+                                    <Video
+                                        source={{ uri: selectedTemplate.header.content }}
+                                        resizeMode='cover'
+                                        muted
+                                        style={{ width: '100%', height: '100%' }}
+                                    />
+                                </View>
+                            )
+                            : selectedTemplate.header.type === "Document"
+                                ? (
+                                    <View className="flex-row items-center elevation-sm bg-white py-5 px-4 rounded-2xl">
+                                        <View className="w-10 h-10 bg-red-100 rounded-lg items-center justify-center mr-3">
+                                            <Text className="text-red-600 text-xs font-bold uppercase">
+                                                PDF
+                                            </Text>
+                                        </View>
+                                        <View className="flex-1">
+                                            <Text
+                                                className="text-gray-800 font-medium text-sm"
+                                                numberOfLines={1}
+                                            >
+                                                Document.pdf
+                                            </Text>
+                                            <Text className="text-gray-500 text-xs capitalize">
+                                                Pdf Document
+                                            </Text>
+                                        </View>
+                                    </View>
+                                ) : (
+                                    <Text className='text-sm font-JakartaMedium text-neutral-600'>
+                                        {selectedTemplate?.header?.content}
+                                    </Text>
+                                )}
                 </View>
             )
         }
 
         return (
-            <View style={{ flex: 1, marginBottom: 100, paddingHorizontal: 10 }}>
+            <View style={{ flex: 1, marginBottom: 20, paddingHorizontal: 10 }}>
                 <View className='px-4 pb-2 pt-4'>
                     <View className='flex flex-row items-center justify-between mb-4'>
                         <Text className='text-xl font-JakartaBold text-neutral-800'>Preview</Text>
@@ -208,10 +288,12 @@ const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
                     </View>
                 </View>
 
-                <BottomSheetScrollView showsVerticalScrollIndicator={false}>
-
+                <BottomSheetScrollView
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                >
                     {/* WhatsApp Message Card */}
-                    <View className='mx-4 mb-6'>
+                    <View className='flex flex-1 mx-4 mb-6 gap-5'>
                         <View className='bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden'>
                             {/* Header Section */}
                             {renderHeader()}
@@ -254,6 +336,13 @@ const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
                         {/* Variable Input Fields */}
                         {renderVariableInputs()}
 
+                        <CustomButton
+                            title='Send'
+                            loading={sendTemplate.isPending}
+                            rightIcon={<Image source={icons.send as any} className='w-4 h-4' tintColor={'#fff'} />}
+                            onPress={handleSubmit(onSend)}
+                        />
+
                         {/* Help Text */}
                         {Number(selectedTemplate?.variable) > 0 && (
                             <View className='mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200'>
@@ -262,8 +351,11 @@ const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
                                 </Text>
                             </View>
                         )}
+
                     </View>
+
                 </BottomSheetScrollView>
+                <Animated.View style={keyboardHeight} />
             </View>
         );
     };
@@ -278,6 +370,8 @@ const MessageTemplate = forwardRef<BottomSheetModal>((_, ref) => {
             enablePanDownToClose={true}
             enableDynamicSizing={false}
             backdropComponent={renderBackdrop}
+            keyboardBehavior="extend"
+            onDismiss={() => setSelectedTemplate(null)}
         >
             {selectedTemplate ? RenderPreview() : RenderTemplateList()}
         </BottomSheetModal>
@@ -291,3 +385,10 @@ export default MessageTemplate;
 
 
 
+const genFields = (numOfFileds: string) => {
+    if (!(+numOfFileds)) return
+    const data = Array.from({ length: +numOfFileds }).map(() => (
+        { value: "" }
+    ))
+    return { variable: data }
+}

@@ -85,7 +85,10 @@ const Conversation = () => {
 
 
       {/* -------------- Message Template --------------- */}
-      <MessageTemplate selectedTemplate={(s) => console.log(s)} ref={TemplateRef} />
+      <MessageTemplate
+        ref={TemplateRef}
+        close={() => TemplateRef.current?.close()}
+      />
     </SafeAreaView>
   );
 };

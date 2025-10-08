@@ -36,18 +36,6 @@ const Messages = memo(({ data }: { data: Conversations }) => {
     visible: false,
   });
 
-  // Calculate media dimensions with aspect ratio preservation
-  const getMediaDimensions = (aspectRatio = 4 / 3) => {
-    const calculatedWidth = Math.min(
-      Math.max(minMediaWidth, maxMediaWidth),
-      maxMediaWidth
-    );
-    const calculatedHeight = calculatedWidth / aspectRatio;
-    return { width: calculatedWidth, height: Math.min(calculatedHeight, 400) };
-  };
-
-  const mediaDimensions = getMediaDimensions();
-
   const handleDownload = async () => {
     if (!data?.header?.link) return;
 
@@ -77,57 +65,60 @@ const Messages = memo(({ data }: { data: Conversations }) => {
 
     if (format === "png" || format === "jpg" || format === "jpeg") {
       return (
-        <TouchableOpacity
-          onPress={() =>
-            setMedia({ type: "image", source: link, visible: true })
-          }
-          className="overflow-hidden rounded-lg"
-          style={mediaDimensions}
-        >
-          <Image
-            source={{ uri: link.trim() }}
-            style={mediaDimensions}
-            className="rounded-lg"
-            resizeMode="cover"
-          />
-          {/* Image overlay for better UX */}
-          <View className="absolute inset-0 bg-black/5" />
-        </TouchableOpacity>
+        <View className={`p-3 ${data?.body?.text && "border-b border-neutral-200"}`}>
+          <TouchableOpacity
+            onPress={() =>
+              setMedia({ type: "image", source: link, visible: true })
+            }
+            className=" rounded-lg overflow-hidden  w-full aspect-[4/3]"
+          >
+            <Image
+              source={{ uri: link.trim() }}
+              className=" size-full"
+              resizeMode="cover"
+            />
+            {/* Image overlay for better UX */}
+            <View className="absolute inset-0 bg-black/5" />
+          </TouchableOpacity>
+        </View>
       );
     }
 
     if (format === "mp4") {
       return (
-        <TouchableOpacity
-          onPress={() =>
-            setMedia({ type: "video", source: link, visible: true })
-          }
-          className="relative overflow-hidden rounded-lg"
-          style={mediaDimensions}
-        >
-          <Video
-            source={{ uri: link.trim() }}
-            style={mediaDimensions}
-            muted={true}
-            paused={true}
-            repeat={false}
-            resizeMode="cover"
-            className="rounded-lg"
-            onEnd={() => console.log("Video ended")}
-          />
-          {/* Video overlay */}
-          <View className="absolute inset-0 bg-black/20 rounded-lg" />
-          {/* Play button */}
-          <View className="absolute inset-0 items-center justify-center">
-            <View className="w-16 h-16 bg-black/50 rounded-full items-center justify-center">
-              <Image
-                source={icons.play as any}
-                className="w-8 h-8 ml-1"
-                tintColor="#ffffff" // TODO: change to blue
-              />
+        <View className={`p-3 ${data?.body?.text && "border-b border-neutral-200"}`}>
+          <TouchableOpacity
+            onPress={() =>
+              setMedia({ type: "video", source: link, visible: true })
+            }
+            className="relative overflow-hidden rounded-lg border-b border-neutral-200 w-full aspect-[4/3]"
+          >
+            <Video
+              source={{ uri: link.trim() }}
+              style={{
+                width: "100%",
+                height: "100%"
+              }}
+              muted={true}
+              paused={true}
+              repeat={false}
+              resizeMode="cover"
+              className="rounded-lg"
+            />
+            {/* Video overlay */}
+            <View className="absolute inset-0 bg-black/20 rounded-lg" />
+            {/* Play button */}
+            <View className="absolute inset-0 items-center justify-center">
+              <View className="w-16 h-16 bg-black/50 rounded-full items-center justify-center">
+                <Image
+                  source={icons.play as any}
+                  className="w-8 h-8 ml-1"
+                  tintColor="#ffffff" // TODO: change to blue
+                />
+              </View>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
       );
     }
 
@@ -137,9 +128,9 @@ const Messages = memo(({ data }: { data: Conversations }) => {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            backgroundColor: isSender ? "transparent" : "white",
+            backgroundColor: isSender ? "#ecfdf5" : "white",
             borderRadius: 12,
-            padding: 5,
+            padding: 10,
             minWidth: 200,
           }}
         >
@@ -188,10 +179,11 @@ const Messages = memo(({ data }: { data: Conversations }) => {
       format === "pdf" ||
       format === "csv" ||
       format === "xlsx" ||
-      format === "pptx"
+      format === "pptx" ||
+      format === "docx"
     ) {
       return (
-        <View className="bg-gray-50 rounded-lg p-4 min-w-[250px]">
+        <View className={`p-4 min-w-[250px] ${data?.body?.text && "border-b border-neutral-200"}`}>
           <View className="flex-row items-center mb-3">
             <View className="w-10 h-10 bg-red-100 rounded-lg items-center justify-center mr-3">
               <Text className="text-red-600 text-xs font-bold uppercase">
@@ -271,7 +263,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
     <>
       {/* ---------------- Assigned To Label --------------- */}
       {
-        data.message_type === "label" ? (
+        data?.message_type === "label" ? (
           <View className="flex items-center my-3">
             <View className="rounded-full bg-neutral-100 py-1 px-4 elevation-sm">
               <Text className="text-sm text-neutral-500">{data.text}</Text>
@@ -296,19 +288,15 @@ const Messages = memo(({ data }: { data: Conversations }) => {
             >
               {/* Message bubble */}
               <View
-                className={`px-3 py-2 elevation-sm relative  ${isSender
-                  ? "bg-[#dffff5] rounded-tl-[18px]  rounded-bl-[18px] rounded-br-[4px]"
-                  : "bg-white rounded-tr-[18px]  rounded-br-[18px] rounded-bl-[4px]"
-                  }`}
-              >
+                className={` relative bg-white overflow-hidden rounded-2xl elevation-sm`}>
                 {/* Media content */}
-                {data?.header && renderMedia()}
+                {renderMedia()}
 
                 {/* Text content */}
-                {data.body.text && (
-                  <View className={data?.header ? "mt-2" : ""}>
+                {data?.body?.text && (
+                  <View className={`px-4 py-3  ${isSender ? "bg-emerald-50" : "bg-neutral-50"}`}>
                     <ClickableText
-                      text={data.body.text}
+                      text={data.body?.text}
                       style={{
                         color: isSender ? "#1f2937" : "#374151",
                         fontSize: 15,
@@ -322,22 +310,22 @@ const Messages = memo(({ data }: { data: Conversations }) => {
                 {/* Message Footer */}
 
                 {data.footer && (
-                  <View className="mt-2">
+                  <View className="px-3 border-t border-neutral-200 pt-1 pb-3">
                     <Text className="text-xs text-gray-400 font-Jakarta">
-                      {data.footer}
+                      {data?.footer}
                     </Text>
                   </View>
                 )}
 
                 {data.button.length > 0 && (
-                  <View className="mt-2 flex gap-2 items-center">
-                    {data.button.map((button, index) => (
+                  <View className={`flex gap-2 items-center px-3 mb-4 ${!data?.footer && "pt-3 border-t border-neutral-200"}`}>
+                    {data?.button.map((button, index) => (
                       <TouchableOpacity
                         key={index}
-                        className={` w-full py-2 px-4 items-center justify-center border border-emerald-400 rounded-xl`}
+                        className={` w-full py-2.5 px-4 items-center justify-center border border-emerald-400 rounded-xl`}
                       >
                         <Text className={`font-medium text-sm text-emerald-500`}>
-                          {button.text}
+                          {button?.text}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -370,9 +358,9 @@ const Messages = memo(({ data }: { data: Conversations }) => {
                     }
                     className="w-4 h-4"
                     tintColor={
-                      data.status === "failed"
+                      data?.status === "failed"
                         ? "red"
-                        : data.status === "read"
+                        : data?.status === "read"
                           ? "#27f5a9"
                           : "#A3A3A3"
                     }

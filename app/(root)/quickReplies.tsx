@@ -1,14 +1,14 @@
 import CustomButton from "@/components/custom-button";
 import InputField from "@/components/input-field";
 import QuickReplyCard from "@/components/QuickReplyCard";
+import SendQuickReply from "@/components/sendQuickReply";
 import { icons } from "@/constants";
-import useChat from "@/hooks/useChat";
 import useQuickReply from "@/hooks/useQuickReply";
-import { useChatStore } from "@/store/chat";
 import { quickReplySchema } from "@/utils/formSchema";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   Dimensions,
@@ -35,8 +35,8 @@ const QuickReplies = () => {
   });
   const [selectedReply, setSelectedReply] = useState<QuickReply | null>(null);
   const [form, setForm] = useState(false);
-  const { selectedChat } = useChatStore();
-  const { sendMessage } = useChat();
+
+  const sheetRef = useRef<BottomSheetModal>(null)
   const {
     handleSubmit,
     control,
@@ -47,15 +47,7 @@ const QuickReplies = () => {
     defaultValues: { name: "", content: "" },
   });
 
-  const onSend = () => {
-    if (!selectedReply) return;
-    const formdata = new FormData();
-    formdata.append("type", "text");
-    formdata.append("message", selectedReply?.content);
-    sendMessage({ receiverId: selectedChat?.id!, data: formdata });
-    setSelectedReply(null);
-    router.back();
-  };
+
 
   const onSubmit = async (data: z.infer<typeof quickReplySchema>) => {
     createQuickReply.mutate({ name: data.name, content: data.content });
@@ -88,7 +80,7 @@ const QuickReplies = () => {
           data={quickReplies.data}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <QuickReplyCard data={item} onSend={() => setSelectedReply(item)} />
+            <QuickReplyCard data={item} onSend={() => { setSelectedReply(item); sheetRef.current?.present() }} />
           )}
           initialNumToRender={10}
           maxToRenderPerBatch={5}
@@ -100,7 +92,7 @@ const QuickReplies = () => {
 
       {/* -----------Alert Modal---------- */}
 
-      <Modal
+      {/* <Modal
         visible={!!selectedReply}
         transparent={true}
         animationType="fade"
@@ -145,7 +137,10 @@ const QuickReplies = () => {
             </TouchableOpacity>
           </Pressable>
         </Pressable>
-      </Modal>
+      </Modal> */}
+
+
+      <SendQuickReply ref={sheetRef} selectedReply={selectedReply!} />
 
       {/* -----------Form Modal---------- */}
 
