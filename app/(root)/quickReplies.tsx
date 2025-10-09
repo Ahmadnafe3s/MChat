@@ -34,6 +34,7 @@ const QuickReplies = () => {
     afterSuccess: () => setForm(false),
   });
   const [selectedReply, setSelectedReply] = useState<QuickReply | null>(null);
+
   const [form, setForm] = useState(false);
 
   const sheetRef = useRef<BottomSheetModal>(null)
@@ -46,6 +47,7 @@ const QuickReplies = () => {
     resolver: zodResolver(quickReplySchema),
     defaultValues: { name: "", content: "" },
   });
+
 
 
 
@@ -90,55 +92,7 @@ const QuickReplies = () => {
         />
       </SafeAreaView>
 
-      {/* -----------Alert Modal---------- */}
-
-      {/* <Modal
-        visible={!!selectedReply}
-        transparent={true}
-        animationType="fade"
-        statusBarTranslucent={true}
-      >
-        <Pressable
-          className="relative flex-1 bg-black/20 justify-center items-center"
-          onPress={() => setSelectedReply(null)}
-        >
-          <Pressable
-            className="bg-white mx-5 p-5 rounded-xl items-center gap-3"
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View className="bg-yellow-100 p-6 rounded-full mt-2">
-              <Image
-                source={icons.failed as any}
-                className="w-20 h-20"
-                tintColor={"#eab308"}
-              />
-            </View>
-
-            <Text className="text-lg font-JakartaSemiBold text-neutral-600">
-              Do you want to send this quick reply?
-            </Text>
-            <Text className="text-sm text-neutral-500">
-              ( {selectedReply?.name} )
-            </Text>
-
-            <View className="flex flex-row gap-2 mt-4">
-              <CustomButton title="Send" onPress={onSend} />
-            </View>
-
-            <TouchableOpacity
-              className="absolute top-4 right-5"
-              onPress={() => setSelectedReply(null)}
-            >
-              <Image
-                source={icons.cross as any}
-                className="w-6 h-6"
-                tintColor={"#d1d5db"}
-              />
-            </TouchableOpacity>
-          </Pressable>
-        </Pressable>
-      </Modal> */}
-
+      {/* -----------Send Quick Reply---------- */}
 
       <SendQuickReply ref={sheetRef} selectedReply={selectedReply!} />
 

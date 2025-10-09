@@ -73,13 +73,13 @@ const Contacts = () => {
           />
         } // if user function is not memoized, it will re-render
         ListFooterComponent={
-          <View className="mb-4">
+          <View className="mb-20">
             {isFetchingNextPage && <ChatCardPlaceholder />}
           </View>
         }
         contentContainerStyle={{
           paddingHorizontal: 10,
-          paddingBottom: 10,
+          paddingBottom: 50,
         }}
       />
     </View>

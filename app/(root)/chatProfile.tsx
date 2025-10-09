@@ -15,14 +15,13 @@ const submitAsOptions = ["Open", "Solved", "Pending"];
 const ChatProfile = () => {
   const { selectedChat } = useChatStore();
   const [tag, setTag] = useState("")
+  const [switchTagInput, setSwitchTagInput] = useState(false)
   const [note, setNote] = useState("")
   const { user } = useAuthStore()
   const router = useRouter();
-  const { chatProfile, agentList, submitAs, assignAgent, createTag, createNote } = useContactProfile();
-
+  const { chatProfile, agentList, submitAs, assignAgent, createTag, getTags, createNote } = useContactProfile();
 
   if (chatProfile.isLoading) return <ChatProfilePlaceholder />
-
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -163,34 +162,58 @@ const ChatProfile = () => {
                     <View className="w-1 h-4 bg-purple-500 rounded-full" />
                     <Text className="text-sm font-JakartaBold text-gray-800">Tag</Text>
                   </View>
-                  <View className="flex flex-row items-center px-4 gap-3 border-2 bg-white border-gray-100 rounded-2xl shadow-sm">
-                    <Image source={icons.tag as any} className="w-5 h-5" tintColor={"#9333ea"} />
-                    <TextInput
-                      value={tag}
-                      onChangeText={(text) => setTag(text)}
-                      placeholder="Add a tag"
-                      placeholderTextColor="#9ca3af"
-                      className="flex-1 rounded-xl py-4 font-JakartaMedium"
-                      maxLength={100}
-                    />
-                    {createTag.isPending ? (
-                      <ActivityIndicator color={'#10b981'} />
+                  {switchTagInput ?
+                    (
+                      <View className="flex flex-row items-center px-4 gap-3 border-2 bg-white border-gray-100 rounded-2xl shadow-sm">
+                        <Image source={icons.tag as any} className="w-5 h-5" tintColor={"#9333ea"} />
+                        <TextInput
+                          value={tag}
+                          onChangeText={(text) => setTag(text)}
+                          placeholder="Add a tag"
+                          placeholderTextColor="#9ca3af"
+                          className="flex-1 rounded-xl py-4 font-JakartaMedium"
+                          maxLength={100}
+                        />
+                        {createTag.isPending ? (
+                          <ActivityIndicator color={'#10b981'} />
+                        ) : (
+                          <TouchableOpacity
+                            onPress={() => createTag.mutate({ name: tag }, { onSuccess: () => setTag("") })}
+                            disabled={!tag}
+                            className={`${!tag && 'opacity-40'}`}
+                          >
+                            <View className="bg-emerald-500 rounded-xl p-2 shadow-md">
+                              <Image
+                                source={icons.add as any}
+                                className="size-5"
+                                tintColor={"#fff"}
+                              />
+                            </View>
+                          </TouchableOpacity>
+                        )}
+                      </View>
                     ) : (
-                      <TouchableOpacity
-                        onPress={() => createTag.mutate({ name: tag }, { onSuccess: () => setTag("") })}
-                        disabled={!tag}
-                        className={`${!tag && 'opacity-40'}`}
-                      >
-                        <View className="bg-emerald-500 rounded-xl p-2 shadow-md">
-                          <Image
-                            source={icons.add as any}
-                            className="size-5"
-                            tintColor={"#fff"}
-                          />
-                        </View>
-                      </TouchableOpacity>
+                      <Select
+                        value={tag}
+                        options={getTags.data?.map((tag) => ({ value: `${tag.id}+${tag.name}`, label: tag.name })) || []}
+                        onValueChange={(value) => {
+                          setTag(value)
+                          createTag.mutate({ name: value.split('+')[1] }, { onSuccess: () => setTag("") })
+                        }}
+                      />
                     )}
-                  </View>
+
+                  <TouchableOpacity
+                    onPress={() => {
+                      setTag("")
+                      setSwitchTagInput(!switchTagInput)
+                    }}
+                    className="flex flex-row justify-end"
+                  >
+                    <Text className="text-sm font-JakartaSemiBold text-emerald-600 text-end">
+                      {!switchTagInput ? "custom tag" : "select a tag"}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
 
                 {/* --------------Tag List------------- */}

@@ -55,13 +55,20 @@ const useContactProfile = () => {
   })
 
 
+  const getTags = useQuery({
+    queryKey: ['tags', user?.id],
+    queryFn: () => contactProfileApi.getTags({ value: user?.id! }),
+    enabled: !!user?.id
+  })
+
+
   const createTag = useMutation({
     mutationFn: (params: { name: string }) => contactProfileApi.createTag(selectedChat?.id!, params),
-    onSuccess: (newData: any) => {
-      console.log(newData)
-      queryClient.setQueryData(["chatProfile", selectedChat?.id], (oldData: ChatProfile) => {
+    onSuccess: async (newData: any) => {
+      await queryClient.setQueryData(["chatProfile", selectedChat?.id], (oldData: ChatProfile) => {
         return { ...oldData, tag: [newData, ...oldData?.tag] }
       });
+      queryClient.invalidateQueries({ queryKey: ['tags', user?.id] })
     },
     onError: (err: AxiosError<{ message: string }>) => {
       const message = err.response?.data.message! || "Something went wrong";
@@ -82,12 +89,14 @@ const useContactProfile = () => {
     }
   })
 
+
   return {
     chatProfile,
     agentList,
     submitAs,
     assignAgent,
     createTag,
+    getTags,
     createNote
   };
 };

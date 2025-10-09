@@ -14,6 +14,7 @@ import doubleCheck from "@/assets/icons/check-double.png";
 import check from "@/assets/icons/check.png";
 import clip from "@/assets/icons/clip.png";
 import watch from "@/assets/icons/clock-three.png";
+import chat from "@/assets/icons/comment-dots.png";
 import cross from "@/assets/icons/cross.png";
 import document from "@/assets/icons/document.png";
 import download from "@/assets/icons/download.png";
@@ -30,6 +31,7 @@ import phone from "@/assets/icons/mobile-notch.png";
 import note from "@/assets/icons/note-sticky.png";
 import send from "@/assets/icons/paper-plane-top.png";
 import pause from "@/assets/icons/pause.png";
+import dialer from "@/assets/icons/phone-flip.png";
 import gallery from "@/assets/icons/picture.png";
 import play from "@/assets/icons/play.png";
 import search from "@/assets/icons/search.png";
@@ -82,7 +84,9 @@ export const icons = {
   tag,
   note,
   template,
-  globe
+  globe,
+  dialer,
+  chat
 };
 
 export const onboarding = [
