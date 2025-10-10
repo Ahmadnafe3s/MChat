@@ -46,6 +46,10 @@ const ChatApi = {
       `https://meta.muzztech.com/api/v1/block-unblock/${selectedChat}`
     );
     return res.data;
+  },
+  getMedia: async (selectedChat: number): Promise<ChatMediaResponse> => {
+    const res = await axios.get(`https://meta.muzztech.com/api/v1/chat-media/${selectedChat}`);
+    return res.data
   }
 };
 

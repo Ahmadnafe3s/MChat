@@ -128,6 +128,12 @@ const useChat = (screen?: "chats" | "conversation" | "template") => {
   })
 
 
+  const getChatMedia = useQuery({
+    queryKey: ["media", selectedChat?.id],
+    queryFn: () => ChatApi.getMedia(selectedChat?.id!),
+    enabled: !!selectedChat?.id,
+  });
+
   const onSearch = debounce((value: string) => {
     setSearch(value);
   }, 400);
@@ -174,6 +180,9 @@ const useChat = (screen?: "chats" | "conversation" | "template") => {
 
     // block chat
     blockChat,
+
+    // media
+    getChatMedia
   };
 };
 

@@ -14,6 +14,7 @@ const ConversationHeader = memo(({ onTemplate }: { onTemplate: () => void }) => 
   const { starredChat, blockChat } = useChat();
   const { showToast } = useToastStore()
 
+  console.log("Selected Chat ID", selectedChat?.id)
 
   const handleSelect = (value: string) => {
     switch (value) {
@@ -48,13 +49,17 @@ const ConversationHeader = memo(({ onTemplate }: { onTemplate: () => void }) => 
               {selectedChat?.formatted}
             </Text>
           </View>
-          <Text
-            className="text-lg flex-1  text-neutral-700 font-Jakarta mr-2"
-            numberOfLines={1}
-            ellipsizeMode="tail"
+          <TouchableOpacity className="flex flex-1"
+            onPress={ () => router.push(`/(root)/allMedia`) }
           >
-            {selectedChat?.name}
-          </Text>
+            <Text
+              className="text-lg  text-neutral-700 font-Jakarta mr-2"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {selectedChat?.name}
+            </Text>
+          </TouchableOpacity>
         </View>
 
 

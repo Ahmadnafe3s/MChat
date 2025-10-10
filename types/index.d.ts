@@ -143,3 +143,18 @@ declare interface Template {
   variable: string;
   created_at: string;
 }
+
+
+// --------------------Chat Media-------------------
+
+
+declare interface ChatMediaResponse {
+  success: true,
+  data: Array<{
+    id: number,
+    filetype: "audio" | "image" | "video",
+    format: "ogg" | "mp4" | "png",
+    link: string
+  }>,
+  count: 0
+}
