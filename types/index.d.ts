@@ -158,3 +158,30 @@ declare interface ChatMediaResponse {
   }>,
   count: 0
 }
+
+
+
+// --------------------Calls-------------------
+
+declare interface CallLogs {
+  success: true,
+  statuses: {
+    total: number
+    missed: string,
+    answered: string
+    incoming: string
+    outgoing: string
+  },
+  count: number
+  data: Array<{
+    id: number
+    agent_name: string
+    contact_name: string
+    contact_phone: string
+    call_status: string
+    duration: string
+    direction: string
+    call_date: string
+  }>
+
+}
