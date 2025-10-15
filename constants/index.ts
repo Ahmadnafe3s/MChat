@@ -31,7 +31,13 @@ import phone from "@/assets/icons/mobile-notch.png";
 import note from "@/assets/icons/note-sticky.png";
 import send from "@/assets/icons/paper-plane-top.png";
 import pause from "@/assets/icons/pause.png";
-import dialer from "@/assets/icons/phone-flip.png";
+// import dialer from "@/assets/icons/phone-flip.png";
+import call_incoming from "@/assets/icons/call-incoming.png";
+import call_missed from "@/assets/icons/call-missed.png";
+import call_outgoing from "@/assets/icons/call-outgoing.png";
+import contact from "@/assets/icons/form.png";
+import campaign from "@/assets/icons/megaphone.png";
+import call from "@/assets/icons/phone-call.png";
 import gallery from "@/assets/icons/picture.png";
 import play from "@/assets/icons/play.png";
 import search from "@/assets/icons/search.png";
@@ -41,6 +47,7 @@ import tag from "@/assets/icons/tags.png";
 import template from "@/assets/icons/template.png";
 import user from "@/assets/icons/user.png";
 import avatar from "@/assets/images/avatar.png";
+
 
 export const images = {
   onboarding1,
@@ -85,8 +92,13 @@ export const icons = {
   note,
   template,
   globe,
-  dialer,
-  chat
+  chat,
+  call,
+  call_incoming,
+  call_missed,
+  call_outgoing,
+  contact,
+  campaign
 };
 
 export const onboarding = [

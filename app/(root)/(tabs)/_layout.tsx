@@ -44,11 +44,29 @@ const TabLayout = () => {
             />
             <Tabs.Screen
 
+                name="contacts"
+                options={{
+                    tabBarLabel: 'Contacts',
+                    headerShown: false,
+                    tabBarIcon: ({ focused }) => (<TabIcon focused={focused} Icon={icons.contact} />)
+                }}
+            />
+            <Tabs.Screen
+
+                name="campaign"
+                options={{
+                    tabBarLabel: 'Campaigns',
+                    headerShown: false,
+                    tabBarIcon: ({ focused }) => (<TabIcon focused={focused} Icon={icons.campaign} />)
+                }}
+            />
+            <Tabs.Screen
+
                 name="callLogs"
                 options={{
                     tabBarLabel: 'Calls',
                     headerShown: false,
-                    tabBarIcon: ({ focused }) => (<TabIcon focused={focused} Icon={icons.dialer} />)
+                    tabBarIcon: ({ focused }) => (<TabIcon focused={focused} Icon={icons.call} />)
                 }}
             />
         </Tabs>
