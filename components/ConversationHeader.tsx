@@ -7,7 +7,7 @@ import React, { memo } from "react";
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
 import Dropdown from "./Dropdown";
 
-const ConversationHeader = memo(({ onTemplate }: { onTemplate: () => void }) => {
+const ConversationHeader = memo(({ onTemplate, onCall }: { onTemplate: () => void, onCall: () => void }) => {
 
   const router = useRouter();
   const { selectedChat } = useChatStore();
@@ -50,7 +50,7 @@ const ConversationHeader = memo(({ onTemplate }: { onTemplate: () => void }) => 
             </Text>
           </View>
           <TouchableOpacity className="flex flex-1"
-            onPress={ () => router.push(`/(root)/allMedia`) }
+            onPress={() => router.push(`/(root)/allMedia`)}
           >
             <Text
               className="text-lg  text-neutral-700 font-Jakarta mr-2"
@@ -75,6 +75,13 @@ const ConversationHeader = memo(({ onTemplate }: { onTemplate: () => void }) => 
                 tintColor={"#ffbb00"}
               />
             )}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onCall}>
+            <Image
+              source={icons.dialer as any}
+              className="w-6 h-6"
+              tintColor={"#10b981"}
+            />
           </TouchableOpacity>
           <Dropdown
             options={["Template", "Clear Chat", selectedChat?.status === "Blocked" ? "Unblock" : "Block", "Profile"]}

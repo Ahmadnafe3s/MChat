@@ -312,7 +312,7 @@ const headerStyleCoinfig = (statuses: any) => (
     [
         {
             label: 'Total Calls',
-            value: statuses.total,
+            value: statuses.total ?? 0,
             color: 'text-amber-500',
             bgColor: 'bg-amber-50',
             borderColor: 'border-amber-200',
@@ -321,7 +321,7 @@ const headerStyleCoinfig = (statuses: any) => (
         },
         {
             label: 'Missed',
-            value: statuses.missed,
+            value: statuses.missed ?? 0,
             color: 'text-red-500',
             bgColor: 'bg-red-50',
             borderColor: 'border-red-200',
@@ -330,7 +330,7 @@ const headerStyleCoinfig = (statuses: any) => (
         },
         {
             label: 'Answered',
-            value: statuses.answered,
+            value: statuses.answered ?? 0,
             color: "text-green-500",
             bgColor: 'bg-green-50',
             borderColor: 'border-green-200',
@@ -339,7 +339,7 @@ const headerStyleCoinfig = (statuses: any) => (
         },
         {
             label: 'Outgoing',
-            value: statuses.outgoing,
+            value: statuses.outgoing ?? 0,
             color: 'text-blue-500',
             bgColor: 'bg-blue-50',
             borderColor: 'border-blue-200',
@@ -348,7 +348,7 @@ const headerStyleCoinfig = (statuses: any) => (
         },
         {
             label: 'Incoming',
-            value: statuses.incoming,
+            value: statuses.incoming ?? 0,
             color: 'text-emerald-500',
             bgColor: 'bg-emerald-50',
             borderColor: 'border-emerald-200',

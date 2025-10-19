@@ -1,5 +1,6 @@
 
 import ConversationHeader from "@/components/ConversationHeader";
+import InitiateCall from "@/components/initiateCall";
 import Messages from "@/components/Messages";
 import MessageTemplate from "@/components/MessageTemplate";
 import SendChatInput from "@/components/SendChatInput";
@@ -16,6 +17,7 @@ const Conversation = () => {
   const { height } = useGradualKeyboard();
   const { conversations, isLoadingConversations } = useChat("conversation");
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [isInitiateCall, setInitiateCall] = useState(false)
   const flashListRef = React.useRef<FlashList<any>>(null);
   const TemplateRef = useRef<BottomSheetModal>(null);
 
@@ -37,7 +39,10 @@ const Conversation = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* -------------- Chat Header --------------- */}
-      <ConversationHeader onTemplate={() => TemplateRef.current?.present()} />
+      <ConversationHeader
+        onCall={() => setInitiateCall(true)}
+        onTemplate={() => TemplateRef.current?.present()}
+      />
 
       {/* -------------- Flash List --------------- */}
       <FlashList
@@ -89,6 +94,10 @@ const Conversation = () => {
         ref={TemplateRef}
         close={() => TemplateRef.current?.close()}
       />
+
+      {/* -------------- Initiate Call --------------- */}
+
+      {isInitiateCall && <InitiateCall isVisible={isInitiateCall} onClose={() => setInitiateCall(false)} />}
     </SafeAreaView>
   );
 };

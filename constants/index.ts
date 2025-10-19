@@ -9,6 +9,9 @@ import add from "@/assets/icons/add.png";
 import chevronDown from "@/assets/icons/angle-small-down.png";
 import moveLeft from "@/assets/icons/arrow-left.png";
 import flash from "@/assets/icons/bolt.png";
+import call_incoming from "@/assets/icons/call-incoming.png";
+import call_missed from "@/assets/icons/call-missed.png";
+import call_outgoing from "@/assets/icons/call-outgoing.png";
 import check_circle from "@/assets/icons/check-circle.png";
 import doubleCheck from "@/assets/icons/check-double.png";
 import check from "@/assets/icons/check.png";
@@ -20,24 +23,21 @@ import document from "@/assets/icons/document.png";
 import download from "@/assets/icons/download.png";
 import error_bug from "@/assets/icons/error-bug.png";
 import failed from "@/assets/icons/exclamation.png";
+import contact from "@/assets/icons/form.png";
 import filter from "@/assets/icons/funnel.png";
 import globe from "@/assets/icons/globe.png";
 import audio from "@/assets/icons/headphones.png";
 import company from "@/assets/icons/house-building.png";
 import key from "@/assets/icons/key-round.png";
 import mail from "@/assets/icons/mail.png";
+import campaign from "@/assets/icons/megaphone.png";
 import more from "@/assets/icons/menu-dots-vertical.png";
 import phone from "@/assets/icons/mobile-notch.png";
 import note from "@/assets/icons/note-sticky.png";
 import send from "@/assets/icons/paper-plane-top.png";
 import pause from "@/assets/icons/pause.png";
-// import dialer from "@/assets/icons/phone-flip.png";
-import call_incoming from "@/assets/icons/call-incoming.png";
-import call_missed from "@/assets/icons/call-missed.png";
-import call_outgoing from "@/assets/icons/call-outgoing.png";
-import contact from "@/assets/icons/form.png";
-import campaign from "@/assets/icons/megaphone.png";
 import call from "@/assets/icons/phone-call.png";
+import dialer from "@/assets/icons/phone-flip.png";
 import gallery from "@/assets/icons/picture.png";
 import play from "@/assets/icons/play.png";
 import search from "@/assets/icons/search.png";
@@ -98,7 +98,8 @@ export const icons = {
   call_missed,
   call_outgoing,
   contact,
-  campaign
+  campaign,
+  dialer
 };
 
 export const onboarding = [

@@ -1,7 +1,7 @@
 import callApi from '@/services/call';
 import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 
 const useCall = () => {
 
@@ -21,8 +21,20 @@ const useCall = () => {
     })
   }
 
+
+  const initiateCall = useMutation({
+    mutationFn: (selectedChat: number) => callApi.initiateCall(user?.id!, selectedChat),
+    onSuccess: (newData) => {
+      showToast("Call Initiated Successfully", "success")
+    },
+    onError: () => {
+      showToast("Failed to initiate call", "error")
+    }
+  })
+
   return {
-    getCallLogs
+    getCallLogs,
+    initiateCall
   }
 }
 
