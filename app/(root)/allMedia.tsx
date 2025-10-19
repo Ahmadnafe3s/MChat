@@ -1,9 +1,11 @@
 import Multimedia from '@/components/Multimedia'
 import { icons } from '@/constants'
 import useChat from '@/hooks/useChat'
+import { useToastStore } from '@/store/toast'
+import downloadFile from '@/utils/downloadFiles'
 import { FlashList } from '@shopify/flash-list'
 import { useRouter } from 'expo-router'
-import React, { useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { Dimensions, Image, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Video, { VideoRef } from 'react-native-video'
@@ -13,7 +15,7 @@ const ITEM_SIZE = (width - 32) / 3
 
 interface MediaItem {
   id: number
-  filetype: 'image' | 'video' | 'audio'
+  filetype: 'image' | 'video' | 'audio' | 'application'
   format: string
   link: string
 }
@@ -21,6 +23,7 @@ interface MediaItem {
 const AllMedia = () => {
   const router = useRouter()
   const { getChatMedia } = useChat()
+  const { showToast } = useToastStore()
   const [selectedMedia, setSelectedMedia] = useState<{
     visible: boolean
     type: 'image' | 'video'
@@ -31,9 +34,15 @@ const AllMedia = () => {
     source: ''
   })
 
-  const [playingAudio, setPlayingAudio] = useState<number | null>(null)
-  const [isPaused, setIsPaused] = useState(false)
-  const playerRef = useRef<VideoRef>(null)
+  const [playingAudioId, setPlayingAudioId] = useState<number | null>(null)
+  const [isPaused, setIsPaused] = useState(true)
+  const audioRef = useRef<VideoRef>(null)
+
+  // Find the currently playing audio item
+  const currentAudioItem = useMemo(() => {
+    if (!playingAudioId || !getChatMedia.data?.data) return null
+    return getChatMedia.data.data.find(item => item.id === playingAudioId)
+  }, [playingAudioId, getChatMedia.data?.data])
 
   const handleMediaPress = (item: MediaItem) => {
     if (item.filetype === 'image' || item.filetype === 'video') {
@@ -43,17 +52,21 @@ const AllMedia = () => {
         source: item.link
       })
     } else if (item.filetype === 'audio') {
-      if (playingAudio === item.id) {
-        setPlayingAudio(null)
-        setIsPaused(false)
+      if (playingAudioId === item.id) {
+        // Toggle pause/play for the same audio
+        setIsPaused(!isPaused)
       } else {
-        setPlayingAudio(item.id)
+        // Switch to a new audio
+        setPlayingAudioId(item.id)
         setIsPaused(false)
       }
+    } else if (item.filetype === 'application') {
+      downloadFile({
+        url: item.link,
+        fileName: `Document-${Date.now()}.${item.format}`
+      }).catch((error) => showToast("Failed to download file", "error"))
     }
   }
-
-  console.log(playingAudio)
 
   const closeMediaViewer = () => {
     setSelectedMedia({ visible: false, type: 'image', source: '' })
@@ -63,7 +76,8 @@ const AllMedia = () => {
     const isAudio = item.filetype === 'audio'
     const isVideo = item.filetype === 'video'
     const isImage = item.filetype === 'image'
-    const isPlayingCurrent = playingAudio === item.id
+    const isApplication = item.filetype === 'application'
+    const isPlaying = playingAudioId === item.id && !isPaused
 
     return (
       <TouchableOpacity
@@ -104,65 +118,107 @@ const AllMedia = () => {
 
           {/* Audio Visual */}
           {isAudio && (
-            <View
-              className="flex-1 items-center justify-center"
-              style={{
-                backgroundColor: isPlayingCurrent && isPaused ? '#3b82f6' : '#e5e5e5'
-              }}
-            >
+            <>
               <View
-                className="rounded-full p-4"
+                className="flex-1 items-center justify-center"
                 style={{
-                  backgroundColor: isPlayingCurrent && isPaused ? '#ffffff' : '#3b82f6',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 8,
-                  elevation: 4
+                  backgroundColor: isPlaying ? '#3b82f6' : '#e5e5e5'
                 }}
               >
-                <Image
-                  source={isPlayingCurrent && isPaused ? icons.pause : icons.audio as any}
-                  className="w-6 h-6"
-                  style={{ tintColor: isPlayingCurrent && isPaused ? '#3b82f6' : '#ffffff' }}
-                />
-              </View>
-              {isPlayingCurrent && isPaused && (
-                <View className="mt-3 flex-row gap-1 items-end">
-                  <View className="w-1 h-2 bg-white rounded-full" />
-                  <View className="w-1 h-4 bg-white rounded-full" />
-                  <View className="w-1 h-3 bg-white rounded-full" />
-                  <View className="w-1 h-5 bg-white rounded-full" />
-                  <View className="w-1 h-2 bg-white rounded-full" />
+                <View
+                  className="rounded-full p-4"
+                  style={{
+                    backgroundColor: isPlaying ? '#ffffff' : '#3b82f6',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 8,
+                    elevation: 4
+                  }}
+                >
+                  <Image
+                    source={isPlaying ? icons.pause : icons.audio as any}
+                    className="w-6 h-6"
+                    style={{ tintColor: isPlaying ? '#3b82f6' : '#ffffff' }}
+                  />
                 </View>
-              )}
 
-              <Video
-                ref={playerRef}
-                source={{
-                  uri: item.link
-                }}
-                paused={isPaused}
-                onEnd={() => {
-                  playerRef?.current?.seek(0)
-                }}
-                onError={(error) => {
-                  console.log('Audio error:', error)
-                }}
-                volume={1.0}
-                style={{ width: 0, height: 0 }}
-              />
-            </View>
+                {/* Audio Wave Animation - Only show when playing */}
+                {isPlaying && (
+                  <View className="mt-3 flex-row gap-1 items-end">
+                    <View className="w-1 h-2 bg-white rounded-full" />
+                    <View className="w-1 h-4 bg-white rounded-full" />
+                    <View className="w-1 h-3 bg-white rounded-full" />
+                    <View className="w-1 h-5 bg-white rounded-full" />
+                    <View className="w-1 h-2 bg-white rounded-full" />
+                  </View>
+                )}
+              </View>
+
+              {/* Format Badge */}
+              <View className={`absolute top-2 right-2 ${isPlaying ? 'bg-white/20' : 'bg-black/60'} px-2 py-0.5 rounded-full backdrop-blur-sm`}>
+                <Text className="text-white text-[10px] font-JakartaBold uppercase">
+                  {item.format}
+                </Text>
+              </View>
+            </>
           )}
 
-          {/* Format Badge */}
-          <View className={`absolute top-2 right-2 ${isAudio && isPlayingCurrent ? 'bg-white/20' : 'bg-black/60'} px-2 py-0.5 rounded-full backdrop-blur-sm`}>
-            <Text className={`${isAudio && isPlayingCurrent ? 'text-white' : 'text-white'} text-[10px] font-JakartaBold uppercase`}>
-              {item.format}
-            </Text>
-          </View>
+          {/* Application/Document Visual */}
+          {isApplication && (
+            <>
+              <View className="flex-1 items-center justify-center bg-red-50">
+                <View
+                  className="rounded-2xl p-3 bg-white"
+                  style={{
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 8,
+                    elevation: 4
+                  }}
+                >
+                  <Image
+                    source={icons.clip as any}
+                    className="w-8 h-8"
+                    style={{ tintColor: '#dc2626' }}
+                  />
+                </View>
 
+                {/* Document Type Label */}
+                <View className="mt-2 bg-white/90 px-2 py-1 rounded-full">
+                  <Text className="text-red-600 text-[9px] font-JakartaBold uppercase">
+                    Document
+                  </Text>
+                </View>
+              </View>
 
+              {/* Format Badge */}
+              <View className="absolute top-2 right-2 bg-red-600 px-2 py-0.5 rounded-full">
+                <Text className="text-white text-[10px] font-JakartaBold uppercase">
+                  {item.format}
+                </Text>
+              </View>
+
+              {/* Download Icon Overlay */}
+              <View className="absolute bottom-2 right-2 bg-white rounded-full p-1.5">
+                <Image
+                  source={icons.download as any}
+                  className="w-3 h-3"
+                  style={{ tintColor: '#dc2626' }}
+                />
+              </View>
+            </>
+          )}
+
+          {/* Format Badge for non-audio/non-application */}
+          {!isAudio && !isApplication && (
+            <View className="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-sm">
+              <Text className="text-white text-[10px] font-JakartaBold uppercase">
+                {item.format}
+              </Text>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     )
@@ -205,6 +261,7 @@ const AllMedia = () => {
           estimatedItemSize={ITEM_SIZE}
           contentContainerStyle={{ padding: 8 }}
           showsVerticalScrollIndicator={false}
+          extraData={[playingAudioId, isPaused]}
         />
       ) : (
         <View className="flex-1 items-center justify-center p-8">
@@ -224,6 +281,29 @@ const AllMedia = () => {
         </View>
       )}
 
+      {/* Global Audio Player - Hidden but controls audio playback */}
+      {playingAudioId !== null && currentAudioItem && (
+        <Video
+          ref={audioRef}
+          source={{ uri: currentAudioItem.link }}
+          paused={isPaused}
+          onEnd={() => {
+            setIsPaused(true)
+            audioRef.current?.seek(0)
+          }}
+          onError={(error) => {
+            console.log('Audio error:', error)
+            setPlayingAudioId(null)
+            setIsPaused(true)
+            showToast("Failed to play audio", "error")
+          }}
+          playInBackground={false}
+          playWhenInactive={false}
+          ignoreSilentSwitch="ignore"
+          volume={1.0}
+          style={{ width: 0, height: 0, position: 'absolute' }}
+        />
+      )}
 
       {/* Media Viewer Modal */}
       <Multimedia
