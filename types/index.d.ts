@@ -185,3 +185,53 @@ declare interface CallLogs {
   }>
 
 }
+
+
+
+// --------------------Campaigns-------------------
+
+
+declare interface Campaign {
+  id: number;
+  job_id: string;
+  template: string;
+  phonebook: string;
+  total: number;
+  status: string;
+  through: string;
+  scheduled_at: string;
+  deducted: string;
+  formatted_date: string;
+  created_at: string;
+}
+
+declare interface CampaignStatuses {
+  total: number;
+  pending_count: string;
+  submitted_count: string;
+  sent_count: string;
+  delivered_count: string;
+  read_count: string;
+  failed_count: string;
+  paused_count: string;
+}
+
+declare interface CampaignResponse {
+  success: boolean;
+  statuses: CampaignStatuses;
+  count: number;
+  data: Campaign[];
+}
+
+
+declare interface CampaignDetails {
+  id: number,
+  total: string
+  pending_count: number
+  submitted_count: number
+  sent_count: number
+  delivered_count: number
+  read_count: number
+  failed_count: number
+  paused_count: number
+}
