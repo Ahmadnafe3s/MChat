@@ -2,13 +2,14 @@ import useCall from '@/hooks/useCall'
 import { useChatStore } from '@/store/chat'
 import React, { useEffect } from 'react'
 import { Modal, Text, View } from 'react-native'
-import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
 
 const InitiateCall = ({ isVisible, onClose }: { isVisible: boolean, onClose: () => void }) => {
 
     const { initiateCall } = useCall()
     const opacity = useSharedValue(1)
     const scale = useSharedValue(1)
+    const scale2 = useSharedValue(1) // Separate shared value for second ring
 
     const { selectedChat } = useChatStore()
 
@@ -19,6 +20,11 @@ const InitiateCall = ({ isVisible, onClose }: { isVisible: boolean, onClose: () 
     const animatedRingStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scale.value }],
         opacity: 1 - (scale.value - 1) * 2
+    }))
+
+    const animatedRing2Style = useAnimatedStyle(() => ({
+        transform: [{ scale: scale2.value }],
+        opacity: 1 - (scale2.value - 1) * 2
     }))
 
     useEffect(() => {
@@ -41,6 +47,15 @@ const InitiateCall = ({ isVisible, onClose }: { isVisible: boolean, onClose: () 
                 withSequence(
                     withTiming(1, { duration: 0 }),
                     withTiming(1.4, { duration: 1500 })
+                ),
+                -1
+            )
+
+            // Second ring with delay for staggered effect
+            scale2.value = withRepeat(
+                withSequence(
+                    withTiming(1, { duration: 0 }),
+                    withDelay(300, withTiming(1.5, { duration: 1500 }))
                 ),
                 -1
             )
@@ -70,11 +85,7 @@ const InitiateCall = ({ isVisible, onClose }: { isVisible: boolean, onClose: () 
                             className="absolute bg-emerald-200 rounded-full size-32"
                         />
                         <Animated.View
-                            style={[animatedRingStyle, {
-                                transform: [{
-                                    scale: useSharedValue(1).value
-                                }]
-                            }]}
+                            style={animatedRing2Style}
                             className="absolute bg-emerald-200/30 rounded-full size-40"
                         />
 

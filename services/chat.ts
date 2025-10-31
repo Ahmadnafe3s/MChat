@@ -10,7 +10,7 @@ const ChatApi = {
     search?: string;
   }): Promise<PaginatedChats> => {
     const res = await axios.get(
-      `https://meta.muzztech.com/api/v1/chat/contacts`,
+      `https://meta.muzztech.com/api/v1/chat/list`,
       { params }
     );
     return res.data;
@@ -50,6 +50,15 @@ const ChatApi = {
   getMedia: async (selectedChat: number): Promise<ChatMediaResponse> => {
     const res = await axios.get(`https://meta.muzztech.com/api/v1/chat-media/${selectedChat}`);
     return res.data
+  },
+
+  sendOTP: async (selectedChat: number) => {
+    const res = await axios.post(`https://meta.muzztech.com/api/v1/send-otp/${selectedChat}`);
+    return res.data;
+  },
+  verifyOTP: async (selectedChat: number, params: { otp: number }) => {
+    const res = await axios.post(`https://meta.muzztech.com/api/v1/verify-otp/${selectedChat}`, { params });
+    return res.data;
   }
 };
 

@@ -29,7 +29,7 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
         resolver: zodResolver(templateVarSchema),
         defaultValues: { variable: [] }
     });
-    const { fields, append } = useFieldArray({
+    const { fields } = useFieldArray({
         control,
         name: "variable",
     })
@@ -54,6 +54,7 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
         })
     }
 
+    console.log(getTemplate.data)
 
     const renderBackdrop = React.useCallback((props: any) => (
         <BottomSheetBackdrop
@@ -73,7 +74,7 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
                     <Text className='text-xl font-JakartaBold text-neutral-800'>Message Templates</Text>
                     <View className='py-1 px-3 bg-amber-100 rounded-full border border-amber-200'>
                         <Text className='text-amber-600 font-JakartaSemiBold text-sm'>
-                            {getTemplate.data?.total}
+                            {getTemplate.data?.count}
                         </Text>
                     </View>
                 </View>

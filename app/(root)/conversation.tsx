@@ -1,10 +1,13 @@
 
+import CustomAlert from "@/components/Alert";
 import ConversationHeader from "@/components/ConversationHeader";
 import InitiateCall from "@/components/initiateCall";
+import OTPModal from "@/components/InputOTP";
 import Messages from "@/components/Messages";
 import MessageTemplate from "@/components/MessageTemplate";
 import SendChatInput from "@/components/SendChatInput";
 import useChat from "@/hooks/useChat";
+import useClearChat from "@/hooks/useClearChat";
 import useGradualKeyboard from "@/hooks/useGradualKeyboard";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
@@ -20,12 +23,20 @@ const Conversation = () => {
   const [isInitiateCall, setInitiateCall] = useState(false)
   const flashListRef = React.useRef<FlashList<any>>(null);
   const TemplateRef = useRef<BottomSheetModal>(null);
+  const { sendOTP, verifyOTP } = useClearChat()
+  const [alert, setAlert] = useState(false)
+  const [otpVisible, setOtpVisible] = useState<boolean>(false);
 
   const keyboardPadding = useAnimatedStyle(() => {
     return { height: height.value };
   }, []);
 
   const isLessThan6 = conversations?.length! < 6;
+
+  const handleCancelClearChat = () => {
+    setOtpVisible(false)
+    setAlert(false)
+  }
 
   useEffect(() => {
     if (!isAtBottom && conversations?.length! > 0) {
@@ -36,12 +47,14 @@ const Conversation = () => {
     }
   }, [conversations]);
 
+
   return (
     <SafeAreaView style={styles.container}>
       {/* -------------- Chat Header --------------- */}
       <ConversationHeader
         onCall={() => setInitiateCall(true)}
         onTemplate={() => TemplateRef.current?.present()}
+        onClearChat={() => setAlert(true)}
       />
 
       {/* -------------- Flash List --------------- */}
@@ -98,6 +111,31 @@ const Conversation = () => {
       {/* -------------- Initiate Call --------------- */}
 
       {isInitiateCall && <InitiateCall isVisible={isInitiateCall} onClose={() => setInitiateCall(false)} />}
+
+      {/* -------------- Alert --------------- */}
+
+      <CustomAlert
+        visible={alert}
+        title="Clear Chat"
+        message="Do you really want clear chat!"
+        onContinue={() => sendOTP.mutate("no_params", {
+          onSuccess: () => setOtpVisible(true)
+        })}
+        onCancel={() => setAlert(false)}
+      />
+
+
+      {/* -------------- Verify OTP --------------- */}
+
+      <OTPModal
+        visible={otpVisible}
+        title="Enter Verification Code"
+        error={verifyOTP.isError ? verifyOTP?.error?.response?.data?.message : ''}
+        onVerify={(otp) => verifyOTP.mutate(Number(otp), {
+          onSuccess: () => handleCancelClearChat()
+        })}
+        onCancel={() => handleCancelClearChat()}
+      />
     </SafeAreaView>
   );
 };

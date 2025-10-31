@@ -19,8 +19,9 @@ const CallLogs = () => {
     const [endDate, setEndDate] = React.useState(new Date())
     const [showStartPicker, setShowStartPicker] = React.useState(false)
     const [showEndPicker, setShowEndPicker] = React.useState(false)
+    const [selectedStatus, setSelectedStatus] = React.useState('All')
     const { getCallLogs } = useCall()
-    const { data, isLoading, isError } = getCallLogs(genDate(startDate), genDate(endDate))
+    const { data, isLoading, isError } = getCallLogs(genDate(startDate), genDate(endDate), selectedStatus)
 
     const filterHeight = useSharedValue(FilterHeaderHeight)
 
@@ -133,11 +134,11 @@ const CallLogs = () => {
                         contentContainerStyle={{ paddingRight: 16 }}
                         className="flex-row"
                     >
-                        {headerStyleCoinfig(statuses).map((item, index) => (
-                            <View
+                        {headerStyleCoinfig(statuses, data.count).map((item, index) => (
+                            <TouchableOpacity
                                 key={index}
-                                className={`mr-3 ${item.bgColor} flex flex-row gap-2 items-center rounded-2xl px-4 py-2 border ${item.borderColor} shadow-sm ${index === 0 ? 'w-40' : 'w-36'
-                                    }`}
+                                activeOpacity={0.7}
+                                onPress={() => setSelectedStatus(item.status)}
                                 style={{
                                     shadowColor: item.icon,
                                     shadowOffset: { width: 0, height: 2 },
@@ -146,34 +147,38 @@ const CallLogs = () => {
                                     elevation: 3,
                                 }}
                             >
-                                {/* Icon Container */}
                                 <View
-                                    className={`w-12 h-12 rounded-xl bg-white items-center justify-center mb-3`}
-                                    style={{
-                                        shadowColor: '#000',
-                                        shadowOffset: { width: 0, height: 1 },
-                                        shadowOpacity: 0.05,
-                                        shadowRadius: 2,
-                                        elevation: 1,
-                                    }}
+                                    className={`mr-3 ${item.bgColor} flex flex-row gap-2 items-center rounded-2xl px-4 py-2 border ${item.borderColor} shadow-sm ${index === 0 ? 'w-40' : 'w-36'}`}
                                 >
-                                    <Image
-                                        source={icons[item.iconName as keyof typeof icons] as any}
-                                        className='size-6'
-                                        tintColor={item.icon}
-                                    />
-                                </View>
+                                    {/* Icon Container */}
+                                    <View
+                                        className={`w-12 h-12 rounded-xl bg-white items-center justify-center mb-3`}
+                                        style={{
+                                            shadowColor: '#000',
+                                            shadowOffset: { width: 0, height: 1 },
+                                            shadowOpacity: 0.05,
+                                            shadowRadius: 2,
+                                            elevation: 1,
+                                        }}
+                                    >
+                                        <Image
+                                            source={icons[item.iconName as keyof typeof icons] as any}
+                                            className='size-6'
+                                            tintColor={item.icon}
+                                        />
+                                    </View>
 
-                                {/* Stats Content */}
-                                <View>
-                                    <Text className={`text-3xl font-extrabold ${item.color} mb-1`}>
-                                        {item.value}
-                                    </Text>
-                                    <Text className="text-gray-600 text-xs font-medium tracking-wide">
-                                        {item.label}
-                                    </Text>
+                                    {/* Stats Content */}
+                                    <View>
+                                        <Text className={`text-3xl font-extrabold ${item.color} mb-1`}>
+                                            {item.value}
+                                        </Text>
+                                        <Text className="text-gray-600 text-xs font-medium tracking-wide">
+                                            {item.label}
+                                        </Text>
+                                    </View>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         ))}
                     </ScrollView>
                 </View>
@@ -308,16 +313,17 @@ export default CallLogs
 
 
 
-const headerStyleCoinfig = (statuses: any) => (
+const headerStyleCoinfig = (statuses: any, allCount: number) => (
     [
         {
-            label: 'Total Calls',
+            label: 'All Calls',
             value: statuses.total ?? 0,
             color: 'text-amber-500',
             bgColor: 'bg-amber-50',
             borderColor: 'border-amber-200',
             icon: '#f59e0b',
-            iconName: 'call'
+            iconName: 'call',
+            status: "All"
         },
         {
             label: 'Missed',
@@ -326,7 +332,8 @@ const headerStyleCoinfig = (statuses: any) => (
             bgColor: 'bg-red-50',
             borderColor: 'border-red-200',
             icon: "#ef4444",
-            iconName: 'call_missed'
+            iconName: 'call_missed',
+            status: "Missed"
         },
         {
             label: 'Answered',
@@ -335,7 +342,8 @@ const headerStyleCoinfig = (statuses: any) => (
             bgColor: 'bg-green-50',
             borderColor: 'border-green-200',
             icon: '#10b981',
-            iconName: 'call'
+            iconName: 'call',
+            status: "Answered"
         },
         {
             label: 'Outgoing',
@@ -344,7 +352,8 @@ const headerStyleCoinfig = (statuses: any) => (
             bgColor: 'bg-blue-50',
             borderColor: 'border-blue-200',
             icon: '#3b82f6',
-            iconName: 'call_outgoing'
+            iconName: 'call_outgoing',
+            status: "Outgoing"
         },
         {
             label: 'Incoming',
@@ -353,7 +362,8 @@ const headerStyleCoinfig = (statuses: any) => (
             bgColor: 'bg-emerald-50',
             borderColor: 'border-emerald-200',
             icon: '#16a34a',
-            iconName: 'call_incoming'
+            iconName: 'call_incoming',
+            status: "Incoming"
         },
     ]
 )

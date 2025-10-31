@@ -7,7 +7,13 @@ import React, { memo } from "react";
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
 import Dropdown from "./Dropdown";
 
-const ConversationHeader = memo(({ onTemplate, onCall }: { onTemplate: () => void, onCall: () => void }) => {
+interface Props {
+  onTemplate: () => void,
+  onCall: () => void,
+  onClearChat: () => void
+}
+
+const ConversationHeader = memo(({ onTemplate, onCall, onClearChat }: Props) => {
 
   const router = useRouter();
   const { selectedChat } = useChatStore();
@@ -23,7 +29,7 @@ const ConversationHeader = memo(({ onTemplate, onCall }: { onTemplate: () => voi
         blockChat.mutate();
         break;
       case "Clear Chat":
-        showToast("Clear chat is not implemented yet", "success")
+        onClearChat()
         break;
       case "Template":
         onTemplate()

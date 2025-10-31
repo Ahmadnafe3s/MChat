@@ -17,8 +17,8 @@ const Chats = () => {
         style={{ paddingTop: insets.top + 24 , marginTop: -insets.top - 16 }}
         className="pb-4 px-5 bg-emerald-400"
       >
-        <View className="flex flex-row items-center justify-between gap-2">
-          <Text className="text-2xl font-JakartaBold text-white">
+        <View className="flex flex-row items-center justify-between gap-2 ">
+          <Text className="text-2xl font-JakartaBold text-white flex-shrink" numberOfLines={1}>
             {user?.company}
           </Text>
           {/* User Avatar */}

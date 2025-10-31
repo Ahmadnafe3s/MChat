@@ -123,7 +123,7 @@ declare interface AgentList {
 
 declare interface TemplatesResponse {
   success: boolean;
-  total: number;
+  count: number;
   data: Template[]
 }
 
