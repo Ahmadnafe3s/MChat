@@ -1,6 +1,6 @@
 import { icons } from "@/constants";
 import downloadFile from "@/utils/downloadFiles";
-import React, { memo, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -13,6 +13,10 @@ import {
 import Video, { VideoRef } from "react-native-video";
 import { ClickableText } from "./ClickableLink";
 import Multimedia from "./Multimedia";
+
+// Global state to track currently playing audio
+let currentlyPlayingAudioId: string | null = null;
+const audioStateListeners = new Set<(id: string | null) => void>();
 
 const { width: screenWidth } = Dimensions.get("window");
 const maxMediaWidth = screenWidth * 0.7; // 70% of screen width
@@ -35,6 +39,45 @@ const Messages = memo(({ data }: { data: Conversations }) => {
     source: "",
     visible: false,
   });
+  const audioId = useRef(`audio-${data.id || Date.now()}-${Math.random()}`).current;
+
+  useEffect(() => {
+    const listener = (playingId: string | null) => {
+      // If another audio is playing and it's not this one, pause this audio
+      if (playingId !== audioId && paused) {
+        setPaused(false);
+        playerRef?.current?.seek(0);
+      }
+    };
+
+    audioStateListeners.add(listener);
+
+    return () => {
+      audioStateListeners.delete(listener);
+      // Clean up if this audio was playing when component unmounts
+      if (currentlyPlayingAudioId === audioId) {
+        currentlyPlayingAudioId = null;
+      }
+    };
+  }, [audioId, paused]);
+
+  const handleAudioPlayPause = () => {
+    const newPausedState = !paused;
+    
+    if (newPausedState) {
+      // Starting to play this audio
+      currentlyPlayingAudioId = audioId;
+      // Notify all other audio instances to pause
+      audioStateListeners.forEach(listener => listener(audioId));
+    } else {
+      // Pausing this audio
+      if (currentlyPlayingAudioId === audioId) {
+        currentlyPlayingAudioId = null;
+      }
+    }
+    
+    setPaused(newPausedState);
+  };
 
   const handleDownload = async () => {
     if (!data?.header?.link) return;
@@ -148,9 +191,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
           </Text>
 
           <TouchableOpacity
-            onPress={() => {
-              setPaused((prev) => !prev);
-            }}
+            onPress={handleAudioPlayPause}
           >
             <Image
               source={paused ? icons.pause : (icons.play as any)}
