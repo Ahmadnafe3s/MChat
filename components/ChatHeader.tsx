@@ -1,41 +1,34 @@
 import { icons } from "@/constants";
-import { useRouter } from "expo-router";
 import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Text, TextInput, View } from "react-native";
 import HorizontalFilter from "./HorizontalFilter";
 
-const OPTIONS = [
-    "All", "Active", "Unread", "Expired", "Blocked",
-    "Assigned", "Open", "Solved", "Pending", "Starred"
-];
 
 interface ChatsHeaderProps {
     filter: string;
     totalChats?: number;
     setFilter: (value: string) => void;
+    serach: string
+    onSearch: (value: string) => void
+    options: string[]
 }
 
 const ChatsHeader: React.FC<ChatsHeaderProps> = React.memo(
-    ({ filter, setFilter, totalChats }) => {
-        const router = useRouter();
+    ({ filter, setFilter, totalChats, options, serach, onSearch }) => {
         return (
             <View className="flex gap-4 mt-4 pb-2">
-                <Pressable
-                    className="flex flex-row items-center border border-gray-200 rounded-2xl bg-gray-100 p-3.5"
-                    onPress={() => router.push("/(root)/searchChat")}
-                >
-                    <Image
-                        source={icons.search as any}
-                        className="w-6 h-6 mr-1"
-                        tintColor={"gray"}
+                <View className="flex px-4 gap-2 flex-row mb-4 mt-2 items-center  border border-gray-200 rounded-2xl bg-gray-100">
+                    <Image source={icons.search as any} className="w-6 h-6" />
+                    <TextInput
+                        placeholder="Search by name or contact"
+                        placeholderTextColor={"#A3A3A3"}
+                        className="py-3.5 flex-1 text-lg"
+                        onChangeText={onSearch}
                     />
-                    <Text className="text-lg font-JakartaSemiBold text-[#A3A3A3]">
-                        Search by name or contact
-                    </Text>
-                </Pressable>
+                </View>
                 <HorizontalFilter
                     defaultValue={filter}
-                    options={OPTIONS}
+                    options={options}
                     onSelect={setFilter}
                 />
                 {/* Chats count */}

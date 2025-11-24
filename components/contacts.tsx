@@ -1,14 +1,16 @@
-import { icons, images } from "@/constants";
 import useChat from "@/hooks/useChat";
+import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import ChatCard from "./ChatCard";
 import ChatsHeader from "./ChatHeader";
 import ChatCardPlaceholder from "./ChatPlaceholder";
 
 const Contacts = () => {
   const {
+    search,
+    onSearch,
     chats,
     isLoading,
     totalChats,
@@ -21,6 +23,39 @@ const Contacts = () => {
     setFilter,
   } = useChat("chats");
 
+
+  const renderEmpty = () => (
+    <View className="flex-1">
+      {isLoading ? (
+        <View className="flex gap-[6px]">
+          {Array.from({ length: 7 }, (_, i) => (
+            <ChatCardPlaceholder key={i} />
+          ))}
+        </View>
+      ) : isError ? (
+        <View className="flex-1 items-center justify-center px-8 pt-40">
+          <Ionicons name="alert-circle-outline" size={64} color="#ef4444" />
+          <Text className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+            Error Loading chats
+          </Text>
+          <Text className="text-sm text-gray-600 text-center">
+            {error?.message || 'Something went wrong'}
+          </Text>
+        </View>
+      ) : (
+        < View className="flex-1 items-center justify-center px-8 pt-40">
+          <Ionicons name="chatbox" size={64} color="#d1d5db" />
+          <Text className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+            No Chats Found
+          </Text>
+          <Text className="text-sm text-gray-600 text-center px-8">
+            Try refreshing your chats
+          </Text>
+        </View>
+      )}
+    </View>
+  )
+
   return (
     <View className="flex-1">
       <FlashList
@@ -30,45 +65,20 @@ const Contacts = () => {
         removeClippedSubviews={true}
         onEndReachedThreshold={0.1}
         estimatedItemSize={94}
-        ListEmptyComponent={
-          <View className="mt-4">
-            {isLoading ? (
-              <View className="flex gap-[6px]">
-                {Array.from({ length: 7 }, (_, i) => (
-                  <ChatCardPlaceholder key={i} />
-                ))}
-              </View>
-            ) : isError ? (
-              <View className="flex flex-1 items-center mt-5 h-72 justify-center gap-2">
-                <Image
-                  source={icons.failed as any}
-                  className="h-20 w-20 mb-2"
-                  tintColor={"#eb4034"}
-                />
-                <Text className="text-xl text-gray-500 font-JakartaSemiBold">
-                  {(error as any)?.response?.data?.message || error?.message}
-                </Text>
-              </View>
-            ) : (
-              <View>
-                <Image
-                  source={images.empty as any}
-                  className="h-[300px] w-full"
-                />
-                <Text className="text-neutral-400 text-lg font-Jakarta text-center">
-                  Sorry! we could not find any chats
-                </Text>
-              </View>
-            )}
-          </View>
-        }
+        ListEmptyComponent={renderEmpty}
         onEndReached={() => {
           hasNextPage && fetchNextPage();
         }}
         ListHeaderComponent={
           <ChatsHeader
+            options={[
+              "All", "Active", "Unread", "Expired", "Blocked",
+              "Assigned", "Open", "Solved", "Pending", "Starred"
+            ]}
             filter={filter}
             setFilter={setFilter}
+            serach={search}
+            onSearch={onSearch}
             totalChats={totalChats}
           />
         } // if user function is not memoized, it will re-render

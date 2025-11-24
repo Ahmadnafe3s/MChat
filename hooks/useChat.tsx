@@ -162,6 +162,7 @@ const useChat = (screen?: "chats" | "conversation" | "template") => {
     filter,
     setFilter,
     hasNextPage,
+    search,
 
 
     // conversation

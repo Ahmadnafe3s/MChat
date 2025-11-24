@@ -33,7 +33,13 @@ const ChatCard = memo(
             {data?.last_message}
           </Text>
           <Text
-            className={`text-sm py-0.5 px-1 rounded-full text-center mt-1 max-w-16 ${data?.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}
+            className={`text-sm py-0.5 px-1 rounded-full text-center mt-1 max-w-16
+                                      ${data?.status === "Active"
+                ? "bg-green-100 text-green-700"
+                : data?.status === "Expired"
+                  ? "bg-amber-100 text-amber-700"
+                  : "bg-red-100 text-red-600"
+              }`}
           >
             {data?.status}
           </Text>

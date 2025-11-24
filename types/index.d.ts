@@ -36,7 +36,7 @@ declare interface PaginatedChats {
 
 declare interface ChatStore {
   selectedChat: Chat | null;
-  setSelectedChat: (chat: Chat) => void;
+  setSelectedChat: (chat: Chat | Contact) => void;
   setStarred: (status: string) => void;
   setStatus: (status: string) => void;
 }
@@ -234,4 +234,27 @@ declare interface CampaignDetails {
   read_count: number
   failed_count: number
   paused_count: number
+}
+
+
+
+
+// --------------------Contacts-------------------
+
+
+declare interface Contact {
+  id: number,
+  name: string
+  phone: string
+  formatted: string
+  status: string
+  source: string
+}
+
+
+declare interface paginatedContacts {
+  data: Contact[],
+  current_page: number,
+  last_page: number,
+  total: number
 }

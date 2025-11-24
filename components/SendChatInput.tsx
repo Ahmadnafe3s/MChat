@@ -136,7 +136,7 @@ const SendChatInput = () => {
 
 
   // ---------------------Checking Status--------------------
-  if (selectedChat?.status === "Expired" || selectedChat?.status === "Blocked") {
+  if (selectedChat?.status === "Expired" || selectedChat?.status === "Blocked" || selectedChat?.status === "Create") {
     return (
       <View className="flex flex-row items-center gap-2 justify-center bg-red-50  p-4 rounded-lg">
         <Image
@@ -145,7 +145,11 @@ const SendChatInput = () => {
           tintColor={"#ef4444"}
         />
         <Text className="text-center text-red-500 text-sm font-JakartaBold">
-          {selectedChat?.status === "Expired" ? "Chat Has Been Expired" : "Chat Has Been Blocked"}
+          {selectedChat?.status === "Expired"
+            ? "Chat Has Been Expired"
+            : selectedChat.status === "Create"
+              ? "To start conversation send a template"
+              : "Chat Has Been Blocked"}
         </Text>
       </View>
     );
