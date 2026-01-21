@@ -20,8 +20,6 @@ const ConversationHeader = memo(({ onTemplate, onCall, onClearChat }: Props) => 
   const { starredChat, blockChat } = useChat();
   const { showToast } = useToastStore()
 
-  console.log("Selected Chat ID", selectedChat?.id)
-
   const handleSelect = (value: string) => {
     switch (value) {
       case "Block":

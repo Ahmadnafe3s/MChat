@@ -2,8 +2,10 @@ import { icons } from '@/constants'
 import { Tabs } from 'expo-router'
 import React from 'react'
 import { Image, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const TabLayout = () => {
+    const insets = useSafeAreaInsets();
 
     const TabIcon = ({ focused, Icon }: { focused: boolean, Icon: any }) => {
         return (
@@ -22,10 +24,10 @@ const TabLayout = () => {
                     marginTop: 2,
                     fontSize: 15
                 },
-
                 tabBarStyle: {
                     gap: 2,
-                    height: 70,
+                    height: 60 + insets.bottom,
+                    paddingBottom: insets.bottom,
                 },
                 tabBarItemStyle: {
                     flexDirection: "row",

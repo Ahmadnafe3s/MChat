@@ -1,5 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
 import React, { forwardRef, useState } from "react";
-import { Image, Text, TextInput, View } from "react-native";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 type InputFieldProps = {
   labelStyle?: string;
@@ -34,6 +35,11 @@ const InputField = forwardRef<TextInput, InputFieldProps>(
     ref
   ) => {
     const [isFocused, setIsFocused] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+    const togglePasswordVisibility = () => {
+      setIsPasswordVisible(!isPasswordVisible);
+    };
 
     return (
       <View className="my-2 w-full">
@@ -47,7 +53,7 @@ const InputField = forwardRef<TextInput, InputFieldProps>(
         <View
           className={`
               relative flex flex-row px-4 items-center border gap-2 bg-neutral-50 rounded-full
-              ${isFocused ? "border-gray-800" : "border-neutral-200"}
+              ${isFocused ? "border-green-600" : "border-neutral-200"}
               ${containerStyle}
             `}
         >
@@ -55,13 +61,13 @@ const InputField = forwardRef<TextInput, InputFieldProps>(
             <Image
               source={Icon}
               className="w-6 h-6"
-              style={{ tintColor: "gray" }}
+              style={{ tintColor: isFocused ? "#16a34a" : "#9CA3AF" }}
             />
           )}
           <TextInput
             ref={ref}
             className={`flex-1 py-4 font-JakartaSemiBold text-[15px] text-black text-left ${inputStyle}`}
-            secureTextEntry={secureTextEntry}
+            secureTextEntry={secureTextEntry && !isPasswordVisible}
             placeholderTextColor={"#9CA3AF"}
             placeholder={placeholder}
             onFocus={() => {
@@ -71,6 +77,19 @@ const InputField = forwardRef<TextInput, InputFieldProps>(
             onBlur={() => setIsFocused(false)}
             {...props}
           />
+          {secureTextEntry && (
+            <TouchableOpacity
+              onPress={togglePasswordVisibility}
+              className="p-2"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons
+                name={isPasswordVisible ? "eye-off" : "eye"}
+                size={22}
+                color={isFocused ? "#16a34a" : "#9CA3AF"}
+              />
+            </TouchableOpacity>
+          )}
         </View>
         {error && (
           <Text className="text-red-500 text-sm mt-0.5 ml-2">{error}</Text>

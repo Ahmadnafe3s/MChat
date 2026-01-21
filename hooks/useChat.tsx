@@ -42,6 +42,8 @@ const useChat = (screen?: "chats" | "conversation" | "template") => {
         return current_page < last_page ? current_page + 1 : undefined;
       },
       enabled: screen === "chats",
+      refetchInterval: 10000,
+      staleTime: 9000,
     });
 
 
@@ -55,7 +57,9 @@ const useChat = (screen?: "chats" | "conversation" | "template") => {
     queryFn: () => ChatApi.getConversations(selectedChat?.id!),
     refetchOnWindowFocus: true,
     enabled: !!selectedChat?.id && screen === "conversation",
-    placeholderData: keepPreviousData
+    placeholderData: keepPreviousData,
+    refetchInterval: 10000,
+    staleTime: 9000,
   });
 
 
@@ -96,6 +100,7 @@ const useChat = (screen?: "chats" | "conversation" | "template") => {
     },
     onError: (error: AxiosError<{ message: string }>) => {
       const Err = error.response?.data.message || error.message;
+      console.log(Err);
       showToast(Err, "error");
     },
     onSettled: () => {

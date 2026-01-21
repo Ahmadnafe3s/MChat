@@ -9,16 +9,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
-  Alert,
   Image,
   Text,
   View
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
 
 
@@ -26,6 +26,7 @@ const SignIn = () => {
   const { setUser } = useAuthStore();
   const { showToast } = useToastStore()
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { handleSubmit, control, formState: { errors } } = useForm<z.infer<typeof signinSchema>>({
     resolver: zodResolver(signinSchema),
     defaultValues: { email: "", password: "" }
@@ -56,42 +57,66 @@ const SignIn = () => {
 
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-gray-50">
+      <StatusBar style="light" />
       <KeyboardAwareScrollView
         bottomOffset={120}
+        showsVerticalScrollIndicator={false}
       >
-        {/* Header Text */}
-        <View className="flex items-center mt-24 justify-center gap-5">
-          <View>
-            <Image source={images.logo as any} className="size-36" />
-            <Text className="text-3xl text-center text-gray-500 font-JakartaSemiBold">
-              <Text className="text-green-800">M</Text>
+        {/* Header Section with Green Background */}
+        <View
+          className="bg-green-700 pb-16 rounded-b-[40px]"
+          style={{ paddingTop: insets.top + 16 }}
+        >
+          <View className="flex items-center justify-center">
+            {/* Logo Container with White Background */}
+            <View className="bg-white p-4 rounded-3xl shadow-lg">
+              <Image source={images.logo as any} className="size-28" />
+            </View>
+            <Text className="text-4xl text-center text-white font-JakartaBold mt-4 tracking-wide">
+              <Text className="text-emerald-200">M</Text>
               Chat
             </Text>
+            <Text className="text-emerald-200 text-base font-JakartaRegular mt-1">
+              Connect • Communicate • Collaborate
+            </Text>
           </View>
-          <Text className="text-green-800 text-center text-2xl font-JakartaSemiBold">
-            Sign in to your account
+        </View>
+
+        {/* Welcome Text */}
+        <View className="px-6 mt-8 mb-2">
+          <Text className="text-gray-800 text-2xl font-JakartaBold">
+            Welcome Back! 👋
+          </Text>
+          <Text className="text-gray-500 text-base font-JakartaRegular mt-1">
+            Sign in to continue to your account
           </Text>
         </View>
 
-        <View className="p-5">
+        {/* Form Section */}
+        <View className="px-6 pt-4">
+          {/* Email Input */}
           <Controller control={control} name="email" render={({ field }) => (
             <InputField
-              label="Email"
+              label="Email Address"
               Icon={icons.mail}
               iconStyle={{ color: "#9CA3AF" }}
-              placeholder="eg. john@gmaildsdfdf.com"
+              placeholder="Enter your email"
+              keyboardType="email-address"
+              autoCapitalize="none"
               onChangeText={(text) => field.onChange(text)}
               error={errors.email && errors.email.message}
               value={field.value}
             />
           )} />
+
+          {/* Password Input */}
           <Controller control={control} name="password" render={({ field }) => (
             <InputField
               label="Password"
               Icon={icons.key}
               iconStyle={{ color: "#9CA3AF" }}
-              placeholder="********"
+              placeholder="Enter your password"
               secureTextEntry={true}
               onChangeText={(text) => field.onChange(text)}
               error={errors.password && errors.password.message}
@@ -99,26 +124,20 @@ const SignIn = () => {
             />
           )} />
 
-          {/* Sign Up Button */}
+
+          {/* Sign In Button */}
           <CustomButton
             title="Sign In"
-            className="mt-5"
+            className="mt-2 shadow-lg"
             loading={isPending}
             onPress={handleSubmit((data) => mutate(data))}
           />
 
-          <Text className="text-gray-500 font-Jakarta text-center mt-5">
-            Don&apos;t have an account?{" "}
-            <Text
-              className="text-green-800"
-              onPress={() => Alert.alert("This is demo")}
-            >
-              Please contact admin
-            </Text>
-          </Text>
+          {/* Bottom Spacing */}
+          <View style={{ height: insets.bottom + 20 }} />
         </View>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

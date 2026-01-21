@@ -54,8 +54,6 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
         })
     }
 
-    console.log(getTemplate.data)
-
     const renderBackdrop = React.useCallback((props: any) => (
         <BottomSheetBackdrop
             {...props}
