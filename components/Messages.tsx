@@ -29,7 +29,7 @@ interface MediaType {
 }
 
 const Messages = memo(({ data }: { data: Conversations }) => {
-  const isSender = data.message_type === "user";
+  const isSender = data?.message_type === "user";
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
   const playerRef = useRef<VideoRef | null>(null);
@@ -39,7 +39,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
     source: "",
     visible: false,
   });
-  const audioId = useRef(`audio-${data.id || Date.now()}-${Math.random()}`).current;
+  const audioId = useRef(`audio-${data?.id || Date.now()}-${Math.random()}`).current;
 
   useEffect(() => {
     const listener = (playingId: string | null) => {
@@ -63,7 +63,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
 
   const handleAudioPlayPause = () => {
     const newPausedState = !paused;
-    
+
     if (newPausedState) {
       // Starting to play this audio
       currentlyPlayingAudioId = audioId;
@@ -75,7 +75,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
         currentlyPlayingAudioId = null;
       }
     }
-    
+
     setPaused(newPausedState);
   };
 
@@ -350,7 +350,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
 
                 {/* Message Footer */}
 
-                {data.footer && (
+                {data?.footer && (
                   <View className="px-3 border-t border-neutral-200 pt-1 pb-3">
                     <Text className="text-xs text-gray-400 font-Jakarta">
                       {data?.footer}
@@ -358,7 +358,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
                   </View>
                 )}
 
-                {data.button.length > 0 && (
+                {data?.button?.length > 0 && (
                   <View className={`flex gap-2 items-center px-3 mb-4 ${!data?.footer && "pt-3 border-t border-neutral-200"}`}>
                     {data?.button.map((button, index) => (
                       <TouchableOpacity
