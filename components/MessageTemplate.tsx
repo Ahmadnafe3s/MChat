@@ -250,13 +250,13 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
                     ) : selectedTemplate.header.type === 'Image'
                         ? (
                             <View className='w-full aspect-[4/3]'>
-                                <Image source={{ uri: selectedTemplate.header.content }} className='size-full rounded-2xl' />
+                                <Image source={{ uri: `https://meta.muzztech.com/api/v1/preview-template-file/${selectedTemplate.id}` }} className='size-full rounded-2xl' />
                             </View>
                         ) : selectedTemplate.header.type === 'Video'
                             ? (
                                 <View className='w-full aspect-[4/3] rounded-2xl overflow-hidden'>
                                     <Video
-                                        source={{ uri: selectedTemplate.header.content }}
+                                        source={{ uri: `https://meta.muzztech.com/api/v1/preview-template-file/${selectedTemplate.id}` }}
                                         resizeMode='cover'
                                         muted
                                         style={{ width: '100%', height: '100%' }}
