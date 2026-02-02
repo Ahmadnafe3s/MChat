@@ -49,7 +49,7 @@ const AllMedia = () => {
       setSelectedMedia({
         visible: true,
         type: item.filetype,
-        source: item.link
+        source:  `https://meta.muzztech.com/api/v1/preview-file/${item.id}`
       })
     } else if (item.filetype === 'audio') {
       if (playingAudioId === item.id) {
@@ -62,7 +62,7 @@ const AllMedia = () => {
       }
     } else if (item.filetype === 'application') {
       downloadFile({
-        url: item.link,
+        url: `https://meta.muzztech.com/api/v1/preview-file/${item.id}`,
         fileName: `Document-${Date.now()}.${item.format}`
       }).catch((error) => showToast("Failed to download file", "error"))
     }
@@ -90,7 +90,7 @@ const AllMedia = () => {
           {/* Image Thumbnail */}
           {isImage && (
             <Image
-              source={{ uri: item.link }}
+              source={{ uri: `https://meta.muzztech.com/api/v1/preview-file/${item.id}` }}
               className="w-full h-full"
               resizeMode="cover"
             />
@@ -100,7 +100,7 @@ const AllMedia = () => {
           {isVideo && (
             <>
               <Image
-                source={{ uri: item.link }}
+                source={{ uri: `https://meta.muzztech.com/api/v1/preview-file/${item.id}` }}
                 className="w-full h-full"
                 resizeMode="cover"
               />

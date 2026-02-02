@@ -2,7 +2,11 @@ import "@/global.css";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { LogBox } from "react-native";
 import "react-native-reanimated";
+
+// Suppress library's internal deprecation warning
+LogBox.ignoreLogs(['BottomSheetFlashList is deprecated']);
 
 import Toast from "@/components/Toast";
 import { setupNotificationListener } from "@/notifications";

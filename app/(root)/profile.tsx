@@ -18,7 +18,7 @@ const Profile = () => {
 
             {/* Header Section */}
             <View
-                className='bg-green-700 px-5 pb-20 rounded-b-[40px]'
+                className='bg-emerald-500 px-5 pb-20 rounded-b-[40px]'
                 style={{ paddingTop: insets.top + 12 }}
             >
                 <View className='flex flex-row gap-4 items-center'>

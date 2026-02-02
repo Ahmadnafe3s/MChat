@@ -2,8 +2,9 @@ import { icons } from '@/constants';
 import useGradualKeyboard from '@/hooks/useGradualKeyboard';
 import useTemplate from '@/hooks/useTemplate';
 import { templateVarSchema } from '@/utils/formSchema';
-import { BottomSheetBackdrop, BottomSheetFlashList, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FlashList } from '@shopify/flash-list';
 import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -46,12 +47,25 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
 
 
     const onSend = (data: any) => {
+        console.log("Sending template:", { templateId: selectedTemplate?.id, data });
         sendTemplate.mutate({ templateId: selectedTemplate?.id!, data }, {
             onSuccess: () => {
                 close()
                 setSelectedTemplate(null)
             }
         })
+    }
+
+    // Direct send for templates with no variables (bypasses form validation)
+    const handleSend = () => {
+        const numVariables = +(selectedTemplate?.variable || 0);
+        if (numVariables === 0) {
+            // No variables, send directly without form validation
+            onSend({ variable: [] });
+        } else {
+            // Has variables, use form validation
+            handleSubmit(onSend)();
+        }
     }
 
     const renderBackdrop = React.useCallback((props: any) => (
@@ -78,94 +92,98 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
                 </View>
             </View>
 
-            <BottomSheetFlashList
-                data={getTemplate.data?.data}
-                keyExtractor={(item) => String(item?.id)}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        onPress={() => setSelectedTemplate(item)}
-                        activeOpacity={0.7}
-                        className='flex flex-row bg-white border border-gray-100 py-4 px-4 items-center my-2 rounded-3xl'
-                        style={{
-                            shadowColor: '#10b981',
-                            shadowOffset: { width: 0, height: 4 },
-                            shadowOpacity: 0.08,
-                            shadowRadius: 8,
-                            elevation: 3,
-                        }}
-                    >
-                        {/* Icon Container with Gradient Effect */}
-                        <View
-                            className='size-14 flex items-center justify-center rounded-2xl mr-4'
+            <BottomSheetScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 50, paddingHorizontal: 10, flexGrow: 1 }}
+            >
+                <FlashList
+                    data={getTemplate.data?.data}
+                    keyExtractor={(item) => String(item?.id)}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity
+                            onPress={() => setSelectedTemplate(item)}
+                            activeOpacity={0.7}
+                            className='flex flex-row bg-white border border-gray-100 py-4 px-4 items-center my-2 rounded-3xl'
                             style={{
-                                backgroundColor: '#10b981',
                                 shadowColor: '#10b981',
                                 shadowOffset: { width: 0, height: 4 },
-                                shadowOpacity: 0.3,
-                                shadowRadius: 6,
-                                elevation: 4,
+                                shadowOpacity: 0.08,
+                                shadowRadius: 8,
+                                elevation: 3,
                             }}
                         >
-                            <Image source={icons.template as any} className='w-6 h-6' tintColor={'#fff'} />
-                        </View>
-
-                        {/* Content */}
-                        <View className='flex-1 mr-3'>
-                            <Text
-                                className='font-JakartaBold text-gray-900 text-base mb-1'
-                                numberOfLines={1}
+                            {/* Icon Container with Gradient Effect */}
+                            <View
+                                className='size-14 flex items-center justify-center rounded-2xl mr-4'
+                                style={{
+                                    backgroundColor: '#10b981',
+                                    shadowColor: '#10b981',
+                                    shadowOffset: { width: 0, height: 4 },
+                                    shadowOpacity: 0.3,
+                                    shadowRadius: 6,
+                                    elevation: 4,
+                                }}
                             >
-                                {item?.name}
-                            </Text>
-                            <View className='flex flex-row items-center gap-1'>
-                                <View className='size-3 rounded-full'>
-                                    <Image source={icons.globe as any} className='size-full' tintColor={"#6b7280"} />
-                                </View>
-                                <Text className='text-xs text-gray-500 font-JakartaMedium'>
-                                    {item?.language}
-                                </Text>
+                                <Image source={icons.template as any} className='w-6 h-6' tintColor={'#fff'} />
                             </View>
-                        </View>
 
-                        {/* Category Badge */}
-                        <View
-                            className='bg-emerald-50 py-2 px-3.5 rounded-2xl border border-emerald-100'
-                            style={{
-                                shadowColor: '#10b981',
-                                shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.05,
-                                shadowRadius: 3,
-                                elevation: 1,
-                            }}
-                        >
-                            <Text className='text-xs text-emerald-600 font-JakartaBold'>
-                                {item?.category}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                )}
-                ListEmptyComponent={<>
-                    {getTemplate.isLoading ?
-                        <View>
-                            <ActivityIndicator style={{ marginVertical: 50 }} color={"#34d399"} size={22} />
-                        </View>
-                        : getTemplate.isError
-                            ? <View>
-                                <Text className='text-center text-red-500 font-JakartaMedium'>
-                                    Failed to load templates
+                            {/* Content */}
+                            <View className='flex-1 mr-3'>
+                                <Text
+                                    className='font-JakartaBold text-gray-900 text-base mb-1'
+                                    numberOfLines={1}
+                                >
+                                    {item?.name}
+                                </Text>
+                                <View className='flex flex-row items-center gap-1'>
+                                    <View className='size-3 rounded-full'>
+                                        <Image source={icons.globe as any} className='size-full' tintColor={"#6b7280"} />
+                                    </View>
+                                    <Text className='text-xs text-gray-500 font-JakartaMedium'>
+                                        {item?.language}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            {/* Category Badge */}
+                            <View
+                                className='bg-emerald-50 py-2 px-3.5 rounded-2xl border border-emerald-100'
+                                style={{
+                                    shadowColor: '#10b981',
+                                    shadowOffset: { width: 0, height: 2 },
+                                    shadowOpacity: 0.05,
+                                    shadowRadius: 3,
+                                    elevation: 1,
+                                }}
+                            >
+                                <Text className='text-xs text-emerald-600 font-JakartaBold'>
+                                    {item?.category}
                                 </Text>
                             </View>
-                            : <View>
-                                <Text className='text-center text-gray-500 font-JakartaMedium'>
-                                    No templates found
-                                </Text>
+                        </TouchableOpacity>
+                    )}
+                    ListEmptyComponent={<>
+                        {getTemplate.isLoading ?
+                            <View>
+                                <ActivityIndicator style={{ marginVertical: 50 }} color={"#34d399"} size={22} />
                             </View>
-                    }
-                </>}
-                estimatedItemSize={94}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 50, paddingHorizontal: 10 }}
-            />
+                            : getTemplate.isError
+                                ? <View>
+                                    <Text className='text-center text-red-500 font-JakartaMedium'>
+                                        Failed to load templates
+                                    </Text>
+                                </View>
+                                : <View>
+                                    <Text className='text-center text-gray-500 font-JakartaMedium'>
+                                        No templates found
+                                    </Text>
+                                </View>
+                        }
+                    </>}
+                    estimatedItemSize={94}
+                    scrollEnabled={false}
+                />
+            </BottomSheetScrollView>
         </>
     )
 
@@ -339,7 +357,7 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
                             title='Send'
                             loading={sendTemplate.isPending}
                             rightIcon={<Image source={icons.send as any} className='w-4 h-4' tintColor={'#fff'} />}
-                            onPress={handleSubmit(onSend)}
+                            onPress={handleSend}
                         />
 
                         {/* Help Text */}

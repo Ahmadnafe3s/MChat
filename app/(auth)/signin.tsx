@@ -65,7 +65,7 @@ const SignIn = () => {
       >
         {/* Header Section with Green Background */}
         <View
-          className="bg-green-700 pb-16 rounded-b-[40px]"
+          className="bg-emerald-500 pb-16 rounded-b-[40px]"
           style={{ paddingTop: insets.top + 16 }}
         >
           <View className="flex items-center justify-center">

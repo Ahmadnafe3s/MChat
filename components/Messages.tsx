@@ -111,12 +111,12 @@ const Messages = memo(({ data }: { data: Conversations }) => {
         <View className={`p-3 ${data?.body?.text && "border-b border-neutral-200"}`}>
           <TouchableOpacity
             onPress={() =>
-              setMedia({ type: "image", source: link, visible: true })
+              setMedia({ type: "image", source: `https://meta.muzztech.com/api/v1/preview-file/${data.id}`, visible: true })
             }
             className=" rounded-lg overflow-hidden  w-full aspect-[4/3]"
           >
             <Image
-              source={{ uri: link.trim() }}
+              source={{ uri: `https://meta.muzztech.com/api/v1/preview-file/${data.id}` }}
               className=" size-full"
               resizeMode="cover"
             />
@@ -132,12 +132,12 @@ const Messages = memo(({ data }: { data: Conversations }) => {
         <View className={`p-3 ${data?.body?.text && "border-b border-neutral-200"}`}>
           <TouchableOpacity
             onPress={() =>
-              setMedia({ type: "video", source: link, visible: true })
+              setMedia({ type: "video", source: `https://meta.muzztech.com/api/v1/preview-file/${data.id}`, visible: true })
             }
             className="relative overflow-hidden rounded-lg border-b border-neutral-200 w-full aspect-[4/3]"
           >
             <Video
-              source={{ uri: link.trim() }}
+              source={{ uri: `https://meta.muzztech.com/api/v1/preview-file/${data.id}` }}
               style={{
                 width: "100%",
                 height: "100%"
@@ -201,7 +201,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
 
           <Video
             ref={playerRef as any}
-            source={{ uri: link.trim() }}
+            source={{ uri: `https://meta.muzztech.com/api/v1/preview-file/${data.id}` }}
             paused={!paused}
             playInBackground
             ignoreSilentSwitch="ignore"
@@ -309,13 +309,15 @@ const Messages = memo(({ data }: { data: Conversations }) => {
             <View className="rounded-full bg-neutral-100 py-1 px-4 elevation-sm">
               <Text className="text-sm text-neutral-500">{data.text}</Text>
               <Text className={`text-xs font-normal mr-1 text-center text-gray-400`}>
-                {new Date(data?.datetime).toLocaleTimeString([], {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {data?.datetime && !isNaN(new Date(data.datetime).getTime()) ?
+                  new Date(data.datetime).toLocaleTimeString([], {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }) : "Unknown Date"
+                }
               </Text>
             </View>
           </View>
@@ -380,13 +382,15 @@ const Messages = memo(({ data }: { data: Conversations }) => {
            }`}
               >
                 <Text className={`text-xs font-normal mr-1 text-gray-400`}>
-                  {new Date(data?.datetime).toLocaleTimeString([], {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {data?.datetime && !isNaN(new Date(data.datetime).getTime()) ?
+                    new Date(data.datetime).toLocaleTimeString([], {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }) : "Unknown Date"
+                  }
                 </Text>
                 {isSender && (
                   <Image

@@ -9,6 +9,7 @@ import SendChatInput from "@/components/SendChatInput";
 import useChat from "@/hooks/useChat";
 import useClearChat from "@/hooks/useClearChat";
 import useGradualKeyboard from "@/hooks/useGradualKeyboard";
+import { useChatStore } from "@/store/chat";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useRef, useState } from "react";
@@ -26,6 +27,9 @@ const Conversation = () => {
   const { sendOTP, verifyOTP } = useClearChat()
   const [alert, setAlert] = useState(false)
   const [otpVisible, setOtpVisible] = useState<boolean>(false);
+  const { selectedChat } = useChatStore()
+
+  console.log(`🚺 USER ID: ${selectedChat?.id} is selected for chat `);
 
   const keyboardPadding = useAnimatedStyle(() => {
     return { height: height.value };

@@ -23,12 +23,18 @@ const useTemplate = () => {
 
     const sendTemplate = useMutation({
         mutationFn: ({ templateId, data }: { templateId: number, data: any }) => TemplateApi.sendTemplate(templateId, selectedChat?.id!, data),
-        onSuccess: (newData) => {
+        onSuccess: (newData: any) => {
+            console.log("Template API response:", JSON.stringify(newData, null, 2));
+            if (newData.success === false) {
+                showToast(newData.message || "Something went wrong, please retry again", "error");
+                return;
+            }
             queryClient.setQueryData(["conversations", selectedChat?.id], (oldData: any) => {
                 return [newData, ...oldData]
             })
         },
         onError: (error: AxiosError<{ message: string }>) => {
+            console.log("Error sending template:", error);
             const err = error.response?.data.message || "Faield to send template";
             showToast(err, "error")
         }
