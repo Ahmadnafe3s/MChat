@@ -1,5 +1,5 @@
 import Contacts from "@/components/contacts";
-import { icons } from "@/constants";
+import { useAuthStore } from "@/store/auth";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const Chats = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user } = useAuthStore();
 
 
 
@@ -24,7 +25,7 @@ const Chats = () => {
           </Text>
           {/* User Avatar */}
           <TouchableOpacity onPress={() => router.push("/profile")}>
-            <Image source={icons.avatar as any} className="w-10 h-10 rounded-full border-2 border-white/20" />
+            <Image source={{ uri: user?.company_logo }} className="w-10 h-10 rounded-full border-2 border-white/20" style={{ resizeMode: 'contain' }} />
           </TouchableOpacity>
         </View>
       </View>

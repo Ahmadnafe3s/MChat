@@ -7,6 +7,7 @@ declare interface User {
   attribute: string;
   role: string;
   self_id: number;
+  company_logo: string;
 }
 
 declare interface AuthStore {

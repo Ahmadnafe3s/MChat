@@ -12,6 +12,7 @@ const Profile = () => {
     const { user, logout } = useAuthStore();
     const insets = useSafeAreaInsets();
 
+
     return (
         <View className='flex-1 bg-gray-50'>
             <StatusBar style="light" />
@@ -38,7 +39,7 @@ const Profile = () => {
                     {/* Avatar Section */}
                     <View className='flex items-center -mt-16'>
                         <View className='p-1.5 bg-green-100 rounded-full'>
-                            <Image source={icons.avatar as any} className='w-28 h-28' />
+                            <Image source={{ uri: user?.company_logo }} className='w-28 h-28' style={{ borderRadius: 999, resizeMode: 'contain' }} />
                         </View>
                         <Text className='text-2xl font-JakartaBold text-gray-800 mt-3'>{user?.name}</Text>
                         <View className='px-4 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full mt-2'>

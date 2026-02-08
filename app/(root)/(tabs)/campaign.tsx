@@ -18,11 +18,7 @@ const genDate = (date: Date) => date.toISOString().split('T')[0]
 const Campaign = () => {
     const filterHeight = useSharedValue(FilterHeaderHeight)
     const router = useRouter()
-    const [startDate, setStartDate] = React.useState(() => {
-        const date = new Date();
-        date.setDate(date.getDate() - 7); // 7 days ago
-        return date;
-    });
+    const [startDate, setStartDate] = React.useState(new Date());
     const [endDate, setEndDate] = React.useState(new Date())
     const [showStartPicker, setShowStartPicker] = React.useState(false)
     const [showEndPicker, setShowEndPicker] = React.useState(false)

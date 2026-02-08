@@ -1,8 +1,8 @@
+import logo from "@/assets/images/icon.png";
 import empty from "@/assets/images/no-result.png";
 import onboarding1 from "@/assets/images/onboarding1.png";
 import onboarding2 from "@/assets/images/onboarding2.png";
 import onboarding3 from "@/assets/images/onboarding3.png";
-import logo from "@/assets/images/splash.png";
 
 // ICONS
 import add from "@/assets/icons/add.png";

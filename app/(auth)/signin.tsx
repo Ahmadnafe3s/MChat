@@ -45,6 +45,7 @@ const SignIn = () => {
         self_id: data.self_id,
         attribute: data.attribute,
         role: data.role,
+        company_logo: data.company_logo,
       });
       router.push("/(root)/chats");
     },
