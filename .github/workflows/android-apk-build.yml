@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      APP_ENV: preview
     steps:
       - name: Setup repo
         uses: actions/checkout@v4
