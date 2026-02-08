@@ -7,10 +7,19 @@ export const useAuthStore = create<AuthStore>()(
         user: null,
         setUser: (user) => set({ user }),
         logout: () => set({ user: null }),
+        isHydrated: false,
+        setHydrated: (status) => set({ isHydrated: status }),
     }),
         {
             name: 'auth',
             storage: createJSONStorage(() => AsyncStorage),
+            onRehydrateStorage: (state) => {
+                return (rehydratedState, error) => {
+                    if (!error) {
+                        rehydratedState?.setHydrated(true);
+                    }
+                };
+            },
         }
     )
 )

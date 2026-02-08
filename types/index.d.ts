@@ -14,6 +14,8 @@ declare interface AuthStore {
   user: User | null;
   setUser: (user: User) => void;
   logout: () => void;
+  isHydrated: boolean;
+  setHydrated: (status: boolean) => void;
 }
 
 declare interface Chat {
@@ -36,7 +38,7 @@ declare interface PaginatedChats {
 }
 
 declare interface ChatStore {
-  selectedChat: Chat | null;
+  selectedChat: Chat | Contact | null;
   setSelectedChat: (chat: Chat | Contact) => void;
   setStarred: (status: string) => void;
   setStatus: (status: string) => void;
