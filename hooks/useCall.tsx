@@ -11,18 +11,6 @@ const useCall = () => {
   const { user } = useAuthStore();
   const { showToast } = useToastStore();
 
-  const getCallLogs = (startDate: string, endDate: string, status: string) => {
-    console.log("Calling getCallLogs 🚀");
-    console.log(startDate, endDate , status)
-    return useQuery({
-      queryKey: ['callLogs', user?.id, startDate, endDate, status],
-      queryFn: () => callApi.getCallLogs({ value: user?.id!, attribute: user?.attribute!, from_date: startDate, end_date: endDate, status }),
-      enabled: !!user?.id,
-      placeholderData: keepPreviousData
-    })
-  }
-
-
   const initiateCall = useMutation({
     mutationFn: (selectedChat: number) => callApi.initiateCall(user?.id!, selectedChat),
     onSuccess: (newData) => {
@@ -36,9 +24,25 @@ const useCall = () => {
   })
 
   return {
-    getCallLogs,
     initiateCall
   }
+}
+
+export const useCallLogs = (startDate: string, endDate: string, status: string) => {
+  const { user } = useAuthStore();
+
+  return useQuery({
+    queryKey: ['callLogs', user?.id, startDate, endDate, status],
+    queryFn: () => callApi.getCallLogs({
+      value: user?.id!,
+      attribute: user?.attribute!,
+      from_date: startDate,
+      end_date: endDate,
+      status
+    }),
+    enabled: !!user?.id,
+    placeholderData: keepPreviousData
+  })
 }
 
 export default useCall

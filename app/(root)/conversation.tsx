@@ -21,12 +21,10 @@ const Conversation = () => {
   const { height } = useGradualKeyboard();
   const { conversations, isLoadingConversations } = useChat("conversation");
   const [isAtBottom, setIsAtBottom] = useState(true);
-  const [isInitiateCall, setInitiateCall] = useState(false)
   const flashListRef = React.useRef<FlashList<any>>(null);
   const TemplateRef = useRef<BottomSheetModal>(null);
   const { sendOTP, verifyOTP } = useClearChat()
-  const [alert, setAlert] = useState(false)
-  const [otpVisible, setOtpVisible] = useState<boolean>(false);
+  const [modal, setModal] = useState<'none' | 'call' | 'clearChat' | 'otp'>('none');
   const { selectedChat } = useChatStore()
 
   console.log(`🚺 USER ID: ${selectedChat?.id} is selected for chat `);
@@ -38,8 +36,7 @@ const Conversation = () => {
   const isLessThan6 = conversations?.length! < 6;
 
   const handleCancelClearChat = () => {
-    setOtpVisible(false)
-    setAlert(false)
+    setModal('none');
   }
 
   useEffect(() => {
@@ -56,9 +53,9 @@ const Conversation = () => {
     <SafeAreaView style={styles.container}>
       {/* -------------- Chat Header --------------- */}
       <ConversationHeader
-        onCall={() => setInitiateCall(true)}
+        onCall={() => setModal('call')}
         onTemplate={() => TemplateRef.current?.present()}
-        onClearChat={() => setAlert(true)}
+        onClearChat={() => setModal('clearChat')}
       />
 
       {/* -------------- Flash List --------------- */}
@@ -114,25 +111,28 @@ const Conversation = () => {
 
       {/* -------------- Initiate Call --------------- */}
 
-      {isInitiateCall && <InitiateCall isVisible={isInitiateCall} onClose={() => setInitiateCall(false)} />}
+      {modal === 'call' && (
+        <InitiateCall onClose={() => setModal('none')} />
+      )}
+
 
       {/* -------------- Alert --------------- */}
 
+
       <CustomAlert
-        visible={alert}
+        visible={modal === 'clearChat'}
         title="Clear Chat"
         message="Do you really want clear chat!"
         onContinue={() => sendOTP.mutate("no_params", {
-          onSuccess: () => setOtpVisible(true)
+          onSuccess: () => setModal('otp')
         })}
-        onCancel={() => setAlert(false)}
+        onCancel={() => setModal('none')}
       />
-
 
       {/* -------------- Verify OTP --------------- */}
 
       <OTPModal
-        visible={otpVisible}
+        visible={modal === 'otp'}
         title="Enter Verification Code"
         error={verifyOTP.isError ? verifyOTP?.error?.response?.data?.message : ''}
         onVerify={(otp) => verifyOTP.mutate(Number(otp), {

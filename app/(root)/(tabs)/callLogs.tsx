@@ -1,5 +1,5 @@
 import { icons } from '@/constants'
-import useCall from '@/hooks/useCall'
+import { useCallLogs } from '@/hooks/useCall'
 import { Ionicons } from '@expo/vector-icons'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FlashList } from '@shopify/flash-list'
@@ -20,8 +20,7 @@ const CallLogs = () => {
     const [showStartPicker, setShowStartPicker] = React.useState(false)
     const [showEndPicker, setShowEndPicker] = React.useState(false)
     const [selectedStatus, setSelectedStatus] = React.useState('All')
-    const { getCallLogs } = useCall()
-    const { data, isLoading, isError } = getCallLogs(genDate(startDate), genDate(endDate), selectedStatus)
+    const { data, isLoading, isError } = useCallLogs(genDate(startDate), genDate(endDate), selectedStatus)
 
     const filterHeight = useSharedValue(FilterHeaderHeight)
 

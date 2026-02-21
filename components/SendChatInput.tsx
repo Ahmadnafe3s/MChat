@@ -1,10 +1,12 @@
+import MessageTemplate from "@/components/MessageTemplate";
 import { icons } from "@/constants";
 import useChat from "@/hooks/useChat";
 import { useChatStore } from "@/store/chat";
 import { getDocument, getImage } from "@/utils/attachment";
 import bytesToMB from "@/utils/sizeConverter";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Image,
   Modal,
@@ -35,6 +37,7 @@ const SendChatInput = () => {
     message: "",
     attachment: null,
   });
+  const TemplateRef = useRef<BottomSheetModal>(null);
 
 
   // ----------------------Handling Attachment--------------------
@@ -138,20 +141,36 @@ const SendChatInput = () => {
   // ---------------------Checking Status--------------------
   if (selectedChat?.status === "Expired" || selectedChat?.status === "Blocked" || selectedChat?.status === "Create") {
     return (
-      <View className="flex flex-row items-center gap-2 justify-center bg-red-50  p-4 rounded-lg">
-        <Image
-          source={icons.watch as any}
-          className="w-5 h-5"
-          tintColor={"#ef4444"}
+      <>
+        <View className={`flex flex-row items-center gap-2 justify-between ${selectedChat?.status === "Blocked" ? "bg-red-50" : "bg-yellow-50"}  px-4 pt-4 pb-6 rounded-lg -mb-3`}>
+          <View className="flex flex-row gap-2">
+            <Image
+              source={icons.watch as any}
+              className="w-5 h-5"
+              tintColor={selectedChat?.status === "Blocked" ? "#ef4444" : "#eab308"}
+            />
+            <Text className={`text-center text-sm font-JakartaBold ${selectedChat?.status === "Blocked" ? "text-red-500" : "text-yellow-500"}`}>
+              {selectedChat?.status === "Expired"
+                ? "Chat Has Been Expired"
+                : selectedChat.status === "Create"
+                  ? "To start conversation send a template"
+                  : "Chat Has Been Blocked"}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => TemplateRef.current?.present()}
+            className="bg-blue-500 px-4 py-2 rounded-lg"
+          >
+            <Text className="text-white text-sm font-JakartaBold">Send Template</Text>
+          </TouchableOpacity>
+        </View>
+
+        <MessageTemplate
+          ref={TemplateRef}
+          close={() => TemplateRef.current?.close()}
         />
-        <Text className="text-center text-red-500 text-sm font-JakartaBold">
-          {selectedChat?.status === "Expired"
-            ? "Chat Has Been Expired"
-            : selectedChat.status === "Create"
-              ? "To start conversation send a template"
-              : "Chat Has Been Blocked"}
-        </Text>
-      </View>
+      </>
     );
   }
 
@@ -218,13 +237,15 @@ const SendChatInput = () => {
             }
           />
           <TouchableOpacity
-            className="bg-[#42d6a624] rounded-full size-12 flex items-center justify-center mt-auto mb-1.5"
+            disabled={!message.message && !message.attachment}
+            className={`rounded-full size-12 flex items-center justify-center mt-auto mb-1.5 
+                        ${!message.message && !message.attachment ? "bg-gray-200" : "bg-[#42d6a624]"}`}
             onPress={handleSend}
           >
             <Image
               source={icons.send as any}
               className="w-6 h-6"
-              tintColor={"#42d6a6"}
+              tintColor={!message.message && !message.attachment ? "#A3A3A3" : "#42d6a6"}
             />
           </TouchableOpacity>
         </View>
@@ -278,6 +299,8 @@ const SendChatInput = () => {
           </TouchableOpacity>
         </View>
       </Modal>
+
+
     </>
   );
 };

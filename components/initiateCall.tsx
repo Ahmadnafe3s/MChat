@@ -1,15 +1,17 @@
 import useCall from '@/hooks/useCall'
 import { useChatStore } from '@/store/chat'
-import React, { useEffect } from 'react'
-import { Modal, Text, View } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import React, { useEffect, useState } from 'react'
+import { Modal, Text, TouchableOpacity, View } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
 
-const InitiateCall = ({ isVisible, onClose }: { isVisible: boolean, onClose: () => void }) => {
+const InitiateCall = ({ onClose }: { onClose: () => void }) => {
 
     const { initiateCall } = useCall()
+    const [isConfirmed, setIsConfirmed] = useState(false)
     const opacity = useSharedValue(1)
     const scale = useSharedValue(1)
-    const scale2 = useSharedValue(1) // Separate shared value for second ring
+    const scale2 = useSharedValue(1)
 
     const { selectedChat } = useChatStore()
 
@@ -28,10 +30,12 @@ const InitiateCall = ({ isVisible, onClose }: { isVisible: boolean, onClose: () 
     }))
 
     useEffect(() => {
-        if (isVisible) {
+        if (isConfirmed && selectedChat?.id) {
 
-            initiateCall.mutate(selectedChat?.id!, {
-                onSuccess: () => onClose(),
+            initiateCall.mutate(selectedChat.id, {
+                onSuccess: () => {
+                    setTimeout(() => onClose(), 2000)
+                },
                 onError: () => onClose()
             })
 
@@ -51,7 +55,6 @@ const InitiateCall = ({ isVisible, onClose }: { isVisible: boolean, onClose: () 
                 -1
             )
 
-            // Second ring with delay for staggered effect
             scale2.value = withRepeat(
                 withSequence(
                     withTiming(1, { duration: 0 }),
@@ -60,55 +63,96 @@ const InitiateCall = ({ isVisible, onClose }: { isVisible: boolean, onClose: () 
                 -1
             )
         }
-    }, [isVisible])
+    }, [isConfirmed, selectedChat?.id])
+
+    const handleConfirm = () => setIsConfirmed(true)
+
+    if (!selectedChat) return null
 
     return (
         <Modal
-            visible={isVisible}
+            visible={true}
             transparent
             statusBarTranslucent
-            animationType="fade"
+            animationType="slide"
+            onRequestClose={onClose}
         >
-            <View className='flex-1 bg-black/40 justify-end'>
-                <View className='bg-white pt-12 pb-10 rounded-t-3xl shadow-2xl'>
-                    {/* Header Info */}
-                    <View className='flex items-center gap-2 px-6'>
-                        <Text className='text-3xl font-JakartaBold text-neutral-800'>{selectedChat?.name}</Text>
+            <View className='flex-1 bg-black/60 justify-end'>
+                {/* Confirmation View — hidden when confirmed */}
+                <View style={isConfirmed ? { display: 'none' } : undefined}
+                    className='bg-white pt-8 pb-10 rounded-t-[40px] px-8 items-center'>
+                    <View className='w-16 h-1 bg-gray-200 rounded-full mb-8' />
+                    <View className='bg-emerald-50 p-6 rounded-full mb-6'>
+                        <Ionicons name="call" size={40} color="#10b981" />
+                    </View>
+                    <Text className='text-2xl font-JakartaBold text-neutral-800 mb-2'>Initiate Call?</Text>
+                    <Text className='text-neutral-500 text-center text-base font-JakartaRegular mb-8 leading-6'>
+                        You are about to start a call with{"\n"}
+                        <Text className='font-JakartaBold text-neutral-800'>{selectedChat?.name}</Text>
+                    </Text>
+
+                    <View className='flex-row gap-4 w-full'>
+                        <TouchableOpacity
+                            onPress={onClose}
+                            className='flex-1 bg-gray-100 py-4 rounded-2xl items-center'
+                        >
+                            <Text className='text-gray-600 font-JakartaBold text-lg'>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={handleConfirm}
+                            className='flex-2 bg-emerald-500 py-4 px-10 rounded-2xl items-center shadow-lg shadow-emerald-200'
+                        >
+                            <Text className='text-white font-JakartaBold text-lg'>Start Call</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* Calling View — hidden until confirmed */}
+                <View style={!isConfirmed ? { display: 'none' } : undefined}
+                    className='bg-white pt-12 pb-14 rounded-t-[40px] shadow-2xl items-center'>
+                    <View className='w-16 h-1 bg-gray-200 rounded-full mb-10' />
+
+                    <View className='items-center gap-1 mb-10'>
+                        <Text className='text-3xl font-JakartaBold text-neutral-800' numberOfLines={1}>{selectedChat?.name}</Text>
                         <Text className='text-neutral-500 text-lg font-Jakarta tracking-wide'>{selectedChat?.phone}</Text>
                     </View>
 
                     {/* Avatar with Ripple Effect */}
-                    <View className="mt-8 mb-6 items-center justify-center">
-                        {/* Animated Ripple Rings */}
+                    <View className="mb-12 items-center justify-center">
                         <Animated.View
                             style={animatedRingStyle}
-                            className="absolute bg-emerald-200 rounded-full size-32"
+                            className="absolute bg-emerald-100 rounded-full size-40"
                         />
                         <Animated.View
                             style={animatedRing2Style}
-                            className="absolute bg-emerald-200/30 rounded-full size-40"
+                            className="absolute bg-emerald-100/50 rounded-full size-52"
                         />
 
-                        {/* Main Avatar Circle */}
-                        <View className="bg-emerald-400 rounded-full size-32 flex items-center justify-center shadow-lg shadow-emerald-500/50">
+                        <View className="bg-emerald-500 rounded-full size-32 flex items-center justify-center shadow-2xl shadow-emerald-500/50 border-4 border-white">
                             <Text className="font-JakartaBold text-6xl text-white">
                                 {selectedChat?.formatted}
                             </Text>
                         </View>
                     </View>
 
-                    {/* Calling Status */}
                     <Animated.Text
                         style={animatedTextStyle}
-                        className='text-center text-xl mt-4 text-neutral-600 font-JakartaMedium mb-8'>
+                        className='text-center text-xl text-neutral-600 font-JakartaMedium mb-12'>
                         Calling...
                     </Animated.Text>
 
-
+                    {/* Hang Up Button */}
+                    <TouchableOpacity
+                        onPress={onClose}
+                        activeOpacity={0.8}
+                        className='bg-red-500 size-20 rounded-full items-center justify-center shadow-xl shadow-red-200'
+                    >
+                        <Ionicons name="close" size={40} color="white" />
+                    </TouchableOpacity>
                 </View>
             </View>
         </Modal>
     )
 }
 
-export default InitiateCall
+export default InitiateCall;
