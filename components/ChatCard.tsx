@@ -1,7 +1,8 @@
+import { icons } from "@/constants/index";
 import { useChatStore } from "@/store/chat";
 import { useRouter } from "expo-router";
 import React, { memo } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const ChatCard = memo(
 
@@ -23,9 +24,15 @@ const ChatCard = memo(
         </View>
 
         <View className="flex flex-1">
-          <Text className="font-JakartaSemiBold text-gray-600 mr-2" numberOfLines={1}>
-            {data?.name}
-          </Text>
+          <View className="flex flex-row align-middle flex-1">
+            <Text className="font-JakartaSemiBold text-gray-600 mr-2" numberOfLines={1}>
+              {data?.name}
+            </Text>
+            {
+              data.is_starred === "Starred" &&
+              <Image source={icons.star_filled as any} style={{ height: 13, width: 13, marginTop: 5, tintColor: "#ffbb00" }} />
+            }
+          </View>
           <Text
             numberOfLines={1}
             className="text-neutral-400 mr-5 font-Jakarta"

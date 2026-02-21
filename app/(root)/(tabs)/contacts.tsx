@@ -83,6 +83,7 @@ const Contacts = () => {
                             onSearch={onSearch}
                             setFilter={setStatus}
                             totalChats={total}
+                            info='Contacts'
                         />
                     }
                     ListFooterComponent={

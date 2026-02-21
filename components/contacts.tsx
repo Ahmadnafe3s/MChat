@@ -1,13 +1,17 @@
 import useChat from "@/hooks/useChat";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
-import React from "react";
-import { Text, View } from "react-native";
+import React, { forwardRef } from "react";
+import { NativeScrollEvent, NativeSyntheticEvent, Text, View } from "react-native";
 import ChatCard from "./ChatCard";
 import ChatsHeader from "./ChatHeader";
 import ChatCardPlaceholder from "./ChatPlaceholder";
 
-const Contacts = () => {
+interface ContactsProps {
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+}
+
+const Contacts = forwardRef<FlashList<any>, ContactsProps>(({ onScroll }, ref) => {
   const {
     search,
     onSearch,
@@ -59,6 +63,8 @@ const Contacts = () => {
   return (
     <View className="flex-1">
       <FlashList
+        ref={ref}
+        onScroll={onScroll}
         data={chats}
         keyExtractor={(item) => item?.id?.toString()}
         renderItem={({ item }) => <ChatCard data={item} />}
@@ -94,6 +100,6 @@ const Contacts = () => {
       />
     </View>
   );
-};
+});
 
 export default Contacts;

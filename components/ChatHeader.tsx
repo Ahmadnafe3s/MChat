@@ -11,10 +11,11 @@ interface ChatsHeaderProps {
     serach: string
     onSearch: (value: string) => void
     options: string[]
+    info?: string
 }
 
 const ChatsHeader: React.FC<ChatsHeaderProps> = React.memo(
-    ({ filter, setFilter, totalChats, options, serach, onSearch }) => {
+    ({ filter, setFilter, totalChats, options, serach, onSearch, info }) => {
         return (
             <View className="flex gap-4 mt-4 pb-2">
                 <View className="flex px-4 gap-2 flex-row mb-4 mt-2 items-center  border border-gray-200 rounded-2xl bg-gray-100">
@@ -35,7 +36,7 @@ const ChatsHeader: React.FC<ChatsHeaderProps> = React.memo(
                 {
                     totalChats! > 0 && (
                         <Text className="font-JakartaSemiBold text-gray-700">
-                            Chats {totalChats}
+                            {info ? info : "Chats"} {totalChats}
                         </Text>
                     )
                 }

@@ -63,6 +63,7 @@ const SignIn = () => {
       <KeyboardAwareScrollView
         bottomOffset={120}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         {/* Header Section with Green Background */}
         <View

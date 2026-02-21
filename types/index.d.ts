@@ -35,6 +35,7 @@ declare interface PaginatedChats {
   current_page: number;
   last_page: number;
   total: number;
+  is_starred: string;
 }
 
 declare interface ChatStore {

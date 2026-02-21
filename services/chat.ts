@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const ChatApi = {
+
   getChats: async (params: {
     value: number;
     attribute: string;
@@ -13,8 +14,10 @@ const ChatApi = {
       `https://meta.muzztech.com/api/v1/chat/list`,
       { params }
     );
+
     return res.data;
   },
+
   getConversations: async (selectedChat: number): Promise<Conversations[]> => {
     const res = await axios.get(
       `https://meta.muzztech.com/api/v1/chat/history/${selectedChat}`
