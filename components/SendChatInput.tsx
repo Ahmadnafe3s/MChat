@@ -1,9 +1,10 @@
+import AudioPickerModal, { AudioAsset } from "@/components/AudioPickerModal";
 import MessageTemplate from "@/components/MessageTemplate";
 import { icons } from "@/constants";
 import useChat from "@/hooks/useChat";
 import useTemplate from "@/hooks/useTemplate";
 import { useChatStore } from "@/store/chat";
-import { getDocument, getImage } from "@/utils/attachment";
+import { getDocument, getImage, openCamera } from "@/utils/attachment";
 import bytesToMB from "@/utils/sizeConverter";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
@@ -44,6 +45,7 @@ const SendChatInput = () => {
 
 
   const TemplateRef = useRef<BottomSheetModal>(null);
+  const AudioPickerRef = useRef<BottomSheetModal>(null);
 
 
   // ----------------------Handling Attachment--------------------
@@ -78,19 +80,22 @@ const SendChatInput = () => {
           },
         }));
         break;
-      case "audio":
-        const audio = await getDocument(true);
-        if (!audio) return;
+      case "camera":
+        const capture = await openCamera();
+        if (!capture) return;
         setMessage((prev) => ({
           ...prev,
-          type: "audio",
+          type: "gallery",
           attachment: {
-            uri: audio.uri,
-            type: audio.mimeType!,
-            name: audio.name!,
-            size: audio.size!,
+            uri: capture.uri,
+            type: capture.mimeType!,
+            name: capture.fileName!,
+            size: capture.fileSize!,
           },
         }));
+        break;
+      case "audio":
+        AudioPickerRef.current?.present();
         break;
       case "bot":
         console.log("Bot");
@@ -102,6 +107,19 @@ const SendChatInput = () => {
         router.push("quickReplies");
         break;
     }
+  };
+
+  const handleAudioSelect = (asset: AudioAsset) => {
+    setMessage((prev) => ({
+      ...prev,
+      type: "audio",
+      attachment: {
+        uri: asset.uri,
+        type: asset.mimeType,
+        name: asset.filename,
+        size: asset.size,
+      },
+    }));
   };
 
   const handleSendTemplate = (data: SendTemplate) => {
@@ -131,6 +149,12 @@ const SendChatInput = () => {
 
   // ---------------------Attachment Options--------------------
   const attachmentOptions = [
+    {
+      type: "camera",
+      icon: icons.camera || icons.clip,
+      label: "Camera",
+      color: "#FF4D4D",
+    },
     {
       type: "gallery",
       icon: icons.gallery || icons.clip,
@@ -337,6 +361,11 @@ const SendChatInput = () => {
         ref={TemplateRef}
         isLoading={sendTemplate.isPending}
         onSend={handleSendTemplate}
+      />
+
+      <AudioPickerModal
+        ref={AudioPickerRef}
+        onSelect={handleAudioSelect}
       />
     </>
   );

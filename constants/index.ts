@@ -13,6 +13,7 @@ import bot from "@/assets/icons/bot.png";
 import call_incoming from "@/assets/icons/call-incoming.png";
 import call_missed from "@/assets/icons/call-missed.png";
 import call_outgoing from "@/assets/icons/call-outgoing.png";
+import camera from "@/assets/icons/camera.png";
 import check_circle from "@/assets/icons/check-circle.png";
 import doubleCheck from "@/assets/icons/check-double.png";
 import check from "@/assets/icons/check.png";
@@ -103,7 +104,8 @@ export const icons = {
   campaign,
   dialer,
   bot,
-  logout
+  logout,
+  camera
 };
 
 export const onboarding = [
