@@ -47,7 +47,7 @@ const SignIn = () => {
         role: data.role,
         company_logo: data.company_logo,
       });
-      router.push("/(root)/chats");
+      router.replace("/(root)/chats");
     },
     onError: (err: AxiosError<{ message: string }>) => {
       console.log(err);

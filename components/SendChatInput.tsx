@@ -1,12 +1,14 @@
 import MessageTemplate from "@/components/MessageTemplate";
 import { icons } from "@/constants";
 import useChat from "@/hooks/useChat";
+import useTemplate from "@/hooks/useTemplate";
 import { useChatStore } from "@/store/chat";
 import { getDocument, getImage } from "@/utils/attachment";
 import bytesToMB from "@/utils/sizeConverter";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
+
 import {
   Image,
   Modal,
@@ -37,6 +39,10 @@ const SendChatInput = () => {
     message: "",
     attachment: null,
   });
+
+  const { sendTemplate } = useTemplate()
+
+
   const TemplateRef = useRef<BottomSheetModal>(null);
 
 
@@ -86,11 +92,25 @@ const SendChatInput = () => {
           },
         }));
         break;
+      case "bot":
+        console.log("Bot");
+        break;
+      case "template":
+        TemplateRef.current?.present();
+        break;
       case "quickReply":
         router.push("quickReplies");
         break;
     }
   };
+
+  const handleSendTemplate = (data: SendTemplate) => {
+    sendTemplate.mutate(data, {
+      onSuccess: () => {
+        TemplateRef.current?.close()
+      }
+    })
+  }
 
   // ----------------------Mutation--------------------
   const handleSend = async () => {
@@ -135,6 +155,18 @@ const SendChatInput = () => {
       label: "Quick Reply",
       color: "#ff3b3b",
     },
+    {
+      type: "bot",
+      icon: icons.bot || icons.clip,
+      label: "Bot",
+      color: "#000000",
+    },
+    {
+      type: "template",
+      icon: icons.template || icons.clip,
+      label: "Template",
+      color: "#008eff",
+    },
   ];
 
 
@@ -168,7 +200,8 @@ const SendChatInput = () => {
 
         <MessageTemplate
           ref={TemplateRef}
-          close={() => TemplateRef.current?.close()}
+          isLoading={sendTemplate.isPending}
+          onSend={handleSendTemplate}
         />
       </>
     );
@@ -300,7 +333,11 @@ const SendChatInput = () => {
         </View>
       </Modal>
 
-
+      <MessageTemplate
+        ref={TemplateRef}
+        isLoading={sendTemplate.isPending}
+        onSend={handleSendTemplate}
+      />
     </>
   );
 };

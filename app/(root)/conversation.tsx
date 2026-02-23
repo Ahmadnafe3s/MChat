@@ -4,7 +4,6 @@ import ConversationHeader from "@/components/ConversationHeader";
 import InitiateCall from "@/components/initiateCall";
 import OTPModal from "@/components/InputOTP";
 import Messages from "@/components/Messages";
-import MessageTemplate from "@/components/MessageTemplate";
 import SendChatInput from "@/components/SendChatInput";
 import useChat from "@/hooks/useChat";
 import useClearChat from "@/hooks/useClearChat";
@@ -54,7 +53,6 @@ const Conversation = () => {
       {/* -------------- Chat Header --------------- */}
       <ConversationHeader
         onCall={() => setModal('call')}
-        onTemplate={() => TemplateRef.current?.present()}
         onClearChat={() => setModal('clearChat')}
       />
 
@@ -102,12 +100,6 @@ const Conversation = () => {
       {/* -------------- Keyboard --------------- */}
       <Animated.View style={keyboardPadding} />
 
-
-      {/* -------------- Message Template --------------- */}
-      <MessageTemplate
-        ref={TemplateRef}
-        close={() => TemplateRef.current?.close()}
-      />
 
       {/* -------------- Initiate Call --------------- */}
 

@@ -9,6 +9,7 @@ import add from "@/assets/icons/add.png";
 import chevronDown from "@/assets/icons/angle-small-down.png";
 import moveLeft from "@/assets/icons/arrow-left.png";
 import flash from "@/assets/icons/bolt.png";
+import bot from "@/assets/icons/bot.png";
 import call_incoming from "@/assets/icons/call-incoming.png";
 import call_missed from "@/assets/icons/call-missed.png";
 import call_outgoing from "@/assets/icons/call-outgoing.png";
@@ -99,7 +100,8 @@ export const icons = {
   call_outgoing,
   contact,
   campaign,
-  dialer
+  dialer,
+  bot
 };
 
 export const onboarding = [

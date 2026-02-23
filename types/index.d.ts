@@ -253,6 +253,7 @@ declare interface Contact {
   formatted: string
   status: string
   source: string
+  is_starred: string
 }
 
 
@@ -261,4 +262,12 @@ declare interface paginatedContacts {
   current_page: number,
   last_page: number,
   total: number
+}
+
+
+// --------------------Send Template-------------------
+
+declare interface SendTemplate {
+  templateId: number,
+  data: any
 }

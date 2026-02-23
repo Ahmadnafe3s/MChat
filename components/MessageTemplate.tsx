@@ -15,16 +15,17 @@ import CustomButton from './custom-button';
 
 
 interface Props {
-    close: () => void
+    onSend: (data: SendTemplate) => void
+    isLoading: boolean
 }
 
 
-const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => {
+const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ onSend, isLoading }, ref) => {
 
     const Points = useMemo(() => ["40%", "60%", "90%"], []);
     const [selectedTemplate, setSelectedTemplate] = useState<TemplatesResponse['data'][0] | null>(null);
     const { height } = useGradualKeyboard()
-    const { getTemplate, sendTemplate } = useTemplate()
+    const { getTemplate } = useTemplate()
 
     const { watch, handleSubmit, reset, control, formState: { errors } } = useForm<z.infer<typeof templateVarSchema>>({
         resolver: zodResolver(templateVarSchema),
@@ -40,33 +41,21 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
     }), [])
 
 
+    const handleSend = () => {
+        const numVariables = +(selectedTemplate?.variable || 0);
+        if (numVariables === 0) {
+            onSend({ templateId: selectedTemplate?.id!, data: { variable: [] } });
+        } else {
+            handleSubmit((data) => onSend({ templateId: selectedTemplate?.id!, data: { variable: data.variable } }))();
+        }
+    }
+
     useEffect(() => {
         const fields = genFields(selectedTemplate?.variable!)
         reset(fields)
     }, [selectedTemplate?.id])
 
 
-    const onSend = (data: any) => {
-        console.log("Sending template:", { templateId: selectedTemplate?.id, data });
-        sendTemplate.mutate({ templateId: selectedTemplate?.id!, data }, {
-            onSuccess: () => {
-                close()
-                setSelectedTemplate(null)
-            }
-        })
-    }
-
-    // Direct send for templates with no variables (bypasses form validation)
-    const handleSend = () => {
-        const numVariables = +(selectedTemplate?.variable || 0);
-        if (numVariables === 0) {
-            // No variables, send directly without form validation
-            onSend({ variable: [] });
-        } else {
-            // Has variables, use form validation
-            handleSubmit(onSend)();
-        }
-    }
 
     const renderBackdrop = React.useCallback((props: any) => (
         <BottomSheetBackdrop
@@ -355,7 +344,7 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ close }, ref) => 
 
                         <CustomButton
                             title='Send'
-                            loading={sendTemplate.isPending}
+                            loading={isLoading}
                             rightIcon={<Image source={icons.send as any} className='w-4 h-4' tintColor={'#fff'} />}
                             onPress={handleSend}
                         />

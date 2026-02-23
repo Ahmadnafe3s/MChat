@@ -8,12 +8,11 @@ import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-na
 import Dropdown from "./Dropdown";
 
 interface Props {
-  onTemplate: () => void,
   onCall: () => void,
   onClearChat: () => void
 }
 
-const ConversationHeader = memo(({ onTemplate, onCall, onClearChat }: Props) => {
+const ConversationHeader = memo(({ onCall, onClearChat }: Props) => {
 
   const router = useRouter();
   const { selectedChat } = useChatStore();
@@ -29,11 +28,11 @@ const ConversationHeader = memo(({ onTemplate, onCall, onClearChat }: Props) => 
       case "Clear Chat":
         onClearChat()
         break;
-      case "Template":
-        onTemplate()
-        break;
       case "Profile":
         router.push(`/(root)/chatProfile`);
+        break;
+      case "Media":
+        router.push(`/(root)/allMedia`);
         break;
     }
   };
@@ -54,7 +53,7 @@ const ConversationHeader = memo(({ onTemplate, onCall, onClearChat }: Props) => 
             </Text>
           </View>
           <TouchableOpacity className="flex flex-1"
-            onPress={() => router.push(`/(root)/allMedia`)}
+            onPress={() => router.push(`/(root)/chatProfile`)}
           >
             <Text
               className="text-lg  text-neutral-700 font-Jakarta mr-2"
@@ -88,7 +87,7 @@ const ConversationHeader = memo(({ onTemplate, onCall, onClearChat }: Props) => 
             />
           </TouchableOpacity>
           <Dropdown
-            options={["Template", "Clear Chat", selectedChat?.status === "Blocked" ? "Unblock" : "Block", "Profile"]}
+            options={["Media", "Clear Chat", selectedChat?.status === "Blocked" ? "Unblock" : "Block", "Profile"]}
             icon={icons.more as any}
             iconStyle={{ width: 20, height: 20 }}
             iconBgStyle="bg-white"
