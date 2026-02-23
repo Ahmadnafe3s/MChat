@@ -41,7 +41,7 @@ export const getImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
       allowsEditing: true,
-      quality: 1,
+      quality: 0.7, // Using built-in compression to avoid native module rebuild
     });
     if (!result.canceled) {
       const MaxSize = 5 * 1024 * 1024;
@@ -63,7 +63,7 @@ export const openCamera = async () => {
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images", "videos"],
       allowsEditing: true,
-      quality: 1,
+      quality: 0.7, // Using built-in compression to avoid native module rebuild
     });
     if (!result.canceled) {
       const MaxSize = 5 * 1024 * 1024;

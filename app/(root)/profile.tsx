@@ -79,10 +79,6 @@ const Profile = () => {
                         <InfoTile label='Company' value={user?.company!} emoji='🏢' />
                         <InfoTile label='Phone' value={user?.mobile!} emoji='📱' />
                     </View>
-                    <View className='flex flex-row gap-3 mt-3'>
-                        <InfoTile label='Attribute' value={user?.attribute!} emoji='🏷️' />
-                        <InfoTile label='Self ID' value={user?.self_id || '—'} emoji='🆔' />
-                    </View>
                 </View>
 
                 {/* ─── WhatsApp Business ─── */}

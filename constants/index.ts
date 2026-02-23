@@ -43,6 +43,7 @@ import call from "@/assets/icons/phone-call.png";
 import dialer from "@/assets/icons/phone-flip.png";
 import gallery from "@/assets/icons/picture.png";
 import play from "@/assets/icons/play.png";
+import refresh from "@/assets/icons/rotate-ccw.png";
 import search from "@/assets/icons/search.png";
 import star_filled from "@/assets/icons/solid_star.png";
 import star from "@/assets/icons/star.png";
@@ -105,7 +106,8 @@ export const icons = {
   dialer,
   bot,
   logout,
-  camera
+  camera,
+  refresh
 };
 
 export const onboarding = [

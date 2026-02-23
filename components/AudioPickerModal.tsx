@@ -1,6 +1,5 @@
 import { icons } from "@/constants";
-import bytesToMB from "@/utils/sizeConverter";
-import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal } from "@gorhom/bottom-sheet";
 import * as MediaLibrary from "expo-media-library";
 import React, { forwardRef, useCallback, useEffect, useState } from "react";
 import {
@@ -40,14 +39,19 @@ const AudioPickerModal = forwardRef<BottomSheetModal, AudioPickerModalProps>(
 
                 const { assets: fetchedAssets } = await MediaLibrary.getAssetsAsync({
                     mediaType: "audio",
-                    sortBy: [[MediaLibrary.SortBy.creationTime, false]],
-                    first: 1000, // Fetch up to 1000 audios for now
+                    sortBy: [[MediaLibrary.SortBy.creationTime, false]], // Newest first
+                    first: 1000,
                 });
 
-                // We need extra info (size, mimeType) for some assets
-                // Note: MediaLibrary.getAssetInfoAsync is slow for many assets, 
-                // so we'll fetch basic info first.
-                setAssets(fetchedAssets);
+                // Filter out ringtones: duration < 3s or filename containing common system terms
+                const filtered = fetchedAssets.filter(asset => {
+                    const isTooShort = asset.duration < 3;
+                    const name = asset.filename.toLowerCase();
+                    const isSystem = name.includes('ringtone') || name.includes('notification') || name.includes('alarm') || name.includes('ui_sound');
+                    return !isTooShort && !isSystem;
+                });
+
+                setAssets(filtered);
             } catch (error) {
                 console.error("Error fetching audios:", error);
             } finally {
@@ -71,7 +75,7 @@ const AudioPickerModal = forwardRef<BottomSheetModal, AudioPickerModalProps>(
                     ...info,
                     uri: info.localUri || info.uri,
                     filename: info.filename,
-                    size: asset.duration > 0 ? (asset.width || 0) : (asset.height || 0),
+                    size: 0,
                     mimeType: "audio/mpeg",
                 } as any);
             } catch (error) {
@@ -99,6 +103,11 @@ const AudioPickerModal = forwardRef<BottomSheetModal, AudioPickerModalProps>(
             asset.filename.toLowerCase().includes(search.toLowerCase())
         );
 
+        const formatDate = (timestamp: number) => {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        };
+
         return (
             <BottomSheetModal
                 ref={ref}
@@ -108,67 +117,72 @@ const AudioPickerModal = forwardRef<BottomSheetModal, AudioPickerModalProps>(
                 enablePanDownToClose
                 backgroundStyle={{ backgroundColor: "#F9FAFB" }}
             >
-                <BottomSheetView style={{ flex: 1 }}>
-                    <View className="px-4 pt-2 pb-4 border-b border-gray-100 bg-white">
-                        <View className="flex flex-row justify-between items-center mb-4">
-                            <Text className="text-xl font-JakartaBold text-gray-800">
-                                Select Audio
-                            </Text>
-                            <TouchableOpacity onPress={() => fetchAudios()}>
-                                <Image source={icons.filter as any} className="w-5 h-5" tintColor="#42d6a6" />
-                            </TouchableOpacity>
-                        </View>
-
-                        <View className="bg-gray-50 rounded-2xl px-4 flex flex-row items-center border border-gray-100">
-                            <Image source={icons.search as any} className="w-4 h-4" tintColor="#A3A3A3" />
-                            <TextInput
-                                placeholder="Search audios..."
-                                className="py-3 flex-1 ml-2 text-base font-Jakarta"
-                                value={search}
-                                onChangeText={setSearch}
-                            />
-                        </View>
+                {/* Removed BottomSheetView to fix scrolling issues with FlatList */}
+                <View className="px-4 pt-2 pb-4 border-b border-gray-100 bg-white">
+                    <View className="flex flex-row justify-between items-center mb-4">
+                        <Text className="text-xl font-JakartaBold text-gray-800">
+                            Select Audio
+                        </Text>
+                        <TouchableOpacity onPress={() => fetchAudios()}>
+                            <Image source={icons.refresh as any} className="w-5 h-5" tintColor="#42d6a6" />
+                        </TouchableOpacity>
                     </View>
 
-                    {loading && assets.length === 0 ? (
-                        <View className="flex-1 items-center justify-center">
-                            <ActivityIndicator size="large" color="#42d6a6" />
-                            <Text className="mt-2 text-gray-500 font-Jakarta">Loading audios...</Text>
-                        </View>
-                    ) : (
-                        <BottomSheetFlatList
-                            data={filteredAssets}
-                            keyExtractor={(item) => item.id}
-                            contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity
-                                    className="bg-white rounded-2xl p-4 mb-3 flex flex-row items-center shadow-sm border border-gray-50"
-                                    onPress={() => handleSelect(item)}
-                                >
-                                    <View className="w-12 h-12 bg-amber-50 rounded-xl items-center justify-center mr-4">
-                                        <Image source={icons.audio as any} className="w-6 h-6" tintColor="#F59E0B" />
-                                    </View>
-                                    <View className="flex-1">
-                                        <Text className="text-gray-800 font-JakartaSemiBold text-sm" numberOfLines={1}>
-                                            {item.filename}
-                                        </Text>
-                                        <Text className="text-gray-400 text-xs mt-1">
-                                            {Math.round(item.duration)} sec • {bytesToMB(0)}
-                                        </Text>
-                                    </View>
-                                    <View className="w-8 h-8 rounded-full bg-gray-50 items-center justify-center">
-                                        <Image source={icons.send as any} className="w-4 h-4 rotate-45" tintColor="#42d6a6" />
-                                    </View>
-                                </TouchableOpacity>
-                            )}
-                            ListEmptyComponent={() => (
-                                <View className="items-center justify-center py-20">
-                                    <Text className="text-gray-400 font-Jakarta">No audio files found</Text>
-                                </View>
-                            )}
+                    <View className="bg-gray-50 rounded-2xl px-4 flex flex-row items-center border border-gray-100">
+                        <Image source={icons.search as any} className="w-4 h-4" tintColor="#A3A3A3" />
+                        <TextInput
+                            placeholder="Search audios..."
+                            className="py-3 flex-1 ml-2 text-base font-Jakarta"
+                            value={search}
+                            onChangeText={setSearch}
                         />
-                    )}
-                </BottomSheetView>
+                    </View>
+                </View>
+
+                {loading && assets.length === 0 ? (
+                    <View className="flex-1 items-center justify-center">
+                        <ActivityIndicator size="large" color="#42d6a6" />
+                        <Text className="mt-2 text-gray-500 font-Jakarta">Loading audios...</Text>
+                    </View>
+                ) : (
+                    <BottomSheetFlatList
+                        data={filteredAssets}
+                        keyExtractor={(item) => item.id}
+                        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, paddingBottom: 40 }}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                className="bg-white rounded-2xl p-4 mb-3 flex flex-row items-center shadow-sm border border-gray-50"
+                                onPress={() => handleSelect(item)}
+                            >
+                                <View className="w-12 h-12 bg-amber-50 rounded-xl items-center justify-center mr-4">
+                                    <Image source={icons.audio as any} className="w-6 h-6" tintColor="#F59E0B" />
+                                </View>
+                                <View className="flex-1">
+                                    <Text className="text-gray-800 font-JakartaSemiBold text-sm" numberOfLines={1}>
+                                        {item.filename}
+                                    </Text>
+                                    <View className="flex flex-row items-center mt-1">
+                                        <Text className="text-gray-400 text-[10px] font-JakartaMedium">
+                                            {formatDate(item.creationTime || item.modificationTime)}
+                                        </Text>
+                                        <View className="w-1 h-1 rounded-full bg-gray-300 mx-2" />
+                                        <Text className="text-gray-400 text-[10px] font-JakartaMedium">
+                                            {Math.round(item.duration)} sec
+                                        </Text>
+                                    </View>
+                                </View>
+                                <View className="w-8 h-8 ml-2 rounded-full bg-emerald-50 items-center justify-center">
+                                    <Image source={icons.send as any} className="w-4 h-4" tintColor="#42d6a6" />
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                        ListEmptyComponent={() => (
+                            <View className="items-center justify-center py-20">
+                                <Text className="text-gray-400 font-Jakarta">No audio files found</Text>
+                            </View>
+                        )}
+                    />
+                )}
             </BottomSheetModal>
         );
     }

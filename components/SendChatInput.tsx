@@ -153,7 +153,7 @@ const SendChatInput = () => {
       type: "camera",
       icon: icons.camera || icons.clip,
       label: "Camera",
-      color: "#FF4D4D",
+      color: "#ff00bd",
     },
     {
       type: "gallery",
@@ -235,36 +235,56 @@ const SendChatInput = () => {
     <>
       {/* Attachment Preview */}
       {message.attachment && (
-        <View className="mx-3 px-3 py-2 bg-emerald-50 rounded-lg flex flex-row items-center gap-1">
-          <View className="w-16 h-16 bg-red-100 rounded-lg items-center justify-center mr-3">
+        <View className="mx-3 mb-2 p-2 bg-white rounded-2xl flex flex-row items-center border border-gray-100 shadow-sm">
+          <View className="w-14 h-14 bg-gray-50 rounded-xl items-center justify-center overflow-hidden">
             {message.attachment?.type.includes("image") ? (
               <Image
                 source={{ uri: message.attachment?.uri }}
-                className="h-full w-full rounded-lg"
+                className="h-full w-full"
+                resizeMode="cover"
               />
+            ) : message.attachment?.type.includes("audio") ? (
+              <View className="bg-amber-50 w-full h-full items-center justify-center">
+                <Image source={icons.audio as any} className="w-6 h-6" tintColor="#F59E0B" />
+              </View>
             ) : (
-              <Text className="text-red-600 text-lg font-bold uppercase">
-                {message.attachment?.type.split("/")[1]}
-              </Text>
+              <View className="bg-emerald-50 w-full h-full items-center justify-center">
+                <Image source={icons.document as any} className="w-6 h-6" tintColor="#10B981" />
+              </View>
             )}
           </View>
-          <View className="flex gap-0.5 flex-1 mr-4">
+
+          <View className="flex-1 ml-3 mr-2">
             <Text
-              className="font-JakartaSemiBold text-gray-700"
+              className="font-JakartaSemiBold text-gray-800 text-sm"
               numberOfLines={1}
             >
               {message.attachment?.name}
             </Text>
-            <Text className="text-gray-400 text-xs">
-              {bytesToMB(message.attachment?.size!)}
-            </Text>
+            <View className="flex flex-row items-center mt-0.5">
+              <View className={`px-1.5 py-0.5 rounded-md ${message.attachment?.type.includes("audio") ? 'bg-amber-100' : 'bg-emerald-100'}`}>
+                <Text className={`text-[8px] font-JakartaBold uppercase ${message.attachment?.type.includes("audio") ? 'text-amber-600' : 'text-emerald-600'}`}>
+                  {message.attachment?.type.split("/")[1]}
+                </Text>
+              </View>
+              {!message.attachment?.type.includes("audio") && (
+                <>
+                  <View className="w-1 h-1 rounded-full bg-gray-300 mx-2" />
+                  <Text className="text-gray-400 text-[10px] font-JakartaMedium">
+                    {bytesToMB(message.attachment?.size!)}
+                  </Text>
+                </>
+              )}
+            </View>
           </View>
+
           <TouchableOpacity
+            className="w-8 h-8 rounded-full bg-gray-50 items-center justify-center"
             onPress={() =>
               setMessage((prev) => ({ ...prev, attachment: null }))
             }
           >
-            <Text className="text-gray-500 text-lg mr-1">✕</Text>
+            <Image source={icons.cross as any} className="w-3 h-3" tintColor="#6B7280" />
           </TouchableOpacity>
         </View>
       )}
