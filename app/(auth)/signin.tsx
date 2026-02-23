@@ -36,17 +36,7 @@ const SignIn = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: (data: z.infer<typeof signinSchema>) => authApi(data.email, data.password),
     onSuccess: (data) => {
-      setUser({
-        id: data.id,
-        name: data.name,
-        email: data.email,
-        mobile: data.mobile,
-        company: data.company,
-        self_id: data.self_id,
-        attribute: data.attribute,
-        role: data.role,
-        company_logo: data.company_logo,
-      });
+      setUser(data);
       router.replace("/(root)/chats");
     },
     onError: (err: AxiosError<{ message: string }>) => {
@@ -67,13 +57,13 @@ const SignIn = () => {
       >
         {/* Header Section with Green Background */}
         <View
-          className="bg-emerald-500 pb-16 rounded-b-[40px]"
+          className="bg-emerald-600 pb-16 rounded-b-[40px]"
           style={{ paddingTop: insets.top + 16 }}
         >
           <View className="flex items-center justify-center">
             {/* Logo Container with White Background */}
-            <View className="bg-white p-4 rounded-3xl shadow-lg">
-              <Image source={images.logo as any} className="size-28" />
+            <View className="rounded-3xl">
+              <Image source={images.logo as any} className="size-36" />
             </View>
             <Text className="text-4xl text-center text-white font-JakartaBold mt-4 tracking-wide">
               <Text className="text-emerald-200">M</Text>

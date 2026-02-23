@@ -30,6 +30,7 @@ import globe from "@/assets/icons/globe.png";
 import audio from "@/assets/icons/headphones.png";
 import company from "@/assets/icons/house-building.png";
 import key from "@/assets/icons/key-round.png";
+import logout from "@/assets/icons/logout.png";
 import mail from "@/assets/icons/mail.png";
 import campaign from "@/assets/icons/megaphone.png";
 import more from "@/assets/icons/menu-dots-vertical.png";
@@ -101,7 +102,8 @@ export const icons = {
   contact,
   campaign,
   dialer,
-  bot
+  bot,
+  logout
 };
 
 export const onboarding = [

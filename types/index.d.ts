@@ -1,13 +1,42 @@
+declare interface WhatsAppInfo {
+  email: string;
+  number: string;
+  status: string;
+  vertical: string;
+  name_status: string | null;
+  verified_name: string;
+  quality_rating: string;
+  messaging_limit: string;
+  about: string;
+  description: string;
+  address: string;
+  plan: string;
+}
+
+declare interface VoiceInfo {
+  name: string;
+  number: string;
+  mirror_number: string;
+  destination: string;
+  destination_name: string;
+  plan: string;
+  fcm: string;
+}
+
 declare interface User {
   id: number;
   name: string;
-  email: string;
   mobile: string;
+  email: string;
   company: string;
-  attribute: string;
   role: string;
-  self_id: number;
+  attribute: string;
+  self_id: string;
   company_logo: string;
+  flag: string;
+  whatsapp: WhatsAppInfo;
+  voice: VoiceInfo;
+  wallet: string;
 }
 
 declare interface AuthStore {
