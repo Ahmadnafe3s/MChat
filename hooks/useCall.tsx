@@ -1,7 +1,7 @@
 import callApi from '@/services/call';
 import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 const useCall = () => {
@@ -28,21 +28,29 @@ const useCall = () => {
   }
 }
 
+
 export const useCallLogs = (startDate: string, endDate: string, status: string) => {
   const { user } = useAuthStore();
 
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['callLogs', user?.id, startDate, endDate, status],
-    queryFn: () => callApi.getCallLogs({
+    queryFn: ({ pageParam = 1 }) => callApi.getCallLogs({
       value: user?.id!,
       attribute: user?.attribute!,
       from_date: startDate,
       end_date: endDate,
-      status
+      status,
+      page: pageParam,
+      per_page: 20
     }),
+    initialPageParam: 1,
+    getNextPageParam: (prev_page: CallLogs) => {
+      return prev_page.current_page < prev_page.last_page ? prev_page.current_page + 1 : undefined
+    },
     enabled: !!user?.id,
-    placeholderData: keepPreviousData
   })
 }
+
+
 
 export default useCall

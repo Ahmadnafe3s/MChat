@@ -20,12 +20,20 @@ const CallLogs = () => {
     const [showStartPicker, setShowStartPicker] = React.useState(false)
     const [showEndPicker, setShowEndPicker] = React.useState(false)
     const [selectedStatus, setSelectedStatus] = React.useState('All')
-    const { data, isLoading, isError } = useCallLogs(genDate(startDate), genDate(endDate), selectedStatus)
+    const {
+        data,
+        isLoading,
+        isError,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage
+    } = useCallLogs(genDate(startDate), genDate(endDate), selectedStatus)
+
 
     const filterHeight = useSharedValue(FilterHeaderHeight)
+    const statuses = data?.pages[0]?.statuses
+    const callLogs = data?.pages.flatMap(page => page.data ?? []) ?? []
 
-    const statuses = data?.statuses
-    const callLogs = data?.data || []
 
     const formatDate = (date: Date) => {
         return date.toLocaleDateString('en-GB', {
@@ -133,7 +141,7 @@ const CallLogs = () => {
                         contentContainerStyle={{ paddingRight: 16 }}
                         className="flex-row"
                     >
-                        {headerStyleCoinfig(statuses, data.count).map((item, index) => (
+                        {headerStyleCoinfig(statuses, data.pages[0].count).map((item, index) => (
                             <TouchableOpacity
                                 key={index}
                                 activeOpacity={0.7}
@@ -294,6 +302,18 @@ const CallLogs = () => {
                             </Text>
                         </View>
                     }
+                    scrollEventThrottle={16}
+                    onEndReached={() => {
+                        if (hasNextPage && !isFetchingNextPage) {
+                            fetchNextPage()
+                        }
+                    }}
+                    onEndReachedThreshold={1}
+                    ListFooterComponent={
+                        isFetchingNextPage ?
+                            <ActivityIndicator size="small" color="#059669" className="py-4" />
+                            : null}
+
                     onScroll={handleScroll}
                 />
             )}

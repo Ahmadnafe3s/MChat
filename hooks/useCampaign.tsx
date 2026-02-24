@@ -1,33 +1,34 @@
 import { CampaignApi } from '@/services/campaign'
 import { useAuthStore } from '@/store/auth'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query'
 
-const useCampaign = () => {
+export const useCampaigns = (fromDate: string, endDate: string) => {
     const { user } = useAuthStore()
 
-    const getCampaigns = (fromDate: string, endDate: string) => {
-        return useQuery({
-            queryKey: ['campaigns', user?.id, fromDate, endDate],
-            queryFn: () => CampaignApi.getCampaings({ value: user?.id!, attribute: user?.attribute!, from_date: fromDate, end_date: endDate }),
-            enabled: !!user?.id,
-            placeholderData: keepPreviousData
-        })
-    }
-
-
-    const getCampaignByID = (campaignId: number) => {
-        return useQuery({
-            queryKey: ['campaigns', campaignId],
-            queryFn: () => CampaignApi.getCampaignDetails(campaignId),
-            enabled: !!campaignId,
-            placeholderData: keepPreviousData
-        })
-    }
-
-    return {
-        getCampaigns,
-        getCampaignByID
-    }
+    return useInfiniteQuery({
+        queryKey: ['campaigns', user?.id, fromDate, endDate],
+        queryFn: ({ pageParam = 1 }) => CampaignApi.getCampaings({
+            value: user?.id!,
+            attribute: user?.attribute!,
+            from_date: fromDate,
+            end_date: endDate,
+            page: pageParam,
+            per_page: 20
+        }),
+        initialPageParam: 1,
+        getNextPageParam: (prev_page: CampaignResponse) => {
+            const { current_page, last_page } = prev_page
+            return current_page < last_page ? current_page + 1 : undefined
+        },
+        enabled: !!user?.id
+    })
 }
 
-export default useCampaign
+export const useCampaignByID = (campaignId: number) => {
+    return useQuery({
+        queryKey: ['campaigns', campaignId],
+        queryFn: () => CampaignApi.getCampaignDetails(campaignId),
+        enabled: !!campaignId,
+        placeholderData: keepPreviousData
+    })
+}

@@ -1,4 +1,4 @@
-import useCampaign from '@/hooks/useCampaign'
+import { useCampaignByID } from '@/hooks/useCampaign'
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet'
 import React, { forwardRef, useMemo } from 'react'
 import { ActivityIndicator, Text, View } from 'react-native'
@@ -22,9 +22,8 @@ interface CampaignData {
 
 const CampaignDetails = forwardRef<BottomSheetModal, Props>(({ onClose, campaignId }, ref) => {
     const points = useMemo(() => ["40%", "75%"], [])
-    const { getCampaignByID } = useCampaign()
 
-    const { data, isLoading, isError, error } = getCampaignByID(campaignId) as {
+    const { data, isLoading, isError, error } = useCampaignByID(campaignId) as {
         data: CampaignData
         isLoading: boolean
         isError: boolean

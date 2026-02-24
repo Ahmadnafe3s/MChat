@@ -1,12 +1,12 @@
 import CampaignDetails from '@/components/CampaignDetails'
-import useCampaign from '@/hooks/useCampaign'
+import { useCampaigns } from '@/hooks/useCampaign'
 import { Ionicons } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FlashList } from '@shopify/flash-list'
 import { useRouter } from 'expo-router'
 import React, { useRef } from 'react'
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -22,10 +22,13 @@ const Campaign = () => {
     const [endDate, setEndDate] = React.useState(new Date())
     const [showStartPicker, setShowStartPicker] = React.useState(false)
     const [showEndPicker, setShowEndPicker] = React.useState(false)
-    const { getCampaigns } = useCampaign()
-    const { data, isLoading, isError, error } = getCampaigns(genDate(startDate), genDate(endDate))
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } = useCampaigns(genDate(startDate), genDate(endDate))
     const bottomSheetRef = useRef<BottomSheetModal>(null)
     const [selectedCampaign, setSelectedCampaign] = React.useState<number | null>(null)
+
+    const campaignsData = data?.pages.flatMap((page) => page?.data ?? []) ?? [];
+
+    console.log(data?.pages)
 
     const formatDate = (date: Date) => {
         return date.toLocaleDateString('en-GB', {
@@ -142,32 +145,67 @@ const Campaign = () => {
         )
     }
 
-    const renderHeader = () => (
-        <View className="p-4">
-            <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-lg font-bold text-gray-900">
-                    Campaign Results
-                </Text>
-                <Text className="text-sm text-gray-600">
-                    {data?.count || 0} campaigns
-                </Text>
-            </View>
+    const renderHeader = () => {
+        const statuses = data?.pages[0]?.statuses
+        if (!statuses) return <View className="p-4"><Text className="text-lg font-bold text-gray-900">Campaign Results</Text></View>
 
-            {/* Status Summary */}
-            {data?.statuses && (
-                <View className="bg-white rounded-xl p-4 border border-gray-200">
-                    <Text className="text-xs font-semibold text-gray-700 mb-3">Status Overview</Text>
-                    <View className="flex-row flex-wrap">
-                        <StatBadge label="Total" value={data.statuses.total} color="gray" />
-                        <StatBadge label="Delivered" value={data.statuses.delivered_count} color="emerald" />
-                        <StatBadge label="Read" value={data.statuses.read_count} color="blue" />
-                        <StatBadge label="Failed" value={data.statuses.failed_count} color="red" />
-                        <StatBadge label="Sent" value={data.statuses.sent_count} color="purple" />
-                    </View>
+        const statsData = [
+            { label: 'Total', value: statuses.total, color: 'text-amber-500', bgColor: 'bg-amber-50', borderColor: 'border-amber-200', icon: '#f59e0b', iconName: 'list' },
+            { label: 'Delivered', value: statuses.delivered_count, color: 'text-emerald-500', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200', icon: '#10b981', iconName: 'checkmark-circle' },
+            { label: 'Read', value: statuses.read_count, color: 'text-blue-500', bgColor: 'bg-blue-50', borderColor: 'border-blue-200', icon: '#3b82f6', iconName: 'eye' },
+            { label: 'Failed', value: statuses.failed_count, color: 'text-red-500', bgColor: 'bg-red-50', borderColor: 'border-red-200', icon: '#ef4444', iconName: 'close-circle' },
+            { label: 'Sent', value: statuses.sent_count, color: 'text-purple-500', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', icon: '#a855f7', iconName: 'paper-plane' },
+        ]
+
+        return (
+            <View className="py-4">
+                <View className="flex-row items-center justify-between mb-4 px-4">
+                    <Text className="text-lg font-bold text-gray-900">
+                        Campaign Results
+                    </Text>
+                    <Text className="text-sm text-gray-600">
+                        {campaignsData?.length || 0} campaigns
+                    </Text>
                 </View>
-            )}
-        </View>
-    )
+
+                {/* Status Summary ScrollView */}
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ paddingHorizontal: 16 }}
+                    className="flex-row"
+                >
+                    {statsData.map((item, index) => (
+                        <View
+                            key={index}
+                            className={`mr-3 ${item.bgColor} flex-row items-center rounded-2xl px-4 py-3 border ${item.borderColor} shadow-sm w-36`}
+                        >
+                            {/* Icon Container */}
+                            <View
+                                className="w-10 h-10 rounded-xl bg-white items-center justify-center mr-3 shadow-sm"
+                            >
+                                <Ionicons
+                                    name={item.iconName as any}
+                                    size={20}
+                                    color={item.icon}
+                                />
+                            </View>
+
+                            {/* Stats Content */}
+                            <View className="flex-1">
+                                <Text className={`text-xl font-bold ${item.color} leading-none`}>
+                                    {item.value}
+                                </Text>
+                                <Text className="text-gray-500 text-[10px] font-medium uppercase tracking-wider mt-1">
+                                    {item.label}
+                                </Text>
+                            </View>
+                        </View>
+                    ))}
+                </ScrollView>
+            </View>
+        )
+    }
 
     const renderEmpty = () => (
         <View className="flex-1 items-center justify-center py-20">
@@ -253,14 +291,21 @@ const Campaign = () => {
                 </View>
             ) : (
                 <FlashList
-                    data={data?.data || []}
+                    data={campaignsData}
                     renderItem={renderCampaignItem}
                     estimatedItemSize={200}
                     ListHeaderComponent={renderHeader}
                     ListEmptyComponent={renderEmpty}
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
-                    contentContainerStyle={{ paddingTop: 8, paddingBottom: 20 }}
+                    onEndReached={() => {
+                        if (hasNextPage && !isFetchingNextPage) {
+                            fetchNextPage()
+                        }
+                    }}
+                    onEndReachedThreshold={1}
+                    ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#059669" className="py-4" /> : null}
+                    contentContainerStyle={{ paddingTop: 8, paddingBottom: 40 }}
                     showsVerticalScrollIndicator={false}
                 />
             )}
@@ -296,8 +341,9 @@ const Campaign = () => {
     )
 }
 
-// Helper component for status badges
+// StatBadge component is no longer used in renderHeader but kept for reference or other uses if any
 const StatBadge = ({ label, value, color }: { label: string; value: string | number; color: string }) => {
+    // ... same as before or removed if not needed elsewhere
     const colorClasses: any = {
         gray: 'bg-gray-100 text-gray-700',
         emerald: 'bg-emerald-100 text-emerald-700',

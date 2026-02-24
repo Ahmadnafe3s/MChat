@@ -205,6 +205,8 @@ declare interface CallLogs {
     incoming: string
     outgoing: string
   },
+  current_page: number,
+  last_page: number,
   count: number
   data: Array<{
     id: number
@@ -254,6 +256,8 @@ declare interface CampaignResponse {
   statuses: CampaignStatuses;
   count: number;
   data: Campaign[];
+  current_page: number;
+  last_page: number;
 }
 
 

@@ -6,7 +6,9 @@ export const CampaignApi = {
             value: number,
             attribute: string,
             from_date: string,
-            end_date: string
+            end_date: string,
+            page?: number,
+            per_page?: number
         }): Promise<CampaignResponse> => {
         const res = await axios.get(`https://meta.muzztech.com/api/v1/campaign-list`, { params });
         return res.data
