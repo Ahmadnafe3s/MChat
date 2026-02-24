@@ -1,6 +1,8 @@
 import AudioPickerModal, { AudioAsset } from "@/components/AudioPickerModal";
+import BotMessages from "@/components/BotMessages";
 import MessageTemplate from "@/components/MessageTemplate";
 import { icons } from "@/constants";
+import useBot from "@/hooks/useBot";
 import useChat from "@/hooks/useChat";
 import useTemplate from "@/hooks/useTemplate";
 import { useChatStore } from "@/store/chat";
@@ -42,9 +44,11 @@ const SendChatInput = () => {
   });
 
   const { sendTemplate } = useTemplate()
+  const { sendBotMessage } = useBot()
 
 
   const TemplateRef = useRef<BottomSheetModal>(null);
+  const BotMessagesRef = useRef<BottomSheetModal>(null);
   const AudioPickerRef = useRef<BottomSheetModal>(null);
 
 
@@ -98,7 +102,7 @@ const SendChatInput = () => {
         AudioPickerRef.current?.present();
         break;
       case "bot":
-        console.log("Bot");
+        BotMessagesRef.current?.present();
         break;
       case "template":
         TemplateRef.current?.present();
@@ -126,6 +130,14 @@ const SendChatInput = () => {
     sendTemplate.mutate(data, {
       onSuccess: () => {
         TemplateRef.current?.close()
+      }
+    })
+  }
+
+  const handleBotSelect = (botId: number) => {
+    sendBotMessage.mutate({ botId, selctedChatId: selectedChat?.id! }, {
+      onSuccess: () => {
+        BotMessagesRef.current?.close()
       }
     })
   }
@@ -333,7 +345,7 @@ const SendChatInput = () => {
         <View className="flex-1 justify-end">
           <TouchableOpacity
             activeOpacity={1}
-            className="bg-neutral-100 rounded-t-3xl p-6 pb-8`"
+            className="bg-neutral-100 rounded-t-3xl p-6 pb-8"
             onPress={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -387,6 +399,8 @@ const SendChatInput = () => {
         ref={AudioPickerRef}
         onSelect={handleAudioSelect}
       />
+
+      <BotMessages ref={BotMessagesRef} onSelect={handleBotSelect} isSending={sendBotMessage.isPending} />
     </>
   );
 };

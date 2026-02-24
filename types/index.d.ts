@@ -300,3 +300,19 @@ declare interface SendTemplate {
   templateId: number,
   data: any
 }
+
+
+// --------------------Bot-------------------
+
+declare interface BotMessage {
+  id: number,
+  name: string,
+  keyword: string,
+  created_at: string
+}
+
+declare interface BotMessageResponse {
+  success: true,
+  count: number,
+  data: BotMessage[]
+}
