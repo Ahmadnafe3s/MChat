@@ -49,7 +49,7 @@ const AllMedia = () => {
       setSelectedMedia({
         visible: true,
         type: item.filetype,
-        source:  `https://meta.muzztech.com/api/v1/preview-file/${item.id}`
+        source: `https://meta.muzztech.com/api/v1/preview-file/${item.id}`
       })
     } else if (item.filetype === 'audio') {
       if (playingAudioId === item.id) {

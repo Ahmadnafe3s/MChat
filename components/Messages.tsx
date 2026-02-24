@@ -4,11 +4,10 @@ import React, { memo, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Dimensions,
   Image,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import Video, { VideoRef } from "react-native-video";
 import { ClickableText } from "./ClickableLink";
@@ -18,9 +17,6 @@ import Multimedia from "./Multimedia";
 let currentlyPlayingAudioId: string | null = null;
 const audioStateListeners = new Set<(id: string | null) => void>();
 
-const { width: screenWidth } = Dimensions.get("window");
-const maxMediaWidth = screenWidth * 0.7; // 70% of screen width
-const minMediaWidth = 200;
 
 interface MediaType {
   type: "image" | "video";
@@ -111,12 +107,12 @@ const Messages = memo(({ data }: { data: Conversations }) => {
         <View className={`p-3 ${data?.body?.text && "border-b border-neutral-200"}`}>
           <TouchableOpacity
             onPress={() =>
-              setMedia({ type: "image", source: `https://meta.muzztech.com/api/v1/preview-file/${data.id}`, visible: true })
+              setMedia({ type: "image", source: data.header?.link as string, visible: true })
             }
             className=" rounded-lg overflow-hidden  w-full aspect-[4/3]"
           >
             <Image
-              source={{ uri: `https://meta.muzztech.com/api/v1/preview-file/${data.id}` }}
+              source={{ uri: data.header?.link as string }}
               className=" size-full"
               resizeMode="cover"
             />
@@ -132,12 +128,12 @@ const Messages = memo(({ data }: { data: Conversations }) => {
         <View className={`p-3 ${data?.body?.text && "border-b border-neutral-200"}`}>
           <TouchableOpacity
             onPress={() =>
-              setMedia({ type: "video", source: `https://meta.muzztech.com/api/v1/preview-file/${data.id}`, visible: true })
+              setMedia({ type: "video", source: data.header?.link as string, visible: true })
             }
             className="relative overflow-hidden rounded-lg border-b border-neutral-200 w-full aspect-[4/3]"
           >
             <Video
-              source={{ uri: `https://meta.muzztech.com/api/v1/preview-file/${data.id}` }}
+              source={{ uri: data.header?.link }}
               style={{
                 width: "100%",
                 height: "100%"
@@ -201,7 +197,7 @@ const Messages = memo(({ data }: { data: Conversations }) => {
 
           <Video
             ref={playerRef as any}
-            source={{ uri: `https://meta.muzztech.com/api/v1/preview-file/${data.id}` }}
+            source={{ uri: data.header?.link }}
             paused={!paused}
             playInBackground
             ignoreSilentSwitch="ignore"
