@@ -33,6 +33,10 @@ const contactProfileApi = {
         const res = await axios.post(`https://meta.muzztech.com/api/v1/create-note/${selectedChat}`, params);
         return res.data.data
     },
+    deleteTag: async (selectedChat: number, params: { tag_id: string }) => {
+        const res = await axios.post(`https://meta.muzztech.com/api/v1/delete-tag/${selectedChat}`, params);
+        return res.data
+    },
 }
 
 

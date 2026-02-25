@@ -89,6 +89,24 @@ const useContactProfile = () => {
     }
   })
 
+  const deleteTag = useMutation({
+    mutationFn: (params: { tag_id: string }) => contactProfileApi.deleteTag(selectedChat?.id!, params),
+    onSuccess: (newData: any, params: { tag_id: string }) => {
+      queryClient.setQueryData(["chatProfile", selectedChat?.id], (oldData: ChatProfile) => {
+        return {
+          ...oldData,
+          tag: oldData?.tag.filter(
+            (tag) => !params.tag_id.split(",").includes(tag.id.toString())
+          )
+        }
+      });
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      const message = err.response?.data.message! || "Something went wrong";
+      showToast(message, "error")
+    }
+  })
+
 
   return {
     chatProfile,
@@ -97,7 +115,8 @@ const useContactProfile = () => {
     assignAgent,
     createTag,
     getTags,
-    createNote
+    createNote,
+    deleteTag
   };
 };
 
