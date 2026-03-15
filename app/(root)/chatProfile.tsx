@@ -1,5 +1,7 @@
 import ChatProfilePlaceholder from "@/components/ChatProfilePlaceholder";
 import AssignedToSection from "@/components/contactProfile/AssignedToSection";
+import AttributeSection from "@/components/contactProfile/AttributeSection";
+import CustomFieldSection from "@/components/contactProfile/CustomFieldSection";
 import NoteSection from "@/components/contactProfile/NoteSection";
 import ProfileCard from "@/components/contactProfile/ProfileCard";
 import SubmitAsSection from "@/components/contactProfile/SubmitAsSection";
@@ -22,7 +24,7 @@ const ChatProfile = () => {
   const { showToast } = useToastStore()
   const router = useRouter();
   const [selectedTags, setSelectedTag] = useState<Set<number>>(new Set());
-  const { chatProfile, agentList, submitAs, assignAgent, createTag, getTags, createNote, deleteTag } = useContactProfile();
+  const { chatProfile, agentList, submitAs, assignAgent, createTag, getTags, createNote, deleteTag, updateAttributes, updateCustomFields } = useContactProfile();
 
   const handleDeleteTag = () => {
     const tags = [...selectedTags.values()];
@@ -85,7 +87,7 @@ const ChatProfile = () => {
 
       {/* Content */}
       <View className="flex-1">
-        <KeyboardAwareScrollView className="flex-1" bottomOffset={100}>
+        <KeyboardAwareScrollView className="flex-1" bottomOffset={100} keyboardShouldPersistTaps="handled">
           <View className="flex-1 p-5 gap-5">
             <ProfileCard
               formatted={selectedChat?.formatted}
@@ -124,6 +126,22 @@ const ChatProfile = () => {
                 createNote={createNote}
               />
             )}
+
+            <AttributeSection
+              isLoading={updateAttributes.isPending}
+              attributes={chatProfile.data?.attribute || []}
+              onSubmit={(updatedAttributes) => {
+                updateAttributes.mutate(updatedAttributes)
+              }}
+            />
+
+            <CustomFieldSection
+              isLoading={updateCustomFields.isPending}
+              customFields={chatProfile.data?.custom_field || []}
+              onSubmit={(updatedFields) => {
+                updateCustomFields.mutate(updatedFields)
+              }}
+            />
           </View>
         </KeyboardAwareScrollView>
       </View>

@@ -2,16 +2,14 @@
 import CustomAlert from "@/components/Alert";
 import ConversationHeader from "@/components/ConversationHeader";
 import InitiateCall from "@/components/initiateCall";
-import OTPModal from "@/components/InputOTP";
 import Messages from "@/components/Messages";
 import SendChatInput from "@/components/SendChatInput";
 import useChat from "@/hooks/useChat";
 import useClearChat from "@/hooks/useClearChat";
 import useGradualKeyboard from "@/hooks/useGradualKeyboard";
 import { useChatStore } from "@/store/chat";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,9 +19,8 @@ const Conversation = () => {
   const { conversations, isLoadingConversations } = useChat("conversation");
   const [isAtBottom, setIsAtBottom] = useState(true);
   const flashListRef = React.useRef<FlashList<any>>(null);
-  const TemplateRef = useRef<BottomSheetModal>(null);
-  const { sendOTP, verifyOTP } = useClearChat()
-  const [modal, setModal] = useState<'none' | 'call' | 'clearChat' | 'otp'>('none');
+  const clearChat = useClearChat()
+  const [modal, setModal] = useState<'none' | 'call' | 'clearChat'>('none');
   const { selectedChat } = useChatStore()
 
   console.log(`🚺 USER ID: ${selectedChat?.id} is selected for chat `);
@@ -110,28 +107,16 @@ const Conversation = () => {
 
       {/* -------------- Alert --------------- */}
 
-
       <CustomAlert
         visible={modal === 'clearChat'}
         title="Clear Chat"
         message="Do you really want clear chat!"
-        onContinue={() => sendOTP.mutate("no_params", {
-          onSuccess: () => setModal('otp')
+        onContinue={() => clearChat.mutate("no_params", {
+          onSuccess: () => setModal('none')
         })}
         onCancel={() => setModal('none')}
       />
 
-      {/* -------------- Verify OTP --------------- */}
-
-      <OTPModal
-        visible={modal === 'otp'}
-        title="Enter Verification Code"
-        error={verifyOTP.isError ? verifyOTP?.error?.response?.data?.message : ''}
-        onVerify={(otp) => verifyOTP.mutate(Number(otp), {
-          onSuccess: () => handleCancelClearChat()
-        })}
-        onCancel={() => handleCancelClearChat()}
-      />
     </SafeAreaView>
   );
 };

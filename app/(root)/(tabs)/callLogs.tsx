@@ -3,6 +3,7 @@ import CallStatusCards from '@/components/callLogs/CallStatusCards'
 import DateFilter, { DateFilterRef, genDate } from '@/components/DateFilter'
 import MessageTemplate from '@/components/MessageTemplate'
 import { useCallLogs } from '@/hooks/useCall'
+import useTemplate from '@/hooks/useTemplate'
 import { Ionicons } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { FlashList } from '@shopify/flash-list'
@@ -19,6 +20,7 @@ const CallLogs = () => {
     const [endDate, setEndDate] = React.useState(genDate(new Date()))
     const dateFilterRef = useRef<DateFilterRef>(null)
     const templateRef = useRef<BottomSheetModal>(null)
+    const { sendBulkTemplate } = useTemplate()
 
     const {
         data,
@@ -37,22 +39,43 @@ const CallLogs = () => {
         setEndDate(end)
     }, [])
 
-    const handleLongPress = (item: any) => {
+    const handleLongPress = (item: CallLogs['data'][0]) => {
         setSelectedCall((prev) => {
             const newSet = new Set(prev)
-            if (newSet.has(item.id)) {
-                newSet.delete(item.id)
+            if (newSet.has(item.contact_id)) {
+                newSet.delete(item.contact_id)
             } else {
-                newSet.add(item.id)
+                newSet.add(item.contact_id)
             }
             return newSet
         })
     }
 
-    const handlePress = (item: any) => {
+    const handlePress = (item: CallLogs['data'][0]) => {
         if (selectedCall.size > 0) {
             handleLongPress(item)
         }
+    }
+
+    const getUniqueCallLogs = () => {
+        const seen = new Set();
+        return callLogs.filter(item => {
+            if (seen.has(item.contact_id)) return false;
+            seen.add(item.contact_id);
+            return true;
+        });
+
+    }
+
+    const handleSendTemplate = (template: SendTemplate) => {
+        if (selectedCall.size === 0) return
+        const contactIds = Array.from(selectedCall).join(',')
+        sendBulkTemplate.mutate({ templateId: template.templateId, contactIds, data: template.data }, {
+            onSuccess: () => {
+                setSelectedCall(new Set())
+                templateRef.current?.dismiss()
+            }
+        })
     }
 
     return (
@@ -110,11 +133,11 @@ const CallLogs = () => {
                 </View>
             ) : (
                 <FlashList
-                    data={callLogs}
+                    data={selectedCall.size === 0 ? callLogs : getUniqueCallLogs()}
                     renderItem={({ item }) => (
                         <CallItem
                             item={item}
-                            isSelected={selectedCall.has(item.id)}
+                            isSelected={selectedCall.has(item.contact_id)}
                             onLongPress={() => handleLongPress(item)}
                             onPress={() => handlePress(item)}
                         />
@@ -155,7 +178,7 @@ const CallLogs = () => {
                 />
             )}
 
-            <MessageTemplate ref={templateRef} onSend={(d) => console.log(d)} isLoading={false} />
+            <MessageTemplate ref={templateRef} onSend={handleSendTemplate} isLoading={sendBulkTemplate.isPending} />
         </SafeAreaView>
     )
 }

@@ -10,7 +10,7 @@ import { getDocument, getImage, openCamera } from "@/utils/attachment";
 import bytesToMB from "@/utils/sizeConverter";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
   Image,
@@ -37,6 +37,7 @@ const SendChatInput = () => {
   const { sendMessage } = useChat();
   const { selectedChat } = useChatStore();
   const [showModal, setShowModal] = useState(false);
+  const [isTimeout, setIsTimeout] = useState(false)
   const [message, setMessage] = useState<Message>({
     type: "text",
     message: "",
@@ -205,9 +206,30 @@ const SendChatInput = () => {
     },
   ];
 
+  useEffect(() => {
+    setIsTimeout(false);
+    if (!selectedChat?.expired_at) return;
+
+    // Parse the date string "YYYY-MM-DD HH:mm:ss"
+    const expiryTime = new Date(selectedChat.expired_at.replace(' ', 'T')).getTime();
+    const currentTime = Date.now();
+    const delay = expiryTime - currentTime;
+
+    if (delay <= 0) {
+      setIsTimeout(true);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setIsTimeout(true);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [selectedChat?.expired_at, selectedChat?.id]);
+
 
   // ---------------------Checking Status--------------------
-  if (selectedChat?.status === "Expired" || selectedChat?.status === "Blocked" || selectedChat?.status === "Create") {
+  if (isTimeout || selectedChat?.status === "Expired" || selectedChat?.status === "Blocked" || selectedChat?.status === "Create") {
     return (
       <>
         <View className={`flex flex-row items-center gap-2 justify-between ${selectedChat?.status === "Blocked" ? "bg-red-50" : "bg-yellow-50"}  px-4 pt-4 pb-6 rounded-lg -mb-3`}>
@@ -218,9 +240,9 @@ const SendChatInput = () => {
               tintColor={selectedChat?.status === "Blocked" ? "#ef4444" : "#eab308"}
             />
             <Text className={`text-center text-sm font-JakartaBold ${selectedChat?.status === "Blocked" ? "text-red-500" : "text-yellow-500"}`}>
-              {selectedChat?.status === "Expired"
+              {isTimeout || selectedChat?.status === "Expired"
                 ? "Chat Has Been Expired"
-                : selectedChat.status === "Create"
+                : selectedChat?.status === "Create"
                   ? "To start conversation send a template"
                   : "Chat Has Been Blocked"}
             </Text>

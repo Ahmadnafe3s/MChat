@@ -14,14 +14,24 @@ const downloadFile = async ({
   const downloadDest = `${RNFS.DownloadDirectoryPath}/${fileName}`;
   console.log("Downloading to:", downloadDest);
 
+  let lastProgress = 0;
   const task = RNFS.downloadFile({
     fromUrl: url,
     toFile: downloadDest,
-    progressDivider: 1, // update callback for every 1% (can set higher to reduce calls)
+    progressDivider: 1, 
     progress: (res) => {
-      const percentage = Math.floor(
-        (res.bytesWritten / res.contentLength) * 100
-      );
+      let percentage = 0;
+      
+      if (res.contentLength && res.contentLength > 0) {
+        percentage = Math.floor((res.bytesWritten / res.contentLength) * 100);
+      } else if (res.bytesWritten > 0) {
+        // If contentLength unavailable, gradually increment progress (max 95%)
+        percentage = Math.min(95, lastProgress + 1);
+      }
+      
+      percentage = Math.max(0, Math.min(100, percentage));
+      lastProgress = percentage;
+      
       if (onProgress) onProgress(percentage);
       console.log(`Download progress: ${percentage}%`);
     },
@@ -29,6 +39,7 @@ const downloadFile = async ({
 
   try {
     await task.promise;
+    if (onProgress) onProgress(100);
     await scheduleDownloadNotification(fileName, downloadDest);
   } catch (err: any) {
     Alert.alert("Error", err.message);

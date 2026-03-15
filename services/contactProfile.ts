@@ -37,6 +37,14 @@ const contactProfileApi = {
         const res = await axios.post(`https://meta.muzztech.com/api/v1/delete-tag/${selectedChat}`, params);
         return res.data
     },
+    updateCustomFields: async (selectedChat: number, body: Record<string, any>) => {
+        const res = await axios.post(`https://meta.muzztech.com/api/v1/custom/field/${selectedChat}`, body);
+        return res.data
+    },
+    updateAttributes: async (selectedChat: number, body: { id: number, text: string }[]) => {
+        const res = await axios.post(`https://meta.muzztech.com/api/v1/attribute/${selectedChat}`, body);
+        return res.data
+    },
 }
 
 

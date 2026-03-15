@@ -57,6 +57,7 @@ declare interface Chat {
   last_message: string;
   last_chat: string;
   is_starred: string;
+  expired_at: string;
 }
 
 declare interface PaginatedChats {
@@ -121,17 +122,19 @@ declare interface ChatProfile {
 }
 
 declare interface CustomField {
-  field: string; // e.g., "dropdown" | "text" | "email"
-  title: string; // display name (e.g., "product")
-  name: string; // identifier (e.g., "product")
-  input_value: string;
-  value: string; // may contain JSON string or plain text
+  id: number,
+  type: "text" | "date-picker" | "single-choice" | "multiple-choice",
+  title: string,
+  name: string,
+  value: string | string[],
+  options: string[]
 }
 
 declare interface Attribute {
   id: number;
-  name: string;
-  text: string;
+  type: string;
+  title: string;
+  value: string;
 }
 
 declare interface Tag {
@@ -217,6 +220,7 @@ declare interface CallLogs {
     duration: string
     direction: string
     call_date: string
+    contact_id: number
   }>
 
 }
@@ -287,6 +291,7 @@ declare interface Contact {
   status: string
   source: string
   is_starred: string
+  expired_at: string;
 }
 
 

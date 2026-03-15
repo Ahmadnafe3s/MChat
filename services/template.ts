@@ -8,6 +8,10 @@ const TemplateApi = {
     sendTemplate: async (templateId: number, selectedChatId: number, data: any) => {
         const res = await axios.post(`https://meta.muzztech.com/api/v1/send-template/${templateId}/${selectedChatId}`, data);
         return res.data
+    },
+    sendBulkTemplate: async (templateId: number, contactIds: string, data: any) => {
+        const res = await axios.post(`https://meta.muzztech.com/api/v1/send-bulk-template/${templateId}?contact_id=${contactIds}`, data);
+        return res.data
     }
 }
 

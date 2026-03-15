@@ -1,35 +1,22 @@
 import { ClearChatApi } from '@/services/clearChat'
 import { useChatStore } from '@/store/chat'
 import { useToastStore } from '@/store/toast'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 
 const useClearChat = () => {
-
-    const queryClient = useQueryClient()
     const { selectedChat } = useChatStore()
     const { showToast } = useToastStore()
-
-    const sendOTP = useMutation({
-        mutationFn: (_: any) => ClearChatApi.sendOTP(selectedChat?.id!),
-        onError: (err: AxiosError<{ message: string }>) => {
-            const ERR = err.response?.data.message ?? 'Failed to send OTP'
+    return useMutation({
+        mutationFn: (_: any) => ClearChatApi.clearChat(selectedChat?.id!),
+        onSuccess: () => {
+            showToast('Request submitted successfully', 'success')
+        },
+        onError: (err: AxiosError<any>) => {
+            const ERR = err.response?.data?.message || err.message || 'Failed to clear chat'
             showToast(ERR, 'error')
         }
     })
-
-    const verifyOTP = useMutation({
-        mutationFn: (otp: number) => ClearChatApi.verifyOTP(selectedChat?.id!, { otp }),
-        onSuccess: () => {
-            queryClient.setQueryData(['conversations', selectedChat?.id], () => [])
-        },
-        onError: (err: AxiosError<{ message: string }>) => err.response?.data.message ?? 'Failed to Verify OTP'
-    })
-
-    return {
-        sendOTP,
-        verifyOTP
-    }
 }
 
 export default useClearChat

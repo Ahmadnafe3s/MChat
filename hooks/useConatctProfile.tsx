@@ -107,6 +107,32 @@ const useContactProfile = () => {
     }
   })
 
+  const updateCustomFields = useMutation({
+    mutationFn: (body: Record<string, any>) => contactProfileApi.updateCustomFields(selectedChat?.id!, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chatProfile', selectedChat?.id] })
+      showToast("Custom fields updated successfully", "success")
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      const message = err.response?.data.message! || "Something went wrong";
+      showToast(message, "error")
+    }
+  })
+
+  const updateAttributes = useMutation({
+    mutationFn: (body: { id: number, text: string }[]) => contactProfileApi.updateAttributes(selectedChat?.id!, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chatProfile', selectedChat?.id] })
+      showToast("Attributes updated successfully", "success")
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      const message = err.response?.data.message! || "Something went wrong";
+      showToast(message, "error")
+    }
+  })
+
+
+
 
   return {
     chatProfile,
@@ -116,7 +142,9 @@ const useContactProfile = () => {
     createTag,
     getTags,
     createNote,
-    deleteTag
+    deleteTag,
+    updateAttributes,
+    updateCustomFields
   };
 };
 

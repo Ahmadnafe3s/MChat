@@ -39,10 +39,33 @@ const useTemplate = () => {
         }
     })
 
+    type SendBulkTemplateParams = {
+        templateId: number;
+        contactIds: string;
+        data: any;
+    }
+
+    const sendBulkTemplate = useMutation({
+        mutationFn: ({ templateId, contactIds, data }: SendBulkTemplateParams) => TemplateApi.sendBulkTemplate(templateId, contactIds, data),
+        onSuccess: (newData: any) => {
+            if (newData.success === false) {
+                showToast(newData.message || "Something went wrong, please retry again", "error");
+                return;
+            }
+            queryClient.invalidateQueries({ queryKey: ["conversations"] })
+        },
+        onError: (error: AxiosError<{ message: string }>) => {
+            console.log("Error sending template:", error.response?.data);
+            const err = error.response?.data.message || "Faield to send template";
+            showToast(err, "error")
+        }
+    })
+
 
     return {
         getTemplate,
-        sendTemplate
+        sendTemplate,
+        sendBulkTemplate
     }
 }
 

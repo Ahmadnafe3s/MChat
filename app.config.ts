@@ -9,7 +9,7 @@ const APP_NAME = "Mchat";
 const BUNDLE_IDENTIFIER = "com.muzztech.mchat";
 const PACKAGE_NAME = "com.muzztech.mchat";
 const ICON = "./assets/images/icon.png";
-const SPLASH = "./assets/images/icon.png";
+const SPLASH = "./assets/images/splash.png";
 const SCHEME = "app-scheme";
 
 export default ({ config }: ConfigContext): ExpoConfig => {
