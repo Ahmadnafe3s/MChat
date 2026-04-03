@@ -20,10 +20,11 @@ export type AudioAsset = {
 
 interface AudioPickerModalProps {
     onSelect: (asset: AudioAsset) => void;
+    onDismiss?: () => void;
 }
 
 const AudioPickerModal = forwardRef<BottomSheetModal, AudioPickerModalProps>(
-    ({ onSelect }, ref) => {
+    ({ onSelect, onDismiss }, ref) => {
         const [assets, setAssets] = useState<MediaLibrary.Asset[]>([]);
         const [loading, setLoading] = useState(false);
         const [search, setSearch] = useState("");
@@ -116,6 +117,7 @@ const AudioPickerModal = forwardRef<BottomSheetModal, AudioPickerModalProps>(
                 backdropComponent={renderBackdrop}
                 enablePanDownToClose
                 backgroundStyle={{ backgroundColor: "#F9FAFB" }}
+                onDismiss={onDismiss}
             >
                 {/* Removed BottomSheetView to fix scrolling issues with FlatList */}
                 <View className="px-4 pt-2 pb-4 border-b border-gray-100 bg-white">

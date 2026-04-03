@@ -9,10 +9,12 @@ import { useChatStore } from "@/store/chat";
 import { getDocument, getImage, openCamera } from "@/utils/attachment";
 import bytesToMB from "@/utils/sizeConverter";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 
 import {
+  BackHandler,
   Image,
   Modal,
   Text,
@@ -43,6 +45,7 @@ const SendChatInput = () => {
     message: "",
     attachment: null,
   });
+  const [activeBottomSheet, setActiveBottomSheet] = useState<string | null>(null);
 
   const { sendTemplate } = useTemplate()
   const { sendBotMessage } = useBot()
@@ -101,12 +104,15 @@ const SendChatInput = () => {
         break;
       case "audio":
         AudioPickerRef.current?.present();
+        setActiveBottomSheet("audio");
         break;
       case "bot":
         BotMessagesRef.current?.present();
+        setActiveBottomSheet("bot");
         break;
       case "template":
         TemplateRef.current?.present();
+        setActiveBottomSheet("template");
         break;
       case "quickReply":
         router.push("quickReplies");
@@ -206,6 +212,33 @@ const SendChatInput = () => {
     },
   ];
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (showModal) {
+          setShowModal(false);
+          return true;
+        }
+
+        if (activeBottomSheet) {
+          AudioPickerRef.current?.dismiss();
+          BotMessagesRef.current?.dismiss();
+          TemplateRef.current?.dismiss();
+          setActiveBottomSheet(null);
+          return true;
+        }
+
+        return false;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        subscription.remove();
+      };
+    }, [showModal, activeBottomSheet])
+  );
+
   useEffect(() => {
     setIsTimeout(false);
     if (!selectedChat?.expired_at) return;
@@ -223,9 +256,10 @@ const SendChatInput = () => {
     const timer = setTimeout(() => {
       setIsTimeout(true);
     }, delay);
-
     return () => clearTimeout(timer);
   }, [selectedChat?.expired_at, selectedChat?.id]);
+
+
 
 
   // ---------------------Checking Status--------------------
@@ -249,7 +283,10 @@ const SendChatInput = () => {
           </View>
 
           <TouchableOpacity
-            onPress={() => TemplateRef.current?.present()}
+            onPress={() => {
+              TemplateRef.current?.present();
+              setActiveBottomSheet("template");
+            }}
             className="bg-blue-500 px-4 py-2 rounded-lg"
           >
             <Text className="text-white text-sm font-JakartaBold">Send Template</Text>
@@ -363,7 +400,12 @@ const SendChatInput = () => {
       </View>
 
       {/* Attachment Modal */}
-      <Modal visible={showModal} transparent={true} animationType="fade">
+      <Modal 
+        visible={showModal} 
+        transparent={true} 
+        animationType="fade" 
+        onRequestClose={() => setShowModal(false)}
+      >
         <View className="flex-1 justify-end">
           <TouchableOpacity
             activeOpacity={1}
@@ -415,14 +457,21 @@ const SendChatInput = () => {
         ref={TemplateRef}
         isLoading={sendTemplate.isPending}
         onSend={handleSendTemplate}
+        onDismiss={() => setActiveBottomSheet(null)}
       />
 
       <AudioPickerModal
         ref={AudioPickerRef}
         onSelect={handleAudioSelect}
+        onDismiss={() => setActiveBottomSheet(null)}
       />
 
-      <BotMessages ref={BotMessagesRef} onSelect={handleBotSelect} isSending={sendBotMessage.isPending} />
+      <BotMessages
+        ref={BotMessagesRef}
+        onSelect={handleBotSelect}
+        isSending={sendBotMessage.isPending}
+        onDismiss={() => setActiveBottomSheet(null)}
+      />
     </>
   );
 };

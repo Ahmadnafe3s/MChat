@@ -7,10 +7,10 @@ import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 interface BotMessagesProps {
     onSelect?: (id: number) => void;
     isSending?: boolean;
+    onDismiss?: () => void;
 }
 
-const BotMessages = forwardRef<BottomSheetModal, BotMessagesProps>(({ onSelect, isSending }, ref) => {
-
+const BotMessages = forwardRef<BottomSheetModal, BotMessagesProps>(({ onSelect, isSending, onDismiss }, ref) => {
     const Points = useMemo(() => ["40%", "60%", "90%"], []);
     const renderBackdrop = React.useCallback((props: any) => (
         <BottomSheetBackdrop
@@ -34,6 +34,7 @@ const BotMessages = forwardRef<BottomSheetModal, BotMessagesProps>(({ onSelect, 
             enablePanDownToClose={true}
             enableDynamicSizing={false}
             backdropComponent={renderBackdrop}
+            onDismiss={onDismiss}
         >
             <View className="px-4 py-3 border-b border-gray-100 flex-row justify-between items-center">
                 <View className="flex-row items-center gap-2">

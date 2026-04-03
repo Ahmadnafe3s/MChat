@@ -17,10 +17,11 @@ import CustomButton from './custom-button';
 interface Props {
     onSend: (data: SendTemplate) => void
     isLoading: boolean
+    onDismiss?: () => void
 }
 
 
-const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ onSend, isLoading }, ref) => {
+const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ onSend, isLoading, onDismiss }, ref) => {
 
     const Points = useMemo(() => ["40%", "60%", "90%"], []);
     const [selectedTemplate, setSelectedTemplate] = useState<TemplatesResponse['data'][0] | null>(null);
@@ -377,7 +378,10 @@ const MessageTemplate = forwardRef<BottomSheetModal, Props>(({ onSend, isLoading
             enableDynamicSizing={false}
             backdropComponent={renderBackdrop}
             keyboardBehavior="extend"
-            onDismiss={() => setSelectedTemplate(null)}
+            onDismiss={() => {
+                setSelectedTemplate(null);
+                onDismiss?.();
+            }}
         >
             {selectedTemplate ? RenderPreview() : RenderTemplateList()}
         </BottomSheetModal>
