@@ -1,7 +1,7 @@
 import { icons } from "@/constants/index";
 import { useChatStore } from "@/store/chat";
 import { useRouter } from "expo-router";
-import React, { memo } from "react";
+import React, { memo, useRef } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const ChatCard = memo(
@@ -10,9 +10,18 @@ const ChatCard = memo(
     const router = useRouter();
     const { setSelectedChat } = useChatStore();
 
+    const isNavigating = useRef(false);
+
     const handleSelect = () => {
+      if (isNavigating.current) return;
+      isNavigating.current = true;
+
       setSelectedChat(data);
       router.push(`/(root)/conversation`);
+
+      setTimeout(() => {
+        isNavigating.current = false;
+      }, 1000);
     };
 
     return (

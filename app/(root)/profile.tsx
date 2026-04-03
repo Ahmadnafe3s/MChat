@@ -1,3 +1,4 @@
+
 import { icons } from '@/constants'
 import { useAuthStore } from '@/store/auth'
 import { useRouter } from 'expo-router'
@@ -66,7 +67,7 @@ const Profile = () => {
                                 <Text className='text-emerald-600 font-JakartaSemiBold text-xs capitalize'>{user?.role}</Text>
                             </View>
                             <View className='px-4 py-1.5 bg-amber-50 border border-amber-200 rounded-full flex flex-row items-center gap-1.5'>
-                                <Text className='text-sm'>💰</Text>
+                                <Text className='text-sm'>💼</Text>
                                 <Text className='text-amber-700 font-JakartaBold text-xs'>₹{user?.wallet}</Text>
                             </View>
                         </View>
@@ -75,7 +76,7 @@ const Profile = () => {
 
                 {/* ─── Quick Info Grid ─── */}
                 <View className='px-5 mt-4'>
-                    <View className='flex flex-row gap-3'>
+                    <View className='flex gap-3'>
                         <InfoTile label='Company' value={user?.company!} emoji='🏢' />
                         <InfoTile label='Phone' value={user?.mobile!} emoji='📱' />
                     </View>
@@ -97,35 +98,25 @@ const Profile = () => {
                                 </View>
                             </View>
 
-                            {/* Stats row */}
-                            <View className='flex flex-row border-b border-gray-100'>
-                                <StatBox
-                                    label='Quality'
-                                    value={user.whatsapp.quality_rating}
-                                    color={user.whatsapp.quality_rating === 'GREEN' ? 'text-green-600' : user.whatsapp.quality_rating === 'YELLOW' ? 'text-yellow-600' : 'text-red-600'}
-                                />
-                                <View className='w-[1px] bg-gray-100' />
-                                <StatBox label='Limit' value={user.whatsapp.messaging_limit} />
-                                <View className='w-[1px] bg-gray-100' />
-                                <StatBox label='Vertical' value={user.whatsapp.vertical} />
-                            </View>
-
+                            <DetailRow icon={icons.star} label='Quality' value={user.whatsapp.quality_rating} />
+                            <DetailRow icon={icons.flash} label='Limit' value={user.whatsapp.messaging_limit} />
+                            <DetailRow icon={icons.tag} label='Vertical' value={user.whatsapp.vertical} />
                             <DetailRow icon={icons.phone} label='Number' value={user.whatsapp.number} />
                             <DetailRow icon={icons.mail} label='Email' value={user.whatsapp.email} />
-                            <DetailRow icon={icons.star} label='Plan' value={user.whatsapp.plan} />
+                            <DetailRow icon={icons.waypoints} label='Plan' value={user.whatsapp.plan} />
                             <DetailRow icon={icons.user} label='About' value={user.whatsapp.about} />
 
                             {user.whatsapp.description ? (
                                 <View className='px-4 py-3 border-t border-gray-100'>
                                     <Text className='text-[10px] text-gray-400 font-Jakarta uppercase tracking-wider mb-1'>Description</Text>
-                                    <Text className='text-xs font-Jakarta text-gray-500 leading-4'>{user.whatsapp.description}</Text>
+                                    <Text className='text-sm font-JakartaSemiBold text-gray-700 leading-4'>{user.whatsapp.description}</Text>
                                 </View>
                             ) : null}
 
                             {user.whatsapp.address ? (
                                 <View className='px-4 py-3 border-t border-gray-100'>
                                     <Text className='text-[10px] text-gray-400 font-Jakarta uppercase tracking-wider mb-1'>Address</Text>
-                                    <Text className='text-xs font-Jakarta text-gray-500 leading-4'>{user.whatsapp.address}</Text>
+                                    <Text className='text-sm font-JakartaSemiBold text-gray-700 leading-4'>{user.whatsapp.address}</Text>
                                 </View>
                             ) : null}
                         </View>
@@ -145,7 +136,7 @@ const Profile = () => {
                             <DetailRow icon={icons.phone} label='Number' value={user.voice.number} />
                             <DetailRow icon={icons.dialer} label='Mirror' value={user.voice.mirror_number} />
                             <DetailRow icon={icons.user} label='Destination' value={user.voice.destination_name} />
-                            <DetailRow icon={icons.star} label='Plan' value={user.voice.plan} />
+                            <DetailRow icon={icons.waypoints} label='Plan' value={user.voice.plan} />
                         </View>
                     </View>
                 )}
@@ -179,7 +170,7 @@ const InfoTile = ({ label, value, emoji }: { label: string; value: string; emoji
 const StatBox = ({ label, value, color }: { label: string; value: string; color?: string }) => (
     <View className='flex-1 py-3 items-center'>
         <Text className='text-[10px] text-gray-400 font-Jakarta uppercase tracking-wide'>{label}</Text>
-        <Text className={`text-xs font-JakartaBold mt-0.5 ${color || 'text-gray-700'}`} numberOfLines={1}>{value}</Text>
+        <Text className={`text-xs font-JakartaBold mt-0.5 mx-2 ${color || 'text-gray-700'}`} numberOfLines={1}>{value}</Text>
     </View>
 )
 

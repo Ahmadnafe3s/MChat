@@ -50,6 +50,7 @@ import star from "@/assets/icons/star.png";
 import tag from "@/assets/icons/tags.png";
 import template from "@/assets/icons/template.png";
 import user from "@/assets/icons/user.png";
+import waypoints from "@/assets/icons/waypoints.png";
 import avatar from "@/assets/images/avatar.png";
 
 
@@ -107,7 +108,8 @@ export const icons = {
   bot,
   logout,
   camera,
-  refresh
+  refresh,
+  waypoints
 };
 
 export const onboarding = [

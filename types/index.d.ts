@@ -262,6 +262,8 @@ declare interface CampaignResponse {
   data: Campaign[];
   current_page: number;
   last_page: number;
+  total: number
+  to: number
 }
 
 

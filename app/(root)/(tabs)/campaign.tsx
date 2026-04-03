@@ -3,10 +3,11 @@ import DateFilter, { DateFilterRef, genDate } from '@/components/DateFilter'
 import { useCampaigns } from '@/hooks/useCampaign'
 import { Ionicons } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useFocusEffect } from '@react-navigation/native'
 import { FlashList } from '@shopify/flash-list'
 import { useRouter } from 'expo-router'
 import React, { useCallback, useRef } from 'react'
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, BackHandler, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 
@@ -21,6 +22,23 @@ const Campaign = () => {
 
     const campaignsData = data?.pages.flatMap((page) => page?.data ?? []) ?? [];
 
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                if (selectedCampaign) {
+                    bottomSheetRef.current?.dismiss()
+                    return true
+                }
+                return false
+            }
+
+            const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress)
+
+            return () =>
+                subscription.remove()
+        }, [selectedCampaign])
+    )
+
     const handleDateChange = useCallback((start: string, end: string) => {
         setStartDate(start)
         setEndDate(end)
@@ -32,6 +50,8 @@ const Campaign = () => {
                 return { bg: 'bg-emerald-100', text: 'text-emerald-700', icon: 'checkmark-circle' }
             case 'pending':
                 return { bg: 'bg-amber-100', text: 'text-amber-700', icon: 'time' }
+            case 'submitted':
+                return { bg: 'bg-blue-100', text: 'text-blue-700', icon: 'document-text' }
             case 'failed':
                 return { bg: 'bg-red-100', text: 'text-red-700', icon: 'close-circle' }
             case 'paused':
@@ -111,14 +131,21 @@ const Campaign = () => {
 
     const renderHeader = () => {
         const statuses = data?.pages[0]?.statuses
+        const lastPage = data?.pages[data.pages.length - 1]
+        const total = lastPage?.total || 0
+        const to = lastPage?.to || 0
+
         if (!statuses) return <View className="p-4"><Text className="text-lg font-bold text-gray-900">Campaign Results</Text></View>
 
         const statsData = [
             { label: 'Total', value: statuses.total, color: 'text-amber-500', bgColor: 'bg-amber-50', borderColor: 'border-amber-200', icon: '#f59e0b', iconName: 'list' },
+            { label: 'Pending', value: statuses.pending_count, color: 'text-orange-500', bgColor: 'bg-orange-50', borderColor: 'border-orange-200', icon: '#f97316', iconName: 'time' },
+            { label: 'Submitted', value: statuses.submitted_count, color: 'text-gray-500', bgColor: 'bg-gray-50', borderColor: 'border-gray-200', icon: '#6b7280', iconName: 'document-text' },
+            { label: 'Sent', value: statuses.sent_count, color: 'text-purple-500', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', icon: '#a855f7', iconName: 'paper-plane' },
             { label: 'Delivered', value: statuses.delivered_count, color: 'text-emerald-500', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200', icon: '#10b981', iconName: 'checkmark-circle' },
             { label: 'Read', value: statuses.read_count, color: 'text-blue-500', bgColor: 'bg-blue-50', borderColor: 'border-blue-200', icon: '#3b82f6', iconName: 'eye' },
             { label: 'Failed', value: statuses.failed_count, color: 'text-red-500', bgColor: 'bg-red-50', borderColor: 'border-red-200', icon: '#ef4444', iconName: 'close-circle' },
-            { label: 'Sent', value: statuses.sent_count, color: 'text-purple-500', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', icon: '#a855f7', iconName: 'paper-plane' },
+            { label: 'Paused', value: statuses.paused_count, color: 'text-indigo-500', bgColor: 'bg-indigo-50', borderColor: 'border-indigo-200', icon: '#6366f1', iconName: 'pause-circle' },
         ]
 
         return (
@@ -128,7 +155,7 @@ const Campaign = () => {
                         Campaign Results
                     </Text>
                     <Text className="text-sm text-gray-600">
-                        {campaignsData?.length || 0} campaigns
+                        {to} of {total} campaigns
                     </Text>
                 </View>
 
@@ -142,7 +169,7 @@ const Campaign = () => {
                     {statsData.map((item, index) => (
                         <View
                             key={index}
-                            className={`mr-3 ${item.bgColor} flex-row items-center rounded-2xl px-4 py-3 border ${item.borderColor} shadow-sm w-36`}
+                            className={`mr-3 ${item.bgColor} flex-row items-center rounded-2xl px-4 py-3 border ${item.borderColor} shadow-sm min-w-36`}
                         >
                             {/* Icon Container */}
                             <View
@@ -189,7 +216,13 @@ const Campaign = () => {
             <View className="bg-white px-4 py-4 border-b border-gray-200">
                 <View className="flex-row items-center">
                     <TouchableOpacity
-                        onPress={() => router.back()}
+                        onPress={() => {
+                            if (selectedCampaign) {
+                                bottomSheetRef.current?.dismiss()
+                            } else {
+                                router.back()
+                            }
+                        }}
                         className="w-10 h-10 items-center justify-center rounded-full bg-emerald-50"
                         activeOpacity={0.7}
                     >
