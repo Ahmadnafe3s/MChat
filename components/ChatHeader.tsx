@@ -1,6 +1,6 @@
 import { icons } from "@/constants";
 import React from "react";
-import { Image, Text, TextInput, View } from "react-native";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import HorizontalFilter from "./HorizontalFilter";
 
 
@@ -8,24 +8,51 @@ interface ChatsHeaderProps {
     filter: string;
     totalChats?: number;
     setFilter: (value: string) => void;
-    serach: string
+    search: string
     onSearch: (value: string) => void
     options: string[]
     info?: string
+    onClearSearch?: () => void
 }
 
 const ChatsHeader: React.FC<ChatsHeaderProps> = React.memo(
-    ({ filter, setFilter, totalChats, options, serach, onSearch, info }) => {
+    ({ filter, setFilter, totalChats, options, search, onSearch, info, onClearSearch }) => {
+
+        const [localSearch, setLocalSearch] = React.useState(search);
+
+        // Keep local state in sync when search prop changes (e.g. from clear button or external reset)
+        React.useEffect(() => {
+            setLocalSearch(search);
+        }, [search]);
+
+        const handleSearch = (value: string) => {
+            setLocalSearch(value);
+            onSearch(value);
+        };
+
         return (
             <View className="flex gap-4 mt-4 pb-2">
                 <View className="flex px-4 gap-2 flex-row mb-4 mt-2 items-center  border border-gray-200 rounded-2xl bg-gray-100">
-                    <Image source={icons.search as any} className="w-6 h-6" />
+                    <Image source={icons.search as any} className="w-5 h-5 opacity-40" />
                     <TextInput
                         placeholder="Search by name or contact"
                         placeholderTextColor={"#A3A3A3"}
-                        className="py-3.5 flex-1 text-lg"
-                        onChangeText={onSearch}
+                        className="py-3 flex-1 text-base font-Jakarta"
+                        value={localSearch}
+                        onChangeText={handleSearch}
                     />
+                    {localSearch.length > 0 && (
+                        <TouchableOpacity
+                            onPress={() => { handleSearch(""), onClearSearch?.() }}
+                            className="p-1 bg-gray-300/30 rounded-full"
+                        >
+                            <Image
+                                source={icons.cross as any}
+                                className="w-4 h-4"
+                                tintColor="#6b7280"
+                            />
+                        </TouchableOpacity>
+                    )}
                 </View>
                 <HorizontalFilter
                     defaultValue={filter}

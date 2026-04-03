@@ -2,7 +2,7 @@ import useChat from "@/hooks/useChat";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import React, { forwardRef } from "react";
-import { NativeScrollEvent, NativeSyntheticEvent, Text, View } from "react-native";
+import { Keyboard, NativeScrollEvent, NativeSyntheticEvent, Text, View } from "react-native";
 import ChatCard from "./ChatCard";
 import ChatsHeader from "./ChatHeader";
 import ChatCardPlaceholder from "./ChatPlaceholder";
@@ -72,6 +72,7 @@ const Contacts = forwardRef<FlashList<any>, ContactsProps>(({ onScroll }, ref) =
         onEndReachedThreshold={0.1}
         estimatedItemSize={94}
         ListEmptyComponent={renderEmpty}
+        keyboardShouldPersistTaps="handled"
         onEndReached={() => {
           hasNextPage && fetchNextPage();
         }}
@@ -83,9 +84,10 @@ const Contacts = forwardRef<FlashList<any>, ContactsProps>(({ onScroll }, ref) =
             ]}
             filter={filter}
             setFilter={setFilter}
-            serach={search}
+            search={search}
             onSearch={onSearch}
             totalChats={totalChats}
+            onClearSearch={Keyboard.dismiss}
           />
         } // if user function is not memoized, it will re-render
         ListFooterComponent={
