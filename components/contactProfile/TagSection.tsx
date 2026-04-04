@@ -76,54 +76,62 @@ const TagSection = ({
                         setTag("")
                         setSwitchTagInput(!switchTagInput)
                     }}
-                    className="flex flex-row justify-end"
+                    className="flex flex-row items-center justify-end py-1"
                 >
-                    <Text className="text-sm font-JakartaSemiBold text-emerald-600 text-end">
-                        {!switchTagInput ? "custom tag" : "select a tag"}
+                    <Image 
+                        source={switchTagInput ? icons.search as any : icons.add as any} 
+                        className="w-3.5 h-3.5 mr-1.5" 
+                        tintColor="#10b981" 
+                    />
+                    <Text className="text-[13px] font-JakartaSemiBold text-emerald-600">
+                        {!switchTagInput ? "Custom tag" : "Select from list"}
                     </Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Tag List */}
+            {/* Tag List - Chip Grid */}
             {tags.length > 0 && (
-                <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm max-h-80">
-                    <ScrollView
-                        nestedScrollEnabled={true}
-                        showsVerticalScrollIndicator={true}
-                    >
-                        {tags.map((tag, index) => {
-                            const isSelected = selectedTags.has(tag.id);
-                            return (
-                                <TouchableOpacity
-                                    key={tag.id}
-                                    activeOpacity={0.5}
-                                    onLongPress={() => onTagLongPress(tag.id)}
-                                    onPress={() => onTagPress(tag.id)}
-                                    className={`flex flex-col gap-2 p-3.5 ${isSelected ? 'bg-purple-50' : 'bg-white'} ${index !== tags.length - 1 ? 'border-b border-gray-50' : ''
+                <View className="flex flex-row flex-wrap gap-2.5 mt-2">
+                    {tags.map((tag) => {
+                        const isSelected = selectedTags.has(tag.id);
+                        return (
+                            <TouchableOpacity
+                                key={tag.id}
+                                activeOpacity={0.6}
+                                onLongPress={() => onTagLongPress(tag.id)}
+                                onPress={() => onTagPress(tag.id)}
+                                className={`flex flex-row items-center px-3.5 py-2 rounded-xl border ${
+                                    isSelected 
+                                    ? 'bg-purple-100/50 border-purple-400' 
+                                    : 'bg-transparent border-gray-200'
+                                }`}
+                            >
+                                {isSelected && (
+                                    <View className="w-1.5 h-1.5 rounded-full bg-purple-500 mr-2" />
+                                )}
+                                <View className="flex flex-col">
+                                    <Text 
+                                        className={`text-sm font-JakartaSemiBold ${
+                                            isSelected ? 'text-purple-700' : 'text-gray-600'
                                         }`}
-                                >
-                                    <View className="flex flex-row items-center gap-3">
-                                        <View className={`${isSelected ? 'bg-purple-500' : 'bg-purple-50'} rounded-xl size-11 flex items-center justify-center`}>
-                                            <Image source={isSelected ? icons.check as any : icons.tag as any} className="w-5 h-5" tintColor={isSelected ? "#fff" : "#9333ea"} />
-                                        </View>
-                                        <Text className={`${isSelected ? 'text-purple-700' : 'text-gray-700'} text-base flex-1 font-JakartaMedium`}>
-                                            {tag.name}
-                                        </Text>
-                                    </View>
-                                    <View className="flex flex-row justify-end">
-                                        <Text className={`text-xs font-JakartaMedium py-1.5 px-3 rounded-xl ${isSelected ? 'text-purple-500 bg-purple-100' : 'text-gray-500 bg-gray-50'}`}>
-                                            {new Date(tag.created_at).toLocaleTimeString([], {
-                                                day: "numeric",
-                                                month: "short",
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            );
-                        })}
-                    </ScrollView>
+                                    >
+                                        {tag.name}
+                                    </Text>
+                                    <Text className={`text-[10px] font-JakartaMedium ${
+                                        isSelected ? 'text-purple-500/70' : 'text-gray-400'
+                                    }`}>
+                                        {new Date(tag.created_at).toLocaleDateString([], {
+                                            day: "numeric",
+                                            month: "short",
+                                        })}, {new Date(tag.created_at).toLocaleTimeString([], {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    })}
                 </View>
             )}
         </>
