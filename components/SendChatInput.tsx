@@ -400,17 +400,21 @@ const SendChatInput = () => {
       </View>
 
       {/* Attachment Modal */}
-      <Modal 
-        visible={showModal} 
-        transparent={true} 
-        animationType="fade" 
+      <Modal
+        visible={showModal}
+        transparent={true}
+        animationType="fade"
         onRequestClose={() => setShowModal(false)}
       >
-        <View className="flex-1 justify-end">
+        <TouchableOpacity
+          activeOpacity={1}
+          className="flex-1 justify-end"
+          onPress={() => setShowModal(false)}
+        >
           <TouchableOpacity
             activeOpacity={1}
             className="bg-neutral-100 rounded-t-3xl p-6 pb-8"
-            onPress={(e) => e.stopPropagation()}
+            onPress={() => { }}
           >
             {/* Modal Header */}
             <View className="flex flex-row justify-between items-center mb-6">
@@ -450,7 +454,7 @@ const SendChatInput = () => {
               ))}
             </View>
           </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
       </Modal>
 
       <MessageTemplate
