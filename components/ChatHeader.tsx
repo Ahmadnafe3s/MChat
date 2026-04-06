@@ -41,7 +41,7 @@ const ChatsHeader: React.FC<ChatsHeaderProps> = React.memo(
                         value={localSearch}
                         onChangeText={handleSearch}
                     />
-                    {localSearch.length > 0 && (
+                    {localSearch?.length > 0 && (
                         <TouchableOpacity
                             onPress={() => { handleSearch(""), onClearSearch?.() }}
                             className="p-1 bg-gray-300/30 rounded-full"
