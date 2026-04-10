@@ -109,23 +109,19 @@ const ChatProfile = () => {
               assignAgent={assignAgent}
             />
 
-            {user?.role === "user" && (
-              <TagSection
-                tags={chatProfile.data?.tag || []}
-                selectedTags={selectedTags}
-                onTagLongPress={handleTagLongPress}
-                onTagPress={handleTagPress}
-                createTag={createTag}
-                getTags={getTags}
-              />
-            )}
+            <TagSection
+              tags={chatProfile.data?.tag || []}
+              selectedTags={selectedTags}
+              onTagLongPress={handleTagLongPress}
+              onTagPress={handleTagPress}
+              createTag={createTag}
+              getTags={getTags}
+            />
 
-            {user?.role === "user" && (
-              <NoteSection
-                notes={chatProfile.data?.note || []}
-                createNote={createNote}
-              />
-            )}
+            <NoteSection
+              notes={chatProfile.data?.note || []}
+              createNote={createNote}
+            />
 
             <AttributeSection
               isLoading={updateAttributes.isPending}
