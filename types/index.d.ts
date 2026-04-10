@@ -277,6 +277,7 @@ declare interface CampaignDetails {
   read_count: number
   failed_count: number
   paused_count: number
+  job_id:number
 }
 
 

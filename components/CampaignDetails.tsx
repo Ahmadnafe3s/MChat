@@ -18,6 +18,7 @@ interface CampaignData {
     read_count: number
     failed_count: number
     paused_count: number
+    job_id: number
 }
 
 const CampaignDetails = forwardRef<BottomSheetModal, Props>(({ onClose, campaignId }, ref) => {
@@ -60,10 +61,11 @@ const CampaignDetails = forwardRef<BottomSheetModal, Props>(({ onClose, campaign
 
     const calculateSuccessRate = () => {
         if (!data?.sent_count) return '0.0'
-        const sent = parseNumber(data.sent_count)
+        const read = parseNumber(data.read_count)
         const delivered = parseNumber(data.delivered_count)
-        if (sent === 0) return '0.0'
-        return ((delivered / sent) * 100).toFixed(1)
+        const total = parseNumber(data.total)
+        if (read === 0) return '0.0'
+        return ((delivered + read) * 100 / total).toFixed(1)
     }
 
     return (
@@ -80,7 +82,7 @@ const CampaignDetails = forwardRef<BottomSheetModal, Props>(({ onClose, campaign
                 <View className="mb-6 pt-2 items-center">
                     <Text className="text-2xl font-bold text-gray-900 mb-1">Campaign Overview</Text>
                     {data && (
-                        <Text className="text-sm text-gray-500">ID: {campaignId}</Text>
+                        <Text className="text-sm text-gray-500">JOB ID: {data.job_id}</Text>
                     )}
                 </View>
 
