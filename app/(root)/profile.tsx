@@ -1,9 +1,10 @@
 
+import Alert from '@/components/Alert'
 import { icons } from '@/constants'
 import { useAuthStore } from '@/store/auth'
 import { useRouter } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import React from 'react'
+import React, { useState } from 'react'
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -11,6 +12,13 @@ const Profile = () => {
     const router = useRouter()
     const { user, logout } = useAuthStore();
     const insets = useSafeAreaInsets();
+    const [showLogoutAlert, setShowLogoutAlert] = useState(false);
+
+    const handleLogoutConfirm = () => {
+        logout()
+        router.replace('/(auth)/signin')
+        setShowLogoutAlert(false)
+    };
 
     return (
         <View className='flex-1 bg-gray-100'>
@@ -38,10 +46,7 @@ const Profile = () => {
 
                         <TouchableOpacity
                             className='p-3 bg-red-500 rounded-full'
-                            onPress={() => {
-                                logout()
-                                router.replace('/(auth)/signin')
-                            }}
+                            onPress={() => setShowLogoutAlert(true)}
                         >
                             <Image source={icons.logout as any} className='w-5 h-5' tintColor='#fff' />
                         </TouchableOpacity>
@@ -141,6 +146,14 @@ const Profile = () => {
                     </View>
                 )}
             </ScrollView>
+
+            <Alert
+                visible={showLogoutAlert}
+                title="Logout"
+                message="Are you sure you want to logout?"
+                onContinue={handleLogoutConfirm}
+                onCancel={() => setShowLogoutAlert(false)}
+            />
         </View>
     )
 }

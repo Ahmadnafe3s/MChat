@@ -3,8 +3,9 @@ import useChat from "@/hooks/useChat";
 import { useChatStore } from "@/store/chat";
 import { useToastStore } from "@/store/toast";
 import { useRouter } from "expo-router";
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
+import Alert from "./Alert";
 import Dropdown from "./Dropdown";
 
 interface Props {
@@ -18,12 +19,18 @@ const ConversationHeader = memo(({ onCall, onClearChat }: Props) => {
   const { selectedChat } = useChatStore();
   const { starredChat, blockChat } = useChat();
   const { showToast } = useToastStore()
+  const [showBlockAlert, setShowBlockAlert] = useState(false);
+  const [blockAlertType, setBlockAlertType] = useState<"Block" | "Unblock">("Block");
 
   const handleSelect = (value: string) => {
     switch (value) {
       case "Block":
+        setBlockAlertType("Block");
+        setShowBlockAlert(true);
+        break;
       case "Unblock":
-        blockChat.mutate();
+        setBlockAlertType("Unblock");
+        setShowBlockAlert(true);
         break;
       case "Clear Chat":
         onClearChat()
@@ -35,6 +42,11 @@ const ConversationHeader = memo(({ onCall, onClearChat }: Props) => {
         router.push(`/(root)/allMedia`);
         break;
     }
+  };
+
+  const handleBlockConfirm = () => {
+    blockChat.mutate();
+    setShowBlockAlert(false);
   };
 
 
@@ -95,6 +107,15 @@ const ConversationHeader = memo(({ onCall, onClearChat }: Props) => {
           />
         </View>
       </View>
+      <Alert
+        visible={showBlockAlert}
+        title={blockAlertType === "Block" ? "Block Chat" : "Unblock Chat"}
+        message={blockAlertType === "Block" 
+          ? `Are you sure you want to block ${selectedChat?.name}?` 
+          : `Are you sure you want to unblock ${selectedChat?.name}?`}
+        onContinue={handleBlockConfirm}
+        onCancel={() => setShowBlockAlert(false)}
+      />
     </>
   );
 });
