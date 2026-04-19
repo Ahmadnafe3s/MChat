@@ -151,9 +151,14 @@ const SendChatInput = () => {
 
   // ----------------------Mutation--------------------
   const handleSend = async () => {
+    // Prevent sending blank lines/whitespace without attachment
+    if (!message.message.trim() && !message.attachment) {
+      return;
+    }
+
     const formData = new FormData();
     formData.append("type", message.type);
-    formData.append("message", message.message);
+    formData.append("message", message.message.trim());
     if (message.attachment) {
       formData.append("attachment", {
         uri: message.attachment.uri,
@@ -385,15 +390,15 @@ const SendChatInput = () => {
             }
           />
           <TouchableOpacity
-            disabled={!message.message && !message.attachment}
+            disabled={!message.message.trim() && !message.attachment}
             className={`rounded-full size-12 flex items-center justify-center mt-auto mb-1.5 
-                        ${!message.message && !message.attachment ? "bg-gray-200" : "bg-[#42d6a624]"}`}
+                        ${!message.message.trim() && !message.attachment ? "bg-gray-200" : "bg-[#42d6a624]"}`}
             onPress={handleSend}
           >
             <Image
               source={icons.send as any}
               className="w-6 h-6"
-              tintColor={!message.message && !message.attachment ? "#A3A3A3" : "#42d6a6"}
+              tintColor={!message.message.trim() && !message.attachment ? "#A3A3A3" : "#42d6a6"}
             />
           </TouchableOpacity>
         </View>
