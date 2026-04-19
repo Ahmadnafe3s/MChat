@@ -61,7 +61,7 @@ const CallItem = ({ item, isSelected, onLongPress, onPress }: CallItemProps) => 
                     </Text>
                     <View className="flex-row items-center mt-1">
                         <Text className="text-gray-500 text-sm">{item.agent_name}</Text>
-                        <View className="w-1 h-1 rounded-full bg-gray-400 mx-2" />
+                        {item.agent_name && <Text className="text-gray-500 mx-1">•</Text>} 
                         <Text
                             className={`text-sm capitalize ${item.call_status === "missed" ? "text-red-500" : "text-emerald-600"}`}
                         >
