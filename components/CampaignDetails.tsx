@@ -64,7 +64,9 @@ const CampaignDetails = forwardRef<BottomSheetModal, Props>(({ onClose, campaign
         const read = parseNumber(data.read_count)
         const delivered = parseNumber(data.delivered_count)
         const total = parseNumber(data.total)
-        if (read === 0) return '0.0'
+
+        console.log(`Read: ${read}, Delivered: ${delivered}, Total: ${total}`)
+        if (read === 0 && delivered === 0) return '0.0'
         return ((delivered + read) * 100 / total).toFixed(1)
     }
 

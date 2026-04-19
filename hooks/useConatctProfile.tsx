@@ -56,8 +56,8 @@ const useContactProfile = () => {
 
 
   const getTags = useQuery({
-    queryKey: ['tags', user?.id],
-    queryFn: () => contactProfileApi.getTags({ value: user?.id! }),
+    queryKey: ['tags', selectedChat?.id],
+    queryFn: () => contactProfileApi.getTags(selectedChat?.id!),
     enabled: !!user?.id
   })
 
@@ -68,7 +68,6 @@ const useContactProfile = () => {
       await queryClient.setQueryData(["chatProfile", selectedChat?.id], (oldData: ChatProfile) => {
         return { ...oldData, tag: [newData, ...oldData?.tag] }
       });
-      queryClient.invalidateQueries({ queryKey: ['tags', user?.id] })
     },
     onError: (err: AxiosError<{ message: string }>) => {
       const message = err.response?.data.message! || "Something went wrong";

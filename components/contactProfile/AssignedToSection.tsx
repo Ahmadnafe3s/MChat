@@ -6,12 +6,13 @@ import { Image, Text, View } from "react-native";
 
 interface AssignedToSectionProps {
     role?: string;
-    assignTo?: string;
+    agentId?: string;
+    agentName?: string;
     agentList: UseQueryResult<AgentList[], any>;
     assignAgent: UseMutationResult<any, any, { agent_id: number }, unknown>;
 }
 
-const AssignedToSection = ({ role, assignTo, agentList, assignAgent }: AssignedToSectionProps) => {
+const AssignedToSection = ({ role, agentId, agentName, agentList, assignAgent }: AssignedToSectionProps) => {
     return (
         <View className="gap-2.5">
             <View className="flex flex-row items-center gap-2 px-1">
@@ -23,7 +24,7 @@ const AssignedToSection = ({ role, assignTo, agentList, assignAgent }: AssignedT
 
             {role === "user" ? (
                 <Select
-                    value={assignTo?.toString()!}
+                    value={agentId?.toString()!}
                     onValueChange={(value) => assignAgent.mutate({ agent_id: parseInt(value) })}
                     options={agentList.data?.map((opt) => ({ value: opt.id.toString(), label: opt.name })) || []}
                     placeholder={assignAgent.isPending ? "Assigning..." : "Select an option"}
@@ -31,15 +32,15 @@ const AssignedToSection = ({ role, assignTo, agentList, assignAgent }: AssignedT
                     modalTitle="Select an Agent"
                 />
             ) : (
-                assignTo ? (
+                agentId ? (
                     <View className="flex flex-row gap-3 items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
                         <View className="size-12 rounded-xl bg-blue-100 flex items-center justify-center">
                             <Text className="font-JakartaBold text-lg text-blue-600">
-                                {agentList.data?.find((agent) => agent?.id === parseInt(assignTo))?.name.charAt(0).toUpperCase()}
+                                {agentName?.charAt(0).toUpperCase()}
                             </Text>
                         </View>
                         <Text className="font-JakartaSemiBold text-gray-800 text-base">
-                            {agentList.data?.find((agent) => agent?.id === parseInt(assignTo))?.name}
+                            {agentName}
                         </Text>
                     </View>
                 ) : (

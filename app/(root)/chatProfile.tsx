@@ -104,7 +104,8 @@ const ChatProfile = () => {
 
             <AssignedToSection
               role={user?.role}
-              assignTo={chatProfile.data?.assign_to}
+              agentId={chatProfile.data?.agent_id}
+              agentName={chatProfile.data?.agent_name}
               agentList={agentList}
               assignAgent={assignAgent}
             />

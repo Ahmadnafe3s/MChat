@@ -113,7 +113,8 @@ declare interface ChatProfile {
   name: string;
   phone: string;
   submit_as: string;
-  assign_to: string;
+  agent_id: string;
+  agent_name: string;
   flag: string;
   custom_field: CustomField[];
   attribute: Attribute[];

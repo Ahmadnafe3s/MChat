@@ -25,8 +25,8 @@ const contactProfileApi = {
         const res = await axios.post(`https://meta.muzztech.com/api/v1/create-tag/${selectedChat}`, params);
         return res.data.data
     },
-    getTags: async (params: { value: number }): Promise<{ id: number, name: string, created_at: string }[]> => {
-        const res = await axios.get(`https://meta.muzztech.com/api/v1/tag/list`, { params })
+    getTags: async (selectedChatId: number): Promise<{ id: number, name: string, created_at: string }[]> => {
+        const res = await axios.get(`https://meta.muzztech.com/api/v1/tag/list/${selectedChatId}`);
         return res.data.data
     },
     createNote: async (selectedChat: number, params: { note: string }) => {
