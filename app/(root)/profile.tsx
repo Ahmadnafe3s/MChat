@@ -72,7 +72,7 @@ const Profile = () => {
                                 <Text className='text-emerald-600 font-JakartaSemiBold text-xs capitalize'>{user?.role}</Text>
                             </View>
                             <View className='px-4 py-1.5 bg-amber-50 border border-amber-200 rounded-full flex flex-row items-center gap-1.5'>
-                                <Text className='text-sm'>💼</Text>
+                                <Text className='text-sm'>🪙</Text>
                                 <Text className='text-amber-700 font-JakartaBold text-xs'>₹{user?.wallet}</Text>
                             </View>
                         </View>
