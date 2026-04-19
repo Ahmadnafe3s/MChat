@@ -2,7 +2,7 @@ import Select from "@/components/Select";
 import { icons } from "@/constants";
 import { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { ActivityIndicator, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface TagSectionProps {
     tags: Tag[];
@@ -120,13 +120,7 @@ const TagSection = ({
                                     <Text className={`text-[10px] font-JakartaMedium ${
                                         isSelected ? 'text-purple-500/70' : 'text-gray-400'
                                     }`}>
-                                        {new Date(tag.created_at).toLocaleDateString([], {
-                                            day: "numeric",
-                                            month: "short",
-                                        })}, {new Date(tag.created_at).toLocaleTimeString([], {
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                        })}
+                                       {tag.created_at}
                                     </Text>
                                 </View>
                             </TouchableOpacity>

@@ -20,7 +20,6 @@ const NoteSection = ({ notes, createNote }: NoteSectionProps) => {
                 </View>
                 <View className="flex flex-row px-4 py-2 border-2 bg-white border-gray-100 rounded-2xl shadow-sm">
                     <View className="mr-3 mt-3">
-                        <Image source={icons.note as any} className="w-5 h-5" tintColor={"#f59e0b"} />
                     </View>
                     <TextInput
                         placeholder="Add a note"
@@ -59,26 +58,18 @@ const NoteSection = ({ notes, createNote }: NoteSectionProps) => {
                     {notes.map((note) => (
                         <View
                             key={note.id}
-                            className="bg-white rounded-2xl border border-amber-100 shadow-sm p-4"
+                            className="bg-white rounded-2xl border border-amber-100 shadow-sm p-4 gap-2"
                         >
-                            <View className="flex flex-row items-start gap-3 mb-3">
-                                <View className="bg-amber-50 rounded-xl size-11 flex items-center justify-center">
-                                    <Image source={icons.note as any} className="w-5 h-5" tintColor={"#f59e0b"} />
-                                </View>
-                                <View className="flex-1">
-                                    <Text className="text-xs text-gray-500 font-JakartaMedium py-1.5 px-3 bg-amber-50 rounded-xl self-start">
-                                        {new Date(note.created_at).toLocaleTimeString([], {
-                                            day: "numeric",
-                                            month: "short",
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                        })}
-                                    </Text>
-                                </View>
-                            </View>
                             <Text className="text-gray-700 text-base font-JakartaMedium leading-6 px-1">
                                 {note.text}
                             </Text>
+                            <View className="flex flex-row items-start gap-3">
+                                <View className="flex-1">
+                                    <Text className="text-xs text-gray-500 font-JakartaMedium py-1.5 px-3 rounded-xl self-start">
+                                        {note.created_at}
+                                    </Text>
+                                </View>
+                            </View>
                         </View>
                     ))}
                 </View>

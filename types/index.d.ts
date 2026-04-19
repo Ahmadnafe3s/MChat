@@ -208,9 +208,11 @@ declare interface CallLogs {
     incoming: string
     outgoing: string
   },
+  to: number,
   current_page: number,
   last_page: number,
-  count: number
+  count: number,
+  total: number,
   data: Array<{
     id: number
     agent_name: string
@@ -253,6 +255,7 @@ declare interface CampaignStatuses {
   read_count: string;
   failed_count: string;
   paused_count: string;
+  cancel_count: string;
 }
 
 declare interface CampaignResponse {
@@ -277,7 +280,7 @@ declare interface CampaignDetails {
   read_count: number
   failed_count: number
   paused_count: number
-  job_id:number
+  job_id: number
 }
 
 

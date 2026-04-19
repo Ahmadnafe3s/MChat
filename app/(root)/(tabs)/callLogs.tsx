@@ -147,11 +147,21 @@ const CallLogs = () => {
                     contentContainerStyle={{ paddingTop: 8, paddingBottom: 16 }}
                     ListHeaderComponent={
                         !isLoading && statuses ? (
-                            <CallStatusCards
-                                statuses={statuses}
-                                count={data.pages[0].count}
-                                onStatusSelect={setSelectedStatus}
-                            />
+                            <View>
+                                <View className="flex-row items-center justify-between mb-4 px-4 pt-4">
+                                    <Text className="text-lg font-bold text-gray-900">
+                                        Call Results
+                                    </Text>
+                                    <Text className="text-sm text-gray-600">
+                                        {data.pages[data.pages.length - 1]?.to || 0} of {data.pages[data.pages.length - 1]?.total || 0} calls
+                                    </Text>
+                                </View>
+                                <CallStatusCards
+                                    statuses={statuses}
+                                    count={data.pages[0].count}
+                                    onStatusSelect={setSelectedStatus}
+                                />
+                            </View>
                         ) : null
                     }
                     ListEmptyComponent={

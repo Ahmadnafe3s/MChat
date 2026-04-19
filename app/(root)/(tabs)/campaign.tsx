@@ -138,7 +138,7 @@ const Campaign = () => {
         if (!statuses) return <View className="p-4"><Text className="text-lg font-bold text-gray-900">Campaign Results</Text></View>
 
         const statsData = [
-            { label: 'Total', value: statuses.total, color: 'text-amber-500', bgColor: 'bg-amber-50', borderColor: 'border-amber-200', icon: '#f59e0b', iconName: 'list' },
+            { label: 'Contacts', value: statuses.total, color: 'text-amber-500', bgColor: 'bg-amber-50', borderColor: 'border-amber-200', icon: '#f59e0b', iconName: 'list' },
             { label: 'Pending', value: statuses.pending_count, color: 'text-orange-500', bgColor: 'bg-orange-50', borderColor: 'border-orange-200', icon: '#f97316', iconName: 'time' },
             { label: 'Submitted', value: statuses.submitted_count, color: 'text-gray-500', bgColor: 'bg-gray-50', borderColor: 'border-gray-200', icon: '#6b7280', iconName: 'document-text' },
             { label: 'Sent', value: statuses.sent_count, color: 'text-purple-500', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', icon: '#a855f7', iconName: 'paper-plane' },
@@ -146,6 +146,7 @@ const Campaign = () => {
             { label: 'Read', value: statuses.read_count, color: 'text-blue-500', bgColor: 'bg-blue-50', borderColor: 'border-blue-200', icon: '#3b82f6', iconName: 'eye' },
             { label: 'Failed', value: statuses.failed_count, color: 'text-red-500', bgColor: 'bg-red-50', borderColor: 'border-red-200', icon: '#ef4444', iconName: 'close-circle' },
             { label: 'Paused', value: statuses.paused_count, color: 'text-indigo-500', bgColor: 'bg-indigo-50', borderColor: 'border-indigo-200', icon: '#6366f1', iconName: 'pause-circle' },
+            { label: 'Cancelled', value: statuses.cancel_count, color: 'text-pink-500', bgColor: 'bg-pink-50', borderColor: 'border-pink-200', icon: '#ec4899', iconName: 'trash-bin' },
         ]
 
         return (
