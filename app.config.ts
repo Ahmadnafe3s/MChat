@@ -1,8 +1,8 @@
 import { ConfigContext, ExpoConfig } from "@expo/config";
 
-const EAS_PROJECT_ID = "f9d850a7-dd8c-47b3-a09d-a55af206ab39";
+const EAS_PROJECT_ID = "ec57dce7-322c-4600-97dd-5c1b1542767c";
 const PROJECT_SLUG = "mchat";
-const OWNER = "apex5767";
+const OWNER = "muzztech";
 
 // Production Config
 const APP_NAME = "Mchat";
