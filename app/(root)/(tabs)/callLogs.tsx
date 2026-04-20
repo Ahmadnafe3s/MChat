@@ -60,11 +60,22 @@ const CallLogs = () => {
     const getUniqueCallLogs = () => {
         const seen = new Set();
         return callLogs.filter(item => {
+            // Filter out invalid items first
+            if (!item?.contact_id || !item?.call_status) return false;
             if (seen.has(item.contact_id)) return false;
             seen.add(item.contact_id);
             return true;
         });
+    }
 
+    const getValidCallLogs = () => {
+        return callLogs.filter(item => 
+            item?.contact_id && 
+            item?.call_status && 
+            (item?.contact_name || item?.contact_phone) &&
+            item?.call_date &&
+            item?.duration !== undefined
+        );
     }
 
     const handleSendTemplate = (template: SendTemplate) => {
@@ -133,7 +144,7 @@ const CallLogs = () => {
                 </View>
             ) : (
                 <FlashList
-                    data={selectedCall.size === 0 ? callLogs : getUniqueCallLogs()}
+                    data={selectedCall.size === 0 ? getValidCallLogs() : getUniqueCallLogs()}
                     renderItem={({ item }) => (
                         <CallItem
                             item={item}
@@ -142,7 +153,7 @@ const CallLogs = () => {
                             onPress={() => handlePress(item)}
                         />
                     )}
-                    estimatedItemSize={88}
+                    estimatedItemSize={72}
                     keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={{ paddingTop: 8, paddingBottom: 16 }}
                     ListHeaderComponent={

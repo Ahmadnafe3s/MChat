@@ -28,7 +28,12 @@ interface CallItemProps {
 }
 
 const CallItem = ({ item, isSelected, onLongPress, onPress }: CallItemProps) => {
-    const callIcon = getCallIcon(item.direction, item.call_status);
+    // Return null if item doesn't have required data
+    if (!item?.contact_id || !item?.call_status) {
+        return null;
+    }
+
+    const callIcon = getCallIcon(item.direction || "incoming", item.call_status);
 
     return (
         <TouchableOpacity
@@ -57,11 +62,15 @@ const CallItem = ({ item, isSelected, onLongPress, onPress }: CallItemProps) => 
 
                 <View className="flex-1 ml-3">
                     <Text className="text-gray-900 font-semibold text-base">
-                        {item.contact_name !== "N/A" ? item.contact_name : item.contact_phone}
+                        {item.contact_name && item.contact_name !== "N/A" ? item.contact_name : item.contact_phone || "Unknown"}
                     </Text>
                     <View className="flex-row items-center mt-1">
-                        <Text className="text-gray-500 text-sm">{item.agent_name}</Text>
-                        {item.agent_name && <Text className="text-gray-500 mx-1">•</Text>} 
+                        {item.agent_name && (
+                            <>
+                                <Text className="text-gray-500 text-sm">{item.agent_name}</Text>
+                                <Text className="text-gray-500 mx-1">•</Text>
+                            </>
+                        )}
                         <Text
                             className={`text-sm capitalize ${item.call_status === "missed" ? "text-red-500" : "text-emerald-600"}`}
                         >
@@ -72,10 +81,10 @@ const CallItem = ({ item, isSelected, onLongPress, onPress }: CallItemProps) => 
 
                 <View className="items-end">
                     <Text className="text-gray-900 text-sm font-medium">
-                        {item.call_date}
+                        {item.call_date || "N/A"}
                     </Text>
                     <Text className="text-gray-500 text-xs mt-1">
-                        {formatDuration(item.duration)}
+                        {item.duration !== undefined ? formatDuration(item.duration) : "0s"}
                     </Text>
                 </View>
             </View>
