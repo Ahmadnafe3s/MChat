@@ -17,6 +17,7 @@ export async function handleDownloadTap(data: any) {
 }
 export function handleMessageTap(data: any) {
   if (data?.chatId) {
+    
     // navigate("ChatScreen", { chatId: data.chatId });
   }
 }

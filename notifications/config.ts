@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
@@ -31,4 +32,10 @@ export async function setupNotificationConfig() {
       sound: "default",
     });
   }
+
+  const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+
+  const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+
+  return token
 }
